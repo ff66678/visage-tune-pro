@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import ProfilePage from "@/components/ProfilePage";
+import ProfileDetailContent from "@/components/ProfileDetailContent";
 
 const ProfileDetail = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const ProfileDetail = () => {
           </button>
         </div>
         <div className="-mt-14">
-          <ProfilePage />
+          <ProfileDetailContent />
         </div>
       </div>
     </div>
