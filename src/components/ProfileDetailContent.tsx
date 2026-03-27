@@ -41,16 +41,8 @@ const ProfileDetailContent = () => {
 
   return (
     <div className="animate-fade-in pb-4">
-      {/* Header */}
-      <header className="flex justify-between items-center px-6 pt-6">
-        <button
-          onClick={() => setSettingsOpen(true)}
-          className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center text-foreground hover:bg-foreground/5 transition-colors border-none cursor-pointer"
-        >
-          <Settings className="w-5 h-5" />
-        </button>
-        <div className="w-10" />
-      </header>
+      {/* Header spacer */}
+      <div className="pt-6" />
 
       {/* Profile */}
       <section className="flex flex-col items-center -mt-2 px-6">
