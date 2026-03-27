@@ -1,24 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Heart } from "lucide-react";
+import { useCourse } from "@/hooks/useCourses";
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
-    <circle
-      cx="96" cy="96" r="90"
-      stroke="currentColor" strokeWidth="6" fill="transparent"
-      className="text-white/10"
-    />
-    <circle
-      cx="96" cy="96" r="90"
-      stroke="hsl(var(--primary))" strokeWidth="6" fill="transparent"
-      strokeLinecap="round"
-      style={{
-        strokeDasharray: "283",
-        strokeDashoffset: dashOffset,
-        transition: "stroke-dashoffset 1s linear",
-      }}
-    />
+    <circle cx="96" cy="96" r="90" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/10" />
+    <circle cx="96" cy="96" r="90" stroke="hsl(var(--primary))" strokeWidth="6" fill="transparent" strokeLinecap="round"
+      style={{ strokeDasharray: "283", strokeDashoffset: dashOffset, transition: "stroke-dashoffset 1s linear" }} />
   </svg>
 );
 
@@ -47,11 +36,13 @@ const PlayIcon = () => (
 );
 
 const WorkoutPlayer = () => {
+  const { id } = useParams<{ id: string }>();
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
   const [isFavorited, setIsFavorited] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const navigate = useNavigate();
+  const { data: course } = useCourse(id);
 
   const totalSeconds = 60;
   const circumference = 283;
@@ -61,20 +52,14 @@ const WorkoutPlayer = () => {
     if (isPlaying && seconds > 0) {
       intervalRef.current = setInterval(() => {
         setSeconds((prev) => {
-          if (prev <= 1) {
-            clearInterval(intervalRef.current!);
-            setIsPlaying(false);
-            return 0;
-          }
+          if (prev <= 1) { clearInterval(intervalRef.current!); setIsPlaying(false); return 0; }
           return prev - 1;
         });
       }, 1000);
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
     }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, [isPlaying, seconds]);
 
   const formatTime = (s: number) => {
@@ -86,45 +71,33 @@ const WorkoutPlayer = () => {
   const handleRewind = () => setSeconds((prev) => Math.min(prev + 10, totalSeconds));
   const handleFastForward = () => setSeconds((prev) => Math.max(prev - 10, 0));
   const handlePlayPause = () => {
-    if (seconds === 0) {
-      setSeconds(totalSeconds);
-      setIsPlaying(true);
-    } else {
-      setIsPlaying((prev) => !prev);
-    }
+    if (seconds === 0) { setSeconds(totalSeconds); setIsPlaying(true); }
+    else { setIsPlaying((prev) => !prev); }
   };
+
+  const courseTitle = course?.title || "训练中";
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+          src={course?.image_url || "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
           alt="Action Demo"
           className="w-full h-full object-cover opacity-90"
         />
-        <div
-          className="absolute inset-0"
-          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)" }}
-        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)" }} />
       </div>
 
       {/* Top Navigation Bar */}
       <div className="absolute top-12 left-0 w-full px-6 flex justify-between items-center z-20">
-        <button
-          onClick={() => navigate(-1)}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl"
-        >
+        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
           <ChevronLeft className="w-5 h-5" />
         </button>
         <div className="text-center">
-          <h2 className="text-sm font-bold tracking-wide">紧致提升大师课</h2>
-          
+          <h2 className="text-sm font-bold tracking-wide">{courseTitle}</h2>
         </div>
-        <button
-          onClick={() => setIsFavorited((prev) => !prev)}
-          className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform"
-        >
+        <button onClick={() => setIsFavorited((prev) => !prev)} className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform">
           <Heart
             className={`w-5 h-5 transition-all duration-300 ${isFavorited ? 'scale-110' : 'text-white scale-100'}`}
             style={isFavorited ? { color: 'hsl(var(--primary))', fill: 'hsl(var(--primary))' } : undefined}
@@ -134,59 +107,35 @@ const WorkoutPlayer = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-20">
-        {/* Timer Ring */}
         <div className="relative w-48 h-48 flex items-center justify-center mb-8">
           <TimerRing dashOffset={dashOffset} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-5xl font-bold font-mono">{formatTime(seconds)}</span>
-            <span className="text-xs text-white/60 mt-1">
-              {seconds > 0 ? "坚持住" : "完成！"}
-            </span>
+            <span className="text-xs text-white/60 mt-1">{seconds > 0 ? "坚持住" : "完成！"}</span>
           </div>
         </div>
-
-        {/* Action Title */}
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-2">V字手势提升</h1>
-          <p className="text-white/70 text-sm px-12">
-            用食指和中指呈V字型，从下巴向耳根方向轻柔推拉。
-          </p>
+          <p className="text-white/70 text-sm px-12">用食指和中指呈V字型，从下巴向耳根方向轻柔推拉。</p>
         </div>
       </div>
 
-
       {/* Controls Bar */}
       <div className="relative z-10 border-t border-white/10 px-6 pt-6 pb-12 bg-white/5 backdrop-blur-3xl">
-        {/* Progress Bar */}
         <div className="flex items-center gap-3 mb-6">
           <span className="text-[10px] font-mono text-white/50">04:12</span>
           <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full rounded-full"
-              style={{
-                width: "35%",
-                background: "linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%)",
-              }}
-            />
+            <div className="h-full rounded-full" style={{ width: "35%", background: "linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%)" }} />
           </div>
-          <span className="text-[10px] font-mono text-white/50">12:00</span>
+          <span className="text-[10px] font-mono text-white/50">{course?.duration || "12:00"}</span>
         </div>
-
-        {/* Playback Controls */}
         <div className="flex justify-center items-center">
           <div className="flex items-center gap-8">
-            <button className="text-white/80 active:scale-90 transition-transform" onClick={handleRewind}>
-              <RewindIcon />
-            </button>
-            <button
-              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-xl active:scale-90 transition-transform text-foreground"
-              onClick={handlePlayPause}
-            >
+            <button className="text-white/80 active:scale-90 transition-transform" onClick={handleRewind}><RewindIcon /></button>
+            <button className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-xl active:scale-90 transition-transform text-foreground" onClick={handlePlayPause}>
               {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
-            <button className="text-white/80 active:scale-90 transition-transform" onClick={handleFastForward}>
-              <FastForwardIcon />
-            </button>
+            <button className="text-white/80 active:scale-90 transition-transform" onClick={handleFastForward}><FastForwardIcon /></button>
           </div>
         </div>
       </div>

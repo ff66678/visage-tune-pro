@@ -55,7 +55,7 @@ const App = () => (
             <Route path="/paywall" element={<ProtectedRoute><Paywall onClose={() => window.history.back()} /></ProtectedRoute>} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/course/:id" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
-            <Route path="/workout" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
+            <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
