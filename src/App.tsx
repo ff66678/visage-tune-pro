@@ -49,7 +49,7 @@ const PaywallRoute = () => {
   const { user, loading, paywallCompleted } = useAuth();
   if (loading) return <LoadingSpinner />;
   if (!user) return <Navigate to="/onboarding" replace />;
-  if (paywallCompleted) return <Navigate to="/" replace />;
+  
   return <Paywall onClose={() => window.location.replace("/")} />;
 };
 
