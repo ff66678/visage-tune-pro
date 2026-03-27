@@ -4,7 +4,6 @@ import { X, Check, ChevronDown, ArrowRight } from "lucide-react";
 const Paywall = ({ onClose }: { onClose?: () => void }) => {
   const [selectedPlan, setSelectedPlan] = useState("annual");
   const [promoCode, setPromoCode] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleStartTrial = () => {
     if (onClose) {
