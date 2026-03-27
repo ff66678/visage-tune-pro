@@ -119,7 +119,7 @@ const WorkoutPlayer = () => {
         </button>
         <div className="text-center">
           <h2 className="text-sm font-bold tracking-wide">紧致提升大师课</h2>
-          <p className="text-[10px] text-white/60">第 3/12 个动作</p>
+          
         </div>
         <button className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
           <Info className="w-5 h-5" />
