@@ -393,7 +393,7 @@ const Onboarding = () => {
   };
 
   if (showPaywall) {
-    return <Paywall onClose={() => navigate("/")} />;
+    return <Paywall onClose={completeOnboarding} />;
   }
 
   if (showSuccess) {
