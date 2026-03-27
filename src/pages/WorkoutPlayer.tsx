@@ -182,10 +182,7 @@ const WorkoutPlayer = () => {
               <FastForwardIcon />
             </button>
           </div>
-
-          <button className="w-12 h-12 rounded-full flex items-center justify-center text-white/70">
-            <Maximize className="w-6 h-6" />
-          </button>
+          </div>
         </div>
       </div>
     </div>
