@@ -11,10 +11,15 @@ const Index = () => {
   const activeTab = Number(searchParams.get("tab") || 0);
   const setActiveTab = (tab: number) => setSearchParams({ tab: String(tab) }, { replace: true });
   const ActivePage = pages[activeTab];
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo(0, 0);
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
-      <div className="w-full max-w-[480px] min-h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
+      <div ref={scrollRef} className="w-full max-w-[480px] min-h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
         <ActivePage />
         <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
