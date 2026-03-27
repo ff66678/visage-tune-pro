@@ -107,6 +107,30 @@ export type Database = {
         }
         Relationships: []
       }
+      progress_photos: {
+        Row: {
+          created_at: string
+          id: string
+          photo_date: string
+          photo_url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          photo_date?: string
+          photo_url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          photo_date?: string
+          photo_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       workout_logs: {
         Row: {
           completed_at: string
