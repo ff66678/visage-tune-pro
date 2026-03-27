@@ -381,8 +381,12 @@ const Onboarding = () => {
     if (step > 0) setStep(step - 1);
   };
 
+  if (showPaywall) {
+    return <Paywall onClose={() => navigate("/")} />;
+  }
+
   if (showSuccess) {
-    return <SuccessScreen onStart={() => navigate("/")} />;
+    return <SuccessScreen onStart={() => setShowPaywall(true)} />;
   }
 
   if (showLoading) {
