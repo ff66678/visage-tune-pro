@@ -4,18 +4,10 @@ import { Bell, Star, Crown } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
+import { useWeeklyProgress } from "@/hooks/useWorkoutLogs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-const weekData = [
-  { label: "一", height: "40%", active: false },
-  { label: "二", height: "70%", active: false },
-  { label: "三", height: "90%", active: false },
-  { label: "四", height: "100%", active: true },
-  { label: "五", height: "0%", active: false },
-  { label: "六", height: "0%", active: false },
-  { label: "日", height: "0%", active: false },
-];
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -35,6 +27,7 @@ const HomePage = () => {
   const avatarUrl = profile?.avatar_url;
   const initials = displayName.slice(0, 1).toUpperCase();
 
+  const { weekData, percentage } = useWeeklyProgress();
   const todayPlan = courses?.find((c) => c.is_today_plan);
   const recommended = courses?.filter((c) => c.is_featured) ?? [];
 
@@ -71,7 +64,7 @@ const HomePage = () => {
       <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-[15px] font-semibold">每周进度</h2>
-          <span className="text-[13px] text-primary font-semibold">完成 85%</span>
+          <span className="text-[13px] text-primary font-semibold">完成 {percentage}%</span>
         </div>
         <div className="flex justify-between items-end">
           {weekData.map((day, i) => (
