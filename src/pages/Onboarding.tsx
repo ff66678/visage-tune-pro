@@ -426,14 +426,6 @@ const Onboarding = () => {
     }
   };
 
-  // When user logs in during onboarding auth step, move to paywall
-  useEffect(() => {
-    if (showAuth && user) {
-      setShowAuth(false);
-      setShowPaywall(true);
-    }
-  }, [user, showAuth]);
-
   if (showPaywall) {
     return <Paywall onClose={completeOnboarding} />;
   }
