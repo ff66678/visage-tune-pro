@@ -4,7 +4,7 @@ import { Bell, Star, Crown } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
-import { useWeeklyProgress } from "@/hooks/useWorkoutLogs";
+import { useWeeklyProgress, useWorkoutStats } from "@/hooks/useWorkoutLogs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -28,6 +28,7 @@ const HomePage = () => {
   const initials = displayName.slice(0, 1).toUpperCase();
 
   const { weekData, percentage } = useWeeklyProgress();
+  const { streak } = useWorkoutStats();
   const todayPlan = courses?.find((c) => c.is_today_plan);
   const recommended = courses?.filter((c) => c.is_featured) ?? [];
 
@@ -154,8 +155,8 @@ const HomePage = () => {
             <Star className="w-6 h-6" fill="currentColor" />
           </div>
           <div>
-            <div className="text-sm font-semibold">连续打卡 12 天</div>
-            <div className="text-xs text-muted-foreground">太棒了，继续保持！</div>
+            <div className="text-sm font-semibold">连续打卡 {streak} 天</div>
+            <div className="text-xs text-muted-foreground">{streak > 0 ? "太棒了，继续保持！" : "今天开始打卡吧！"}</div>
           </div>
         </div>
       </div>
