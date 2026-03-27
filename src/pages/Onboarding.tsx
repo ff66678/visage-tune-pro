@@ -405,6 +405,7 @@ const Onboarding = () => {
   // After success → if not logged in, show auth; if logged in, show paywall
   const handleSuccessNext = () => {
     if (user) {
+      completeOnboarding();
       setShowSuccess(false);
       setShowPaywall(true);
     } else {
@@ -413,9 +414,10 @@ const Onboarding = () => {
     }
   };
 
-  // When user logs in during onboarding auth step, move to paywall
+  // When user logs in during onboarding auth step, mark onboarding done and move to paywall
   useEffect(() => {
     if (showAuth && user) {
+      completeOnboarding();
       setShowAuth(false);
       setShowPaywall(true);
     }

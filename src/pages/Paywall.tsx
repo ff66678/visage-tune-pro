@@ -7,8 +7,9 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleStartTrial = () => {
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 2000);
+    if (onClose) {
+      onClose();
+    }
   };
 
   const images = [
