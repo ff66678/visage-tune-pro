@@ -126,7 +126,7 @@ const WorkoutPlayer = () => {
           className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform"
         >
           <Heart
-            className={`w-5 h-5 transition-all duration-300 ${isFavorited ? 'text-red-500 fill-red-500 scale-110' : 'text-white scale-100'}`}
+            className={`w-5 h-5 transition-all duration-300 ${isFavorited ? 'text-rose-300 fill-rose-300 scale-110' : 'text-white scale-100'}`}
           />
         </button>
       </div>
