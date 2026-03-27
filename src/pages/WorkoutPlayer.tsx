@@ -182,7 +182,6 @@ const WorkoutPlayer = () => {
               <FastForwardIcon />
             </button>
           </div>
-          </div>
         </div>
       </div>
     </div>
