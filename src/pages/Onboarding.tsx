@@ -350,6 +350,15 @@ const SuccessScreen = ({ onStart }: { onStart: () => void }) => (
 // Main Onboarding Component
 const Onboarding = () => {
   const navigate = useNavigate();
+  const { user, setOnboardingCompleted } = useAuth();
+
+  const completeOnboarding = async () => {
+    if (user) {
+      await supabase.from("profiles").update({ onboarding_completed: true } as any).eq("user_id", user.id);
+      setOnboardingCompleted(true);
+      navigate("/");
+    }
+  };
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<string | null>(null);
   const [skinType, setSkinType] = useState<string | null>(null);
