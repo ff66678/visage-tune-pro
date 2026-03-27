@@ -10,6 +10,7 @@ import Paywall from "./pages/Paywall.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
 import CourseDetail from "./pages/CourseDetail.tsx";
 import WorkoutPlayer from "./pages/WorkoutPlayer.tsx";
+import CategoryAll from "./pages/CategoryAll.tsx";
 import Membership from "./pages/Membership.tsx";
 import GiftPage from "./pages/GiftPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/course/:id" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
             <Route path="/membership" element={<ProtectedRoute><Membership /></ProtectedRoute>} />
             <Route path="/gift" element={<GiftPage />} />
+            <Route path="/category/:category" element={<ProtectedRoute><CategoryAll /></ProtectedRoute>} />
             <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
