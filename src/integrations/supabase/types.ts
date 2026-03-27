@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      courses: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          difficulty: string
+          duration: string
+          expected_effect: string | null
+          id: string
+          image_url: string
+          intensity: string | null
+          is_featured: boolean | null
+          is_today_plan: boolean | null
+          rating: number | null
+          review_count: number | null
+          subtitle: string | null
+          tag: string | null
+          target_audience: string[] | null
+          title: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          difficulty: string
+          duration: string
+          expected_effect?: string | null
+          id?: string
+          image_url: string
+          intensity?: string | null
+          is_featured?: boolean | null
+          is_today_plan?: boolean | null
+          rating?: number | null
+          review_count?: number | null
+          subtitle?: string | null
+          tag?: string | null
+          target_audience?: string[] | null
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          duration?: string
+          expected_effect?: string | null
+          id?: string
+          image_url?: string
+          intensity?: string | null
+          is_featured?: boolean | null
+          is_today_plan?: boolean | null
+          rating?: number | null
+          review_count?: number | null
+          subtitle?: string | null
+          tag?: string | null
+          target_audience?: string[] | null
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
