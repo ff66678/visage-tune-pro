@@ -78,6 +78,40 @@ export const useWorkoutStats = () => {
   return { totalWorkouts, activeWeeks, streak, categories };
 };
 
+export const useWeeklyProgress = () => {
+  const { data: logs = [] } = useWorkoutLogs();
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dayOfWeek = today.getDay(); // 0=Sun
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + mondayOffset);
+
+  const labels = ["一", "二", "三", "四", "五", "六", "日"];
+  const counts = new Array(7).fill(0);
+
+  logs.forEach((l) => {
+    const d = new Date(l.completed_at);
+    d.setHours(0, 0, 0, 0);
+    const diff = Math.floor((d.getTime() - monday.getTime()) / 86400000);
+    if (diff >= 0 && diff < 7) counts[diff]++;
+  });
+
+  const max = Math.max(...counts, 1);
+  const activeDayIndex = Math.floor((today.getTime() - monday.getTime()) / 86400000);
+  const daysWithWorkout = counts.filter((c) => c > 0).length;
+  const percentage = Math.round((daysWithWorkout / 7) * 100);
+
+  const weekData = labels.map((label, i) => ({
+    label,
+    height: counts[i] > 0 ? `${Math.max((counts[i] / max) * 100, 15)}%` : "0%",
+    active: i === activeDayIndex,
+  }));
+
+  return { weekData, percentage };
+};
+
 export const useHeatmapData = () => {
   const { data: logs = [] } = useWorkoutLogs();
 
