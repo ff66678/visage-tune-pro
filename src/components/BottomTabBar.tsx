@@ -1,4 +1,4 @@
-import { Home, Archive, Clock } from "lucide-react";
+import { Home, Archive, TrendingUp } from "lucide-react";
 
 interface BottomTabBarProps {
   activeTab: number;
@@ -8,7 +8,7 @@ interface BottomTabBarProps {
 const tabs = [
   { icon: Home, label: "首页" },
   { icon: Archive, label: "库" },
-  { icon: Clock, label: "分析" },
+  { icon: TrendingUp, label: "进度" },
 ];
 
 const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
