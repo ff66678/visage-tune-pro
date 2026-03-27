@@ -106,7 +106,7 @@ const HomePage = () => {
           }}
           onClick={() => {
             setStartClicked(true);
-            setTimeout(() => setStartClicked(false), 300);
+            setTimeout(() => navigate("/course/1"), 300);
           }}
         >
           {startClicked ? "开始中..." : "立即开始"}
@@ -120,6 +120,7 @@ const HomePage = () => {
           <div
             key={item.id}
             className="min-w-[240px] h-40 bg-surface-elevated rounded-lg relative overflow-hidden flex-shrink-0 cursor-pointer group"
+            onClick={() => navigate(`/course/${item.id}`)}
           >
             <img
               src={item.img}
