@@ -351,12 +351,19 @@ const SuccessScreen = ({ onStart }: { onStart: () => void }) => (
 // Main Onboarding Component
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, setOnboardingCompleted } = useAuth();
+  const { user, setOnboardingCompleted, setPaywallCompleted } = useAuth();
 
   const completeOnboarding = async () => {
     if (user) {
       await supabase.from("profiles").update({ onboarding_completed: true } as any).eq("user_id", user.id);
       setOnboardingCompleted(true);
+    }
+  };
+
+  const completePaywall = async () => {
+    if (user) {
+      await supabase.from("profiles").update({ paywall_completed: true } as any).eq("user_id", user.id);
+      setPaywallCompleted(true);
       navigate("/");
     }
   };
@@ -398,6 +405,7 @@ const Onboarding = () => {
   // After success → if not logged in, show auth; if logged in, show paywall
   const handleSuccessNext = () => {
     if (user) {
+      completeOnboarding();
       setShowSuccess(false);
       setShowPaywall(true);
     } else {
@@ -406,16 +414,17 @@ const Onboarding = () => {
     }
   };
 
-  // When user logs in during onboarding auth step, move to paywall
+  // When user logs in during onboarding auth step, mark onboarding done and move to paywall
   useEffect(() => {
     if (showAuth && user) {
+      completeOnboarding();
       setShowAuth(false);
       setShowPaywall(true);
     }
   }, [user, showAuth]);
 
   if (showPaywall) {
-    return <Paywall onClose={completeOnboarding} />;
+    return <Paywall onClose={completePaywall} />;
   }
 
   if (showAuth) {

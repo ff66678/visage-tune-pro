@@ -4,11 +4,11 @@ import { X, Check, ChevronDown, ArrowRight } from "lucide-react";
 const Paywall = ({ onClose }: { onClose?: () => void }) => {
   const [selectedPlan, setSelectedPlan] = useState("annual");
   const [promoCode, setPromoCode] = useState("");
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleStartTrial = () => {
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 2000);
+    if (onClose) {
+      onClose();
+    }
   };
 
   const images = [
@@ -193,8 +193,8 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
           onClick={handleStartTrial}
           className="w-full bg-primary text-primary-foreground rounded-full py-4 text-[17px] font-medium flex items-center justify-center gap-2 shadow-lg hover:bg-primary/90 active:scale-[0.98] transition-all"
         >
-          {showSuccess ? "试用已开始 ✓" : "开始免费试用"}
-          {!showSuccess && <ArrowRight className="w-5 h-5" />}
+          开始免费试用
+          <ArrowRight className="w-5 h-5" />
         </button>
         <div className="text-center mt-4">
           <button className="text-[13px] text-muted-foreground font-medium flex items-center justify-center gap-1 w-full hover:text-foreground transition-colors">
