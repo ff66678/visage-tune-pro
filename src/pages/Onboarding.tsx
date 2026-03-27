@@ -4,6 +4,7 @@ import { ChevronLeft, ArrowRight, Check, Droplets, Wind, Link, Heart, Sparkles, 
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import Paywall from "./Paywall";
+import Auth from "./Auth";
 
 const TOTAL_STEPS = 6;
 
