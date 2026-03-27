@@ -1,13 +1,35 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
+import { useCourse } from "@/hooks/useCourses";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CourseDetail = () => {
-  const [isFavorited, setIsFavorited] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { id } = useParams<{ id: string }>();
+  const [isFavorited, setIsFavorited] = useState(false);
   const navigate = useNavigate();
+  const { data: course, isLoading } = useCourse(id);
 
-  const tags = ["下颌线模糊", "苹果肌松弛", "长期低头族"];
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background p-6 space-y-4">
+        <Skeleton className="h-[380px] w-full rounded-lg" />
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-20 w-full" />
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">未找到该课程</p>
+          <button onClick={() => navigate(-1)} className="text-primary font-semibold">返回</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
@@ -38,8 +60,8 @@ const CourseDetail = () => {
         {/* Hero Image */}
         <div className="relative h-[380px] w-full">
           <img
-            src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-            alt="Course Cover"
+            src={course.image_url}
+            alt={course.title}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
@@ -51,63 +73,67 @@ const CourseDetail = () => {
           <div className="bg-card p-6 rounded-[32px] shadow-sm">
             {/* Tags */}
             <div className="flex gap-2 mb-3">
-              <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">
-                塑形提升
-              </span>
+              {course.tag && (
+                <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">
+                  {course.tag}
+                </span>
+              )}
               <span className="px-3 py-1 bg-secondary text-muted-foreground text-[10px] font-bold rounded-full uppercase tracking-wider">
-                大师课
+                {course.difficulty}
               </span>
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl font-bold text-foreground mb-2">紧致提升大师课</h1>
+            <h1 className="text-2xl font-bold text-foreground mb-2">{course.title}</h1>
 
             {/* Description */}
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              本课程专为想要改善下颌线清晰度及苹果肌下垂的人群设计。通过科学的肌肉运动，从深层焕活面部轮廓。
-            </p>
+            {course.description && (
+              <p className="text-sm text-muted-foreground leading-relaxed">{course.description}</p>
+            )}
 
             {/* Stats Grid */}
             <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-border">
               <div className="text-center">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">时长</p>
-                <p className="font-bold text-foreground">12 分钟</p>
+                <p className="font-bold text-foreground">{course.duration}</p>
               </div>
               <div className="text-center border-x border-border">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">难度</p>
-                <p className="font-bold text-foreground">进阶级</p>
+                <p className="font-bold text-foreground">{course.difficulty}</p>
               </div>
               <div className="text-center">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">强度</p>
-                <p className="font-bold text-foreground">中等</p>
+                <p className="font-bold text-foreground">{course.intensity || "适中"}</p>
               </div>
             </div>
           </div>
 
           {/* Target Audience */}
-          <div className="mt-8">
-            <h3 className="font-bold text-foreground mb-3">适合人群</h3>
-            <div className="flex flex-wrap gap-2">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-4 py-2 bg-card rounded-2xl text-xs text-foreground border border-border"
-                >
-                  {tag}
-                </span>
-              ))}
+          {course.target_audience && course.target_audience.length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-bold text-foreground mb-3">适合人群</h3>
+              <div className="flex flex-wrap gap-2">
+                {course.target_audience.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-4 py-2 bg-card rounded-2xl text-xs text-foreground border border-border"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Expected Effects */}
-          <div className="mt-8 bg-primary/5 p-5 rounded-3xl border border-primary/10">
-            <h3 className="font-bold text-primary flex items-center gap-2 mb-2">
-              <span>✦</span> 预计效果
-            </h3>
-            <p className="text-sm text-primary/80 leading-relaxed">
-              坚持练习 14 天，可明显观察到面部线条提升约 15%，有效缓解法令纹深度并增强皮肤弹性。
-            </p>
-          </div>
+          {course.expected_effect && (
+            <div className="mt-8 bg-primary/5 p-5 rounded-3xl border border-primary/10">
+              <h3 className="font-bold text-primary flex items-center gap-2 mb-2">
+                <span>✦</span> 预计效果
+              </h3>
+              <p className="text-sm text-primary/80 leading-relaxed">{course.expected_effect}</p>
+            </div>
+          )}
 
           {/* Reviews Section */}
           <div className="mt-8 mb-4">
@@ -115,7 +141,7 @@ const CourseDetail = () => {
               <h3 className="font-bold text-foreground">学员评价</h3>
               <div className="flex items-center gap-1 text-xs font-bold text-primary">
                 <Star className="w-3 h-3 fill-current" />
-                <span>4.9 (128)</span>
+                <span>{course.rating} ({course.review_count})</span>
               </div>
             </div>
 
@@ -147,11 +173,11 @@ const CourseDetail = () => {
       {/* Bottom CTA Button */}
       <div className="absolute bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-8 z-30">
         <button
-          onClick={() => navigate("/workout")}
+          onClick={() => navigate(`/workout/${course.id}`)}
           className="w-full h-14 bg-gradient-to-br from-primary to-primary/80 rounded-2xl text-primary-foreground font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform"
         >
           <Play className="w-5 h-5 fill-current" />
-          {isPlaying ? "暂停训练" : "继续今日训练"}
+          开始训练
         </button>
       </div>
     </div>

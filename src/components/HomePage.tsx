@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, Star, Crown } from "lucide-react";
+import { useCourses } from "@/hooks/useCourses";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const weekData = [
   { label: "一", height: "40%", active: false },
@@ -12,24 +14,13 @@ const weekData = [
   { label: "日", height: "0%", active: false },
 ];
 
-const recommendedItems = [
-  {
-    id: 1,
-    img: "https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=400",
-    tag: "眼部疲劳",
-    name: "眼眶消肿",
-  },
-  {
-    id: 2,
-    img: "https://images.pexels.com/photos/5938367/pexels-photo-5938367.jpeg?auto=compress&cs=tinysrgb&w=400",
-    tag: "轮廓",
-    name: "下颌线塑形",
-  },
-];
-
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
   const navigate = useNavigate();
+  const { data: courses, isLoading } = useCourses();
+
+  const todayPlan = courses?.find((c) => c.is_today_plan);
+  const recommended = courses?.filter((c) => c.is_featured) ?? [];
 
   return (
     <div className="animate-fade-in">
@@ -90,52 +81,63 @@ const HomePage = () => {
 
       {/* Today's Plan */}
       <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">今日计划</h2>
-      <div
-        className="mx-6 rounded-3xl p-6 flex justify-between items-center text-primary-foreground"
-        style={{ background: "var(--gradient-plan)", boxShadow: "0 10px 30px hsl(var(--primary-glow))" }}
-      >
-        <div>
-          <h3 className="text-xl font-semibold mb-1">全脸雕塑</h3>
-          <p className="text-[13px] opacity-90">15 分钟 · 高强度</p>
-        </div>
-        <button
-          className="bg-card text-primary border-none px-5 py-2.5 rounded-full font-semibold text-sm cursor-pointer transition-all"
-          style={{
-            opacity: startClicked ? 0.8 : 1,
-            transform: startClicked ? "scale(0.96)" : "scale(1)",
-          }}
-          onClick={() => {
-            setStartClicked(true);
-            setTimeout(() => navigate("/course/1"), 300);
-          }}
+      {isLoading ? (
+        <div className="mx-6"><Skeleton className="h-24 rounded-3xl" /></div>
+      ) : todayPlan ? (
+        <div
+          className="mx-6 rounded-3xl p-6 flex justify-between items-center text-primary-foreground"
+          style={{ background: "var(--gradient-plan)", boxShadow: "0 10px 30px hsl(var(--primary-glow))" }}
         >
-          {startClicked ? "开始中..." : "立即开始"}
-        </button>
-      </div>
+          <div>
+            <h3 className="text-xl font-semibold mb-1">{todayPlan.title}</h3>
+            <p className="text-[13px] opacity-90">{todayPlan.duration} · {todayPlan.intensity ? `${todayPlan.intensity}强度` : todayPlan.difficulty}</p>
+          </div>
+          <button
+            className="bg-card text-primary border-none px-5 py-2.5 rounded-full font-semibold text-sm cursor-pointer transition-all"
+            style={{
+              opacity: startClicked ? 0.8 : 1,
+              transform: startClicked ? "scale(0.96)" : "scale(1)",
+            }}
+            onClick={() => {
+              setStartClicked(true);
+              setTimeout(() => navigate(`/course/${todayPlan.id}`), 300);
+            }}
+          >
+            {startClicked ? "开始中..." : "立即开始"}
+          </button>
+        </div>
+      ) : null}
 
       {/* Recommended */}
       <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">为你推荐</h2>
-      <div className="flex overflow-x-auto gap-4 px-6 pb-4 no-scrollbar">
-        {recommendedItems.map((item) => (
-          <div
-            key={item.id}
-            className="min-w-[240px] h-40 bg-surface-elevated rounded-lg relative overflow-hidden flex-shrink-0 cursor-pointer group"
-            onClick={() => navigate(`/course/${item.id}`)}
-          >
-            <img
-              src={item.img}
-              alt={item.name}
-              className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-foreground/70 to-transparent">
-              <span className="text-[10px] uppercase tracking-wider text-background/80 bg-accent-gold/90 px-1.5 py-0.5 rounded font-bold mb-1.5 inline-block">
-                {item.tag}
-              </span>
-              <h3 className="text-base font-semibold text-card m-0">{item.name}</h3>
+      {isLoading ? (
+        <div className="flex gap-4 px-6">
+          <Skeleton className="min-w-[240px] h-40 rounded-lg" />
+          <Skeleton className="min-w-[240px] h-40 rounded-lg" />
+        </div>
+      ) : (
+        <div className="flex overflow-x-auto gap-4 px-6 pb-4 no-scrollbar">
+          {recommended.map((item) => (
+            <div
+              key={item.id}
+              className="min-w-[240px] h-40 bg-surface-elevated rounded-lg relative overflow-hidden flex-shrink-0 cursor-pointer group"
+              onClick={() => navigate(`/course/${item.id}`)}
+            >
+              <img
+                src={item.image_url}
+                alt={item.title}
+                className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-foreground/70 to-transparent">
+                <span className="text-[10px] uppercase tracking-wider text-background/80 bg-accent-gold/90 px-1.5 py-0.5 rounded font-bold mb-1.5 inline-block">
+                  {item.tag}
+                </span>
+                <h3 className="text-base font-semibold text-card m-0">{item.title}</h3>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Streak */}
       <div className="px-5 mt-2 mb-6">
