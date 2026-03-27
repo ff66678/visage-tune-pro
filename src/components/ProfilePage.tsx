@@ -1,173 +1,148 @@
-import { useState, useMemo, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Calendar, Camera, Settings, Sparkles, ChevronRight, Play } from "lucide-react";
+import { Settings, Clock, Play, ChevronRight } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
-import { useWorkoutStats, useRecentCourses } from "@/hooks/useWorkoutLogs";
+import { useWorkoutStats, useHeatmapData, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { useCourses } from "@/hooks/useCourses";
 import SettingsDrawer from "@/components/SettingsDrawer";
+
+const heatColors: Record<number, string> = {
+  0: "bg-surface-elevated",
+  1: "bg-[hsl(0_20%_87%)]",
+  2: "bg-[hsl(0_22%_79%)]",
+  3: "bg-primary",
+  4: "bg-[hsl(0_20%_56%)]",
+};
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { data: profile } = useProfile();
-  const { totalWorkouts, streak } = useWorkoutStats();
+  const { totalWorkouts, activeWeeks, streak, categories } = useWorkoutStats();
+  const heatmapCells = useHeatmapData();
   const { data: recentCourses = [] } = useRecentCourses();
   const { data: allCourses = [] } = useCourses();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [heroHovered, setHeroHovered] = useState(false);
 
-  const avatarUrl = profile?.avatar_url || "";
-  const displayName = profile?.display_name || "用户";
-
-  // Build current week days
-  const weekDays = useMemo(() => {
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // 0=Sun
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
-
-    const labels = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
-    return labels.map((label, i) => {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
-      const isToday = d.toDateString() === today.toDateString();
-      return { label: isToday ? "今日" : label, date: d.getDate(), isToday };
-    });
-  }, []);
-
-  const currentMonth = new Date().toLocaleDateString("zh-CN", { month: "long" });
-
-  // Next recommended course
+  // Next recommended course: first featured course not in recent
   const recentIds = new Set(recentCourses.map((c: any) => c?.id));
   const nextCourse = allCourses.find((c) => c.is_featured && !recentIds.has(c.id)) || allCourses[0];
+
+  const joinDate = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString("zh-CN", { month: "long", day: "numeric" })
+    : "";
+
+  const stats = [
+    { label: "总练习次数", value: String(totalWorkouts) },
+    { label: "活跃周数", value: String(activeWeeks) },
+    { label: "连续打卡", value: String(streak) },
+    { label: "锻炼分类", value: String(categories) },
+  ];
 
   return (
     <div className="animate-fade-in pb-4">
       {/* Header */}
-      <header className="flex justify-between items-center px-6 pt-8 pb-2">
-        <div className="flex items-center gap-2 text-foreground">
-          <Calendar className="w-5 h-5" />
-          <span className="text-base font-semibold">{currentMonth}</span>
-        </div>
-        <h1 className="text-lg font-bold tracking-tight text-foreground">进度</h1>
+      <header className="flex justify-between items-center px-6 pt-6">
         <button
           onClick={() => setSettingsOpen(true)}
-          className="w-9 h-9 rounded-full overflow-hidden border-none cursor-pointer bg-transparent p-0"
+          className="w-10 h-10 rounded-full bg-transparent flex items-center justify-center text-foreground hover:bg-foreground/5 transition-colors border-none cursor-pointer"
         >
-          {avatarUrl ? (
-            <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover rounded-full" />
-          ) : (
-            <div className="w-full h-full rounded-full bg-primary/10 flex items-center justify-center text-sm font-semibold text-primary">
-              {displayName.slice(0, 1)}
-            </div>
-          )}
+          <Settings className="w-5 h-5" />
         </button>
+        <div className="w-10" />
       </header>
 
-      {/* Week Calendar */}
-      <div className="flex justify-between items-center px-6 py-4">
-        {weekDays.map((day, i) => (
-          <div key={i} className="flex flex-col items-center gap-1.5">
-            <span className={`text-[11px] font-medium ${day.isToday ? "text-primary" : "text-muted-foreground"}`}>
-              {day.label}
+      {/* Profile */}
+      <section className="flex flex-col items-center -mt-2 px-6">
+        <div className="relative mb-4">
+          <img
+            src={profile?.avatar_url || "https://images.pexels.com/photos/3750717/pexels-photo-3750717.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=2"}
+            alt={profile?.display_name || "用户"}
+            className="w-[120px] h-[120px] rounded-full object-cover border-[3px] border-card bg-card shadow-md"
+          />
+        </div>
+        <h1 className="text-[28px] font-semibold tracking-tight mb-2">
+          {profile?.display_name || "用户"}
+        </h1>
+        {joinDate && (
+          <div className="flex gap-4 text-[13px] text-muted-foreground font-medium">
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-3.5 h-3.5 text-accent-gold" />
+              {joinDate}加入
             </span>
-            <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                day.isToday
-                  ? "bg-foreground text-background shadow-md"
-                  : "text-foreground"
-              }`}
-            >
-              {day.date}
-            </div>
+          </div>
+        )}
+      </section>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-2.5 px-6 mt-8">
+        {stats.map((s) => (
+          <div key={s.label} className="bg-surface rounded-xl p-4 flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground font-medium">{s.label}</span>
+            <span className="text-2xl font-semibold tracking-tight tabular-nums">{s.value}</span>
           </div>
         ))}
       </div>
 
-      {/* Photo Card */}
-      <div className="mx-4 mt-2 rounded-[28px] bg-gradient-to-b from-[hsl(var(--primary)/0.08)] to-[hsl(var(--primary)/0.02)] p-6 pb-8 flex flex-col items-center">
-        {/* Oval Frame */}
-        <div className="relative mt-2 mb-6">
-          {/* Sparkles */}
-          <Sparkles className="absolute -top-2 -left-4 w-5 h-5 text-accent-gold/60 animate-pulse" />
-          <Sparkles className="absolute top-6 -left-6 w-3.5 h-3.5 text-accent-gold/40" />
-          <Sparkles className="absolute -bottom-2 -right-4 w-4 h-4 text-accent-gold/50 animate-pulse" style={{ animationDelay: "1s" }} />
+      <div className="h-px bg-foreground/5 mx-6 my-8" />
 
-          {/* Oval border frame */}
-          <div className="w-[220px] h-[280px] rounded-[50%] border-[6px] border-card shadow-lg flex items-center justify-center overflow-hidden bg-surface relative">
-            {/* Decorative dots */}
-            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-card shadow-sm z-10" />
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-card shadow-sm z-10" />
-            <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-3 h-3 rounded-full bg-card shadow-sm z-10" />
-            <div className="absolute top-1/2 -right-1 -translate-y-1/2 w-3 h-3 rounded-full bg-card shadow-sm z-10" />
-
-            {avatarUrl ? (
-              <img
-                src={avatarUrl}
-                alt={displayName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center text-muted-foreground gap-2">
-                <Camera className="w-10 h-10 opacity-30" />
-                <span className="text-xs opacity-50">等待记录</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Text */}
-        <h2 className="text-xl font-bold tracking-tight text-foreground mb-1.5">
-          拍下你今天的样子吧！
-        </h2>
-        <p className="text-sm text-muted-foreground mb-6">见证你的进度</p>
-
-        {/* Camera Button */}
-        <button className="w-full max-w-[280px] py-3.5 rounded-full bg-primary text-primary-foreground font-semibold text-base flex items-center justify-center gap-2.5 border-none cursor-pointer shadow-md hover:opacity-90 active:scale-[0.97] transition-all">
-          <Camera className="w-5 h-5" />
-          拍照
-        </button>
+      {/* Consistency Log */}
+      <div className="px-6 mb-4">
+        <h2 className="text-xl font-semibold tracking-tight mb-0.5">坚持记录</h2>
+        <p className="text-sm text-muted-foreground">过去二十周的练习回顾</p>
       </div>
-
-      {/* Stats Summary */}
-      <div className="flex justify-around px-6 mt-6 mb-2">
-        <div className="flex flex-col items-center gap-0.5">
-          <span className="text-2xl font-bold tabular-nums">{totalWorkouts}</span>
-          <span className="text-[11px] text-muted-foreground font-medium">总练习</span>
+      <div className="px-6 flex gap-2 items-end">
+        <div className="flex flex-col justify-between h-[100px] pb-0.5">
+          {["日", "一", "二", "三", "四", "五", "六"].map((l, i) => (
+            <span key={i} className="text-[10px] text-muted-foreground font-medium leading-none">
+              {l}
+            </span>
+          ))}
         </div>
-        <div className="w-px bg-foreground/5" />
-        <div className="flex flex-col items-center gap-0.5">
-          <span className="text-2xl font-bold tabular-nums">{streak}</span>
-          <span className="text-[11px] text-muted-foreground font-medium">连续打卡</span>
+        <div className="grid grid-cols-[repeat(20,1fr)] grid-rows-[repeat(7,1fr)] gap-1 flex-grow">
+          {heatmapCells.map((level, i) => (
+            <div key={i} className={`aspect-square rounded-[4px] ${heatColors[level]}`} />
+          ))}
         </div>
       </div>
+      {totalWorkouts === 0 && (
+        <p className="text-xs text-muted-foreground text-center mt-3">暂无练习记录</p>
+      )}
 
-      <div className="h-px bg-foreground/5 mx-6 my-5" />
+      <div className="h-px bg-foreground/5 mx-6 my-8" />
 
       {/* Hero Card */}
       {nextCourse && (
-        <div className="px-6 mb-4">
-          <h3 className="text-lg font-semibold tracking-tight mb-3">推荐课程</h3>
-          <div
-            className="rounded-2xl overflow-hidden relative h-[180px] bg-surface cursor-pointer shadow-sm"
-            onClick={() => navigate(`/course/${nextCourse.id}`)}
-          >
-            <img
-              src={nextCourse.image_url}
-              alt={nextCourse.title}
-              className="absolute inset-0 w-full h-full object-cover opacity-90"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent flex flex-col justify-end p-5">
-              <div className="flex justify-between items-end">
-                <div>
-                  <div className="text-[11px] text-card/70 font-semibold uppercase tracking-wider mb-0.5">推荐</div>
-                  <div className="text-xl font-semibold tracking-tight text-card">{nextCourse.title}</div>
-                </div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); navigate(`/course/${nextCourse.id}`); }}
-                  className="w-10 h-10 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer"
-                >
-                  <Play className="w-4 h-4" fill="currentColor" />
-                </button>
+        <div
+          className="mx-6 rounded-3xl overflow-hidden relative h-[220px] bg-surface cursor-pointer shadow-sm"
+          onMouseEnter={() => setHeroHovered(true)}
+          onMouseLeave={() => setHeroHovered(false)}
+          onClick={() => navigate(`/course/${nextCourse.id}`)}
+        >
+          <img
+            src={nextCourse.image_url}
+            alt={nextCourse.title}
+            className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-500"
+            style={{ transform: heroHovered ? "scale(1.03)" : "scale(1)" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent flex flex-col justify-between p-4 px-6">
+            <div className="flex justify-between items-center">
+              <span className="text-[13px] text-card/90 font-medium">{nextCourse.duration}</span>
+            </div>
+            <div className="flex justify-between items-end">
+              <div>
+                <div className="text-[13px] text-card/80 font-semibold uppercase tracking-wider mb-0.5">推荐</div>
+                <div className="text-2xl font-semibold tracking-tight text-card">{nextCourse.title}</div>
               </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/course/${nextCourse.id}`);
+                }}
+                className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer"
+              >
+                <Play className="w-[18px] h-[18px]" fill="currentColor" />
+              </button>
             </div>
           </div>
         </div>
@@ -175,7 +150,7 @@ const ProfilePage = () => {
 
       {/* Recent Courses */}
       {recentCourses.length > 0 && (
-        <div className="px-6 mt-2 flex flex-col gap-3 mb-8">
+        <div className="px-6 mt-6 flex flex-col gap-3">
           <h3 className="text-lg font-semibold tracking-tight">最近练习</h3>
           {recentCourses.map((item: any) =>
             item ? (
@@ -184,19 +159,38 @@ const ProfilePage = () => {
                 onClick={() => navigate(`/course/${item.id}`)}
                 className="bg-surface rounded-xl p-3 flex items-center gap-4 cursor-pointer hover:bg-surface-hover transition-colors"
               >
-                <div className="w-[60px] h-[60px] rounded-lg overflow-hidden flex-shrink-0">
-                  <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+                <div className="w-[68px] h-[68px] rounded-lg bg-surface-elevated relative overflow-hidden flex-shrink-0">
+                  <img src={item.image_url} alt={item.title} className="w-full h-full object-cover opacity-90" />
                 </div>
                 <div className="flex-grow flex flex-col justify-center">
-                  <div className="text-sm font-semibold mb-0.5">{item.title}</div>
-                  <div className="text-[12px] text-muted-foreground font-medium">{item.duration}</div>
+                  <div className="text-base font-semibold mb-0.5">{item.title}</div>
+                  <div className="text-[13px] text-muted-foreground font-medium">{item.duration}</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
+                <div className="w-10 flex justify-center items-center text-muted-foreground/60">
+                  <ChevronRight className="w-5 h-5" />
+                </div>
               </div>
             ) : null
           )}
         </div>
       )}
+
+      {/* Promo */}
+      <div className="flex flex-col items-center text-center px-6 mt-8 mb-12">
+        <button
+          onClick={() => navigate("/paywall")}
+          className="inline-flex items-center gap-2 bg-card border border-foreground/[0.04] px-4 py-2 pl-2 rounded-full text-sm font-semibold shadow-sm mb-4 cursor-pointer"
+        >
+          <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">
+            +
+          </div>
+          尊享会员
+        </button>
+        <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+          解锁进阶筋膜训练课程<br />
+          升级 <span className="text-foreground font-semibold">尊享会员</span>
+        </p>
+      </div>
 
       <SettingsDrawer open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
