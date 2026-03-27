@@ -50,7 +50,7 @@ const PaywallRoute = () => {
   if (loading) return <LoadingSpinner />;
   if (!user) return <Navigate to="/onboarding" replace />;
   if (paywallCompleted) return <Navigate to="/" replace />;
-  return <Paywall onClose={() => window.history.back()} />;
+  return <Paywall onClose={() => window.location.replace("/")} />;
 };
 
 const App = () => (
