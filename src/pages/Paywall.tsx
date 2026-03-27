@@ -92,8 +92,9 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
           {/* Pricing Plans */}
           <div className="px-5 mt-8 mb-8">
             {/* Yearly */}
+            {/* Yearly Plan */}
             <div
-              className={`relative rounded-3xl p-5 cursor-pointer mb-4 transition-transform active:scale-[0.98] bg-card border-2 ${selectedPlan === "yearly" ? "border-primary" : "border-primary"}`}
+              className={`relative rounded-3xl p-5 cursor-pointer mb-4 transition-all active:scale-[0.98] bg-card border-2 ${selectedPlan === "yearly" ? "border-primary" : "border-border opacity-70"}`}
               onClick={() => setSelectedPlan("yearly")}
             >
               <div className="absolute flex items-center gap-1.5 font-bold uppercase text-primary-foreground shadow-md whitespace-nowrap bg-primary text-[10px] tracking-wider px-4 py-1.5 rounded-full"
@@ -102,8 +103,8 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
               </div>
               <div className="flex justify-between items-start mt-1">
                 <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-primary-foreground" />
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${selectedPlan === "yearly" ? "bg-primary" : "border-2 border-border"}`}>
+                    {selectedPlan === "yearly" && <div className="w-2 h-2 rounded-full bg-primary-foreground" />}
                   </div>
                   <div>
                     <h4 className="font-bold text-lg text-foreground">年卡会员</h4>
@@ -120,24 +121,26 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
               </div>
             </div>
 
-            {/* Monthly */}
+            {/* Monthly Plan */}
             <div
-              className={`rounded-3xl p-5 cursor-pointer transition-opacity border ${selectedPlan === "monthly" ? "border-primary opacity-100" : "border-border opacity-70"}`}
+              className={`relative rounded-3xl p-5 cursor-pointer transition-all active:scale-[0.98] bg-card border-2 ${selectedPlan === "monthly" ? "border-primary" : "border-border opacity-70"}`}
               onClick={() => setSelectedPlan("monthly")}
             >
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-start">
                 <div className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 ${selectedPlan === "monthly" ? "border-primary" : "border-border"}`}>
-                    {selectedPlan === "monthly" && <div className="w-2 h-2 rounded-full bg-primary" />}
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center ${selectedPlan === "monthly" ? "bg-primary" : "border-2 border-border"}`}>
+                    {selectedPlan === "monthly" && <div className="w-2 h-2 rounded-full bg-primary-foreground" />}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-base text-foreground">月卡会员</h4>
-                    <span className="text-xs text-muted-foreground">按月计费</span>
+                    <h4 className="font-bold text-lg text-foreground">月卡会员</h4>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-xs text-muted-foreground">按月计费</span>
+                    </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-semibold text-foreground">¥8.99</div>
-                  <div className="text-[10px] text-muted-foreground">/月</div>
+                  <div className="text-xl font-bold text-foreground">¥8.99</div>
+                  <div className="font-medium uppercase text-[10px] text-muted-foreground tracking-wide mt-0.5">每月</div>
                 </div>
               </div>
             </div>
