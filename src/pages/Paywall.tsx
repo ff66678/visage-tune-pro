@@ -171,13 +171,6 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
         </div>
 
         <div className="mt-8 space-y-6">
-          <p className="text-[12px] text-muted-foreground leading-relaxed font-medium">
-            我们致力于提供包容性的服务。如果您需要经济支持，我们提供专项奖学金计划。请发送邮件至{" "}
-            <a href="mailto:support@glow-yoga.com" className="underline underline-offset-2">
-              support@glow-yoga.com
-            </a>{" "}
-            了解更多信息。
-          </p>
 
           <div className="flex flex-col gap-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
             <a href="#" className="flex items-center w-max hover:text-foreground transition-colors">
