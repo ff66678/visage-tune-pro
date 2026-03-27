@@ -359,6 +359,7 @@ const Onboarding = () => {
       navigate("/");
     }
   };
+
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<string | null>(null);
   const [skinType, setSkinType] = useState<string | null>(null);
@@ -366,6 +367,7 @@ const Onboarding = () => {
   const [time, setTime] = useState<string | null>(null);
   const [showLoading, setShowLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
   const toggleConcern = (c: string) => {
@@ -392,12 +394,35 @@ const Onboarding = () => {
     if (step > 0) setStep(step - 1);
   };
 
+  // After success → if not logged in, show auth; if logged in, show paywall
+  const handleSuccessNext = () => {
+    if (user) {
+      setShowSuccess(false);
+      setShowPaywall(true);
+    } else {
+      setShowSuccess(false);
+      setShowAuth(true);
+    }
+  };
+
+  // When user logs in during onboarding auth step, move to paywall
+  useEffect(() => {
+    if (showAuth && user) {
+      setShowAuth(false);
+      setShowPaywall(true);
+    }
+  }, [user, showAuth]);
+
   if (showPaywall) {
     return <Paywall onClose={completeOnboarding} />;
   }
 
+  if (showAuth) {
+    return <Auth />;
+  }
+
   if (showSuccess) {
-    return <SuccessScreen onStart={() => setShowPaywall(true)} />;
+    return <SuccessScreen onStart={handleSuccessNext} />;
   }
 
   if (showLoading) {
