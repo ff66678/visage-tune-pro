@@ -21,7 +21,7 @@ const HomePage = () => {
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
   const { data: profile } = useProfile();
-  const { user } = useAuth();
+  const { user, paywallCompleted } = useAuth();
 
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "用户";
   const avatarUrl = profile?.avatar_url;
@@ -108,6 +108,7 @@ const HomePage = () => {
               transform: startClicked ? "scale(0.96)" : "scale(1)",
             }}
             onClick={() => {
+              if (!paywallCompleted) { navigate("/paywall"); return; }
               setStartClicked(true);
               setTimeout(() => navigate(`/course/${todayPlan.id}`), 300);
             }}
@@ -130,7 +131,7 @@ const HomePage = () => {
             <div
               key={item.id}
               className="min-w-[240px] h-40 bg-surface-elevated rounded-lg relative overflow-hidden flex-shrink-0 cursor-pointer group"
-              onClick={() => navigate(`/course/${item.id}`)}
+              onClick={() => paywallCompleted ? navigate(`/course/${item.id}`) : navigate("/paywall")}
             >
               <img
                 src={item.image_url}
