@@ -27,6 +27,7 @@ const HomePage = () => {
   const avatarUrl = profile?.avatar_url;
   const initials = displayName.slice(0, 1).toUpperCase();
 
+  const { weekData, percentage } = useWeeklyProgress();
   const todayPlan = courses?.find((c) => c.is_today_plan);
   const recommended = courses?.filter((c) => c.is_featured) ?? [];
 
@@ -63,7 +64,7 @@ const HomePage = () => {
       <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-[15px] font-semibold">每周进度</h2>
-          <span className="text-[13px] text-primary font-semibold">完成 85%</span>
+          <span className="text-[13px] text-primary font-semibold">完成 {percentage}%</span>
         </div>
         <div className="flex justify-between items-end">
           {weekData.map((day, i) => (
