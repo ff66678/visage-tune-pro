@@ -167,15 +167,7 @@ const WorkoutPlayer = () => {
         </div>
 
         {/* Playback Controls */}
-        <div className="flex justify-between items-center">
-          <button
-            className="w-12 h-12 rounded-full flex items-center justify-center transition-colors"
-            style={{ color: isMuted ? "hsl(var(--primary))" : "rgba(255,255,255,0.7)" }}
-            onClick={() => setIsMuted((prev) => !prev)}
-          >
-            <Volume2 className="w-6 h-6" />
-          </button>
-
+        <div className="flex justify-center items-center">
           <div className="flex items-center gap-8">
             <button className="text-white/80 active:scale-90 transition-transform" onClick={handleRewind}>
               <RewindIcon />
@@ -190,10 +182,6 @@ const WorkoutPlayer = () => {
               <FastForwardIcon />
             </button>
           </div>
-
-          <button className="w-12 h-12 rounded-full flex items-center justify-center text-white/70">
-            <Maximize className="w-6 h-6" />
-          </button>
         </div>
       </div>
     </div>
