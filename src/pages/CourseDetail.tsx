@@ -3,12 +3,40 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { Skeleton } from "@/components/ui/skeleton";
+import { usePaywallStatus } from "@/hooks/usePaywallStatus";
+import Paywall from "@/pages/Paywall";
 
 const CourseDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [isFavorited, setIsFavorited] = useState(false);
+  const [showContentGate, setShowContentGate] = useState(false);
   const navigate = useNavigate();
   const { data: course, isLoading } = useCourse(id);
+  const { isPaid, markPaid } = usePaywallStatus();
+
+  const handleStartWorkout = () => {
+    if (isPaid) {
+      navigate(`/workout/${course!.id}`);
+    } else {
+      setShowContentGate(true);
+    }
+  };
+
+  const handleContentGatePaid = async () => {
+    await markPaid();
+    setShowContentGate(false);
+    navigate(`/workout/${course!.id}`);
+  };
+
+  if (showContentGate) {
+    return (
+      <Paywall
+        mode="content-gate"
+        onClose={() => setShowContentGate(false)}
+        onPaid={handleContentGatePaid}
+      />
+    );
+  }
 
   if (isLoading) {
     return (
@@ -173,7 +201,7 @@ const CourseDetail = () => {
       {/* Bottom CTA Button */}
       <div className="absolute bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-8 z-30">
         <button
-          onClick={() => navigate(`/workout/${course.id}`)}
+          onClick={handleStartWorkout}
           className="w-full h-14 bg-gradient-to-br from-primary to-primary/80 rounded-2xl text-primary-foreground font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform"
         >
           <Play className="w-5 h-5 fill-current" />

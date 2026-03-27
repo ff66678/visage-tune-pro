@@ -1,14 +1,22 @@
 import { useState } from "react";
 import { X, Check, ChevronDown, ArrowRight } from "lucide-react";
 
-const Paywall = ({ onClose }: { onClose?: () => void }) => {
+interface PaywallProps {
+  mode?: "onboarding" | "content-gate";
+  onClose?: () => void;
+  onPaid?: () => void;
+}
+
+const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
   const [selectedPlan, setSelectedPlan] = useState("annual");
-  const [promoCode, setPromoCode] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleStartTrial = () => {
     setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 2000);
+    setTimeout(() => {
+      setShowSuccess(false);
+      onPaid?.();
+    }, 1500);
   };
 
   const images = [
@@ -44,12 +52,21 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
       <header className="flex justify-between items-center px-6 py-4 sticky top-0 z-10 backdrop-blur-md bg-background/90">
         <div className="w-6" />
         <h1 className="text-xl tracking-[0.3em] font-medium ml-4">G L O W</h1>
-        <button
-          onClick={onClose}
-          className="p-2 -mr-2 text-foreground opacity-60 hover:opacity-100 transition-opacity"
-        >
-          <X className="w-6 h-6" />
-        </button>
+        {mode === "onboarding" ? (
+          <button
+            onClick={onClose}
+            className="p-2 -mr-2 text-foreground opacity-60 hover:opacity-100 transition-opacity"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        ) : (
+          <button
+            onClick={onClose}
+            className="p-2 -mr-2 text-foreground opacity-60 hover:opacity-100 transition-opacity"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        )}
       </header>
 
       {/* Image Gallery */}

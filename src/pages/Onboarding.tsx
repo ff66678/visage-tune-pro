@@ -414,8 +414,22 @@ const Onboarding = () => {
     }
   }, [user, showAuth]);
 
+  const completeOnboardingWithPayment = async () => {
+    if (user) {
+      await supabase.from("profiles").update({ onboarding_completed: true, paywall_completed: true } as any).eq("user_id", user.id);
+      setOnboardingCompleted(true);
+      navigate("/");
+    }
+  };
+
   if (showPaywall) {
-    return <Paywall onClose={completeOnboarding} />;
+    return (
+      <Paywall
+        mode="onboarding"
+        onClose={completeOnboarding}
+        onPaid={completeOnboardingWithPayment}
+      />
+    );
   }
 
   if (showAuth) {
