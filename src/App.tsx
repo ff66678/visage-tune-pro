@@ -13,6 +13,7 @@ import WorkoutPlayer from "./pages/WorkoutPlayer.tsx";
 import CategoryAll from "./pages/CategoryAll.tsx";
 import Membership from "./pages/Membership.tsx";
 import GiftPage from "./pages/GiftPage.tsx";
+import ProfileDetail from "./pages/ProfileDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ const App = () => (
             <Route path="/course/:id" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
             <Route path="/membership" element={<ProtectedRoute><Membership /></ProtectedRoute>} />
             <Route path="/gift" element={<GiftPage />} />
+            <Route path="/profile" element={<ProtectedRoute><ProfileDetail /></ProtectedRoute>} />
             <Route path="/category/:category" element={<ProtectedRoute><CategoryAll /></ProtectedRoute>} />
             <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
