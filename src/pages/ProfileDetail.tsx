@@ -18,7 +18,7 @@ const ProfileDetail = () => {
           </button>
         </div>
         <div className="-mt-14">
-          <ProfilePage />
+          <ProfileDetailContent />
         </div>
       </div>
     </div>
