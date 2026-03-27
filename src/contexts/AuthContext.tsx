@@ -7,9 +7,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   onboardingCompleted: boolean | null;
-  paywallCompleted: boolean | null;
   setOnboardingCompleted: (v: boolean) => void;
-  setPaywallCompleted: (v: boolean) => void;
   signOut: () => Promise<void>;
 }
 
@@ -18,9 +16,7 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   loading: true,
   onboardingCompleted: null,
-  paywallCompleted: null,
   setOnboardingCompleted: () => {},
-  setPaywallCompleted: () => {},
   signOut: async () => {},
 });
 
@@ -31,16 +27,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
-  const [paywallCompleted, setPaywallCompleted] = useState<boolean | null>(null);
 
-  const fetchProfileStatus = async (userId: string) => {
+  const fetchOnboardingStatus = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("onboarding_completed, paywall_completed")
+      .select("onboarding_completed")
       .eq("user_id", userId)
       .single();
     setOnboardingCompleted(data?.onboarding_completed ?? false);
-    setPaywallCompleted((data as any)?.paywall_completed ?? false);
   };
 
   useEffect(() => {
@@ -49,10 +43,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
-          setTimeout(() => fetchProfileStatus(session.user.id), 0);
+          setTimeout(() => fetchOnboardingStatus(session.user.id), 0);
         } else {
           setOnboardingCompleted(null);
-          setPaywallCompleted(null);
         }
         setLoading(false);
       }
@@ -62,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfileStatus(session.user.id);
+        fetchOnboardingStatus(session.user.id);
       }
       setLoading(false);
     });
@@ -75,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, onboardingCompleted, paywallCompleted, setOnboardingCompleted, setPaywallCompleted, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, onboardingCompleted, setOnboardingCompleted, signOut }}>
       {children}
     </AuthContext.Provider>
   );

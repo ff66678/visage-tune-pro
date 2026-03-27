@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Settings, Clock } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
-import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const filters = ["全部", "眼部", "下颌", "脸颊", "额头", "颈部"];
@@ -12,7 +11,6 @@ const LibraryPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
-  const { paywallCompleted } = useAuth();
 
   const groupedCategories = useMemo(() => {
     if (!courses) return [];
@@ -109,7 +107,7 @@ const LibraryPage = () => {
                   <div
                     key={routine.id}
                     className="bg-card rounded-lg overflow-hidden shadow-sm cursor-pointer group relative"
-                    onClick={() => paywallCompleted ? navigate(`/course/${routine.id}`) : navigate("/paywall")}
+                    onClick={() => navigate(`/course/${routine.id}`)}
                   >
                     <img
                       src={routine.image_url}

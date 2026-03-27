@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
-import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CourseDetail = () => {
@@ -10,7 +9,6 @@ const CourseDetail = () => {
   const [isFavorited, setIsFavorited] = useState(false);
   const navigate = useNavigate();
   const { data: course, isLoading } = useCourse(id);
-  const { paywallCompleted } = useAuth();
 
   if (isLoading) {
     return (
@@ -175,7 +173,7 @@ const CourseDetail = () => {
       {/* Bottom CTA Button */}
       <div className="absolute bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-8 z-30">
         <button
-          onClick={() => paywallCompleted ? navigate(`/workout/${course.id}`) : navigate("/paywall")}
+          onClick={() => navigate(`/workout/${course.id}`)}
           className="w-full h-14 bg-gradient-to-br from-primary to-primary/80 rounded-2xl text-primary-foreground font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform"
         >
           <Play className="w-5 h-5 fill-current" />

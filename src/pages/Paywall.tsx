@@ -1,30 +1,14 @@
 import { useState } from "react";
 import { X, Check, ChevronDown, ArrowRight } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
 
 const Paywall = ({ onClose }: { onClose?: () => void }) => {
   const [selectedPlan, setSelectedPlan] = useState("annual");
-  const { user, setPaywallCompleted } = useAuth();
+  const [promoCode, setPromoCode] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const markPaywallCompleted = async () => {
-    if (user) {
-      await supabase
-        .from("profiles")
-        .update({ paywall_completed: true })
-        .eq("user_id", user.id);
-      setPaywallCompleted(true);
-    }
-  };
-
-  const handleStartTrial = async () => {
-    await markPaywallCompleted();
-    if (onClose) onClose();
-  };
-
-  const handleClose = async () => {
-    await markPaywallCompleted();
-    if (onClose) onClose();
+  const handleStartTrial = () => {
+    setShowSuccess(true);
+    setTimeout(() => setShowSuccess(false), 2000);
   };
 
   const images = [
@@ -61,7 +45,7 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
         <div className="w-6" />
         <h1 className="text-xl tracking-[0.3em] font-medium ml-4">G L O W</h1>
         <button
-          onClick={handleClose}
+          onClick={onClose}
           className="p-2 -mr-2 text-foreground opacity-60 hover:opacity-100 transition-opacity"
         >
           <X className="w-6 h-6" />
@@ -209,8 +193,8 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
           onClick={handleStartTrial}
           className="w-full bg-primary text-primary-foreground rounded-full py-4 text-[17px] font-medium flex items-center justify-center gap-2 shadow-lg hover:bg-primary/90 active:scale-[0.98] transition-all"
         >
-          开始免费试用
-          <ArrowRight className="w-5 h-5" />
+          {showSuccess ? "试用已开始 ✓" : "开始免费试用"}
+          {!showSuccess && <ArrowRight className="w-5 h-5" />}
         </button>
         <div className="text-center mt-4">
           <button className="text-[13px] text-muted-foreground font-medium flex items-center justify-center gap-1 w-full hover:text-foreground transition-colors">
