@@ -351,12 +351,19 @@ const SuccessScreen = ({ onStart }: { onStart: () => void }) => (
 // Main Onboarding Component
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, setOnboardingCompleted } = useAuth();
+  const { user, setOnboardingCompleted, setPaywallCompleted } = useAuth();
 
   const completeOnboarding = async () => {
     if (user) {
       await supabase.from("profiles").update({ onboarding_completed: true } as any).eq("user_id", user.id);
       setOnboardingCompleted(true);
+    }
+  };
+
+  const completePaywall = async () => {
+    if (user) {
+      await supabase.from("profiles").update({ paywall_completed: true } as any).eq("user_id", user.id);
+      setPaywallCompleted(true);
       navigate("/");
     }
   };
@@ -415,7 +422,7 @@ const Onboarding = () => {
   }, [user, showAuth]);
 
   if (showPaywall) {
-    return <Paywall onClose={completeOnboarding} />;
+    return <Paywall onClose={completePaywall} />;
   }
 
   if (showAuth) {
