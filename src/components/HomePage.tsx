@@ -43,14 +43,13 @@ const HomePage = () => {
       {/* Top Nav */}
       <nav className="flex justify-between items-center px-6 pt-8 pb-4 sticky top-0 bg-background/85 backdrop-blur-xl z-40">
         <div className="flex items-center gap-3">
-          <img
-            src="https://images.pexels.com/photos/3750717/pexels-photo-3750717.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=2"
-            className="w-10 h-10 rounded-full border-[1.5px] border-primary p-0.5 object-cover"
-            alt="Avatar"
-          />
+          <Avatar className="w-10 h-10 border-[1.5px] border-primary p-0.5">
+            {avatarUrl && <AvatarImage src={avatarUrl} alt="Avatar" />}
+            <AvatarFallback className="text-sm font-semibold bg-primary/10 text-primary">{initials}</AvatarFallback>
+          </Avatar>
           <div className="flex flex-col">
-            <span className="text-sm text-muted-foreground">早上好，</span>
-            <span className="text-base font-semibold text-foreground">小美</span>
+            <span className="text-sm text-muted-foreground">{getGreeting()}</span>
+            <span className="text-base font-semibold text-foreground">{displayName}</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
