@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Info, Volume2, SkipForward, Maximize } from "lucide-react";
+import { ChevronLeft, Heart } from "lucide-react";
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
@@ -122,7 +122,7 @@ const WorkoutPlayer = () => {
           
         </div>
         <button className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
-          <Info className="w-5 h-5" />
+          <Heart className="w-5 h-5" />
         </button>
       </div>
 
