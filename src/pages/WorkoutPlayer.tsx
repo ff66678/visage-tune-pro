@@ -148,23 +148,6 @@ const WorkoutPlayer = () => {
         </div>
       </div>
 
-      {/* Next Action Card */}
-      <div className="mx-6 mb-4 relative z-10 rounded-2xl p-3 flex items-center gap-3 border border-white/10 bg-white/10 backdrop-blur-xl">
-        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-800">
-          <img
-            src="https://images.unsplash.com/photo-1596704017254-9b121068fb31?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-            alt="Next Action"
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="flex-1">
-          <p className="text-[10px] font-bold uppercase tracking-wider text-primary">下一动作</p>
-          <p className="text-xs font-bold text-white">苹果肌画圈按摩</p>
-        </div>
-        <div className="text-white/40">
-          <SkipForward className="w-[18px] h-[18px]" />
-        </div>
-      </div>
 
       {/* Controls Bar */}
       <div className="relative z-10 border-t border-white/10 px-6 pt-6 pb-12 bg-white/5 backdrop-blur-3xl">
