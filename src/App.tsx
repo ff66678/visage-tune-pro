@@ -10,6 +10,7 @@ import Paywall from "./pages/Paywall.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
 import CourseDetail from "./pages/CourseDetail.tsx";
 import WorkoutPlayer from "./pages/WorkoutPlayer.tsx";
+import Membership from "./pages/Membership.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/paywall" element={<ProtectedRoute><Paywall onClose={() => window.history.back()} /></ProtectedRoute>} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/course/:id" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
+            <Route path="/membership" element={<ProtectedRoute><Membership /></ProtectedRoute>} />
             <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
