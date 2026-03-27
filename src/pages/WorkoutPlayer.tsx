@@ -178,9 +178,6 @@ const WorkoutPlayer = () => {
             >
               {isPlaying ? <PauseIcon /> : <PlayIcon />}
             </button>
-            <button className="text-white/80 active:scale-90 transition-transform" onClick={handleFastForward}>
-              <FastForwardIcon />
-            </button>
           </div>
         </div>
       </div>
