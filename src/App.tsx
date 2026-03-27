@@ -13,6 +13,7 @@ import WorkoutPlayer from "./pages/WorkoutPlayer.tsx";
 import CategoryAll from "./pages/CategoryAll.tsx";
 import Membership from "./pages/Membership.tsx";
 import GiftPage from "./pages/GiftPage.tsx";
+import ProfileDetail from "./pages/ProfileDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
