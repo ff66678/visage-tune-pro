@@ -24,16 +24,16 @@ const generateHeatmap = () => {
 };
 
 const stats = [
-  { label: "Total Routines", value: "142" },
-  { label: "Active Weeks", value: "24" },
-  { label: "Current Streak", value: "12" },
-  { label: "Muscles Toned", value: "43" },
+  { label: "总练习次数", value: "142" },
+  { label: "活跃周数", value: "24" },
+  { label: "连续打卡", value: "12" },
+  { label: "锻炼肌群", value: "43" },
 ];
 
 const listItems = [
-  { img: "https://images.pexels.com/photos/4046316/pexels-photo-4046316.jpeg?auto=compress&cs=tinysrgb&w=200", title: "Gua Sha Drain", meta: "12 minutes", starred: true },
-  { img: "https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=200", title: "Orbital Lift", meta: "5 minutes", starred: false },
-  { img: "https://images.pexels.com/photos/3762871/pexels-photo-3762871.jpeg?auto=compress&cs=tinysrgb&w=200", title: "Buccal Release", meta: "10 minutes", starred: false },
+  { img: "https://images.pexels.com/photos/4046316/pexels-photo-4046316.jpeg?auto=compress&cs=tinysrgb&w=200", title: "刮痧排毒", meta: "12 分钟", starred: true },
+  { img: "https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=200", title: "眼眶提升", meta: "5 分钟", starred: false },
+  { img: "https://images.pexels.com/photos/3762871/pexels-photo-3762871.jpeg?auto=compress&cs=tinysrgb&w=200", title: "颊肌放松", meta: "10 分钟", starred: false },
 ];
 
 const ProfilePage = () => {
@@ -57,22 +57,22 @@ const ProfilePage = () => {
         <div className="relative mb-4">
           <img
             src="https://images.pexels.com/photos/3750717/pexels-photo-3750717.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=2"
-            alt="Elena"
+            alt="小美"
             className="w-[120px] h-[120px] rounded-full object-cover border-[3px] border-card bg-card shadow-md"
           />
           <div className="absolute bottom-1 right-1 w-7 h-7 bg-foreground text-primary-foreground rounded-full flex items-center justify-center text-base font-semibold border-[3px] border-background">
             +
           </div>
         </div>
-        <h1 className="text-[28px] font-semibold tracking-tight mb-2">Elena</h1>
+        <h1 className="text-[28px] font-semibold tracking-tight mb-2">小美</h1>
         <div className="flex gap-4 text-[13px] text-muted-foreground font-medium">
           <span className="flex items-center gap-1.5">
             <MapPin className="w-3.5 h-3.5 text-primary" />
-            New York, NY
+            纽约
           </span>
           <span className="flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5 text-accent-gold" />
-            Joined 12th Aug
+            8月12日加入
           </span>
         </div>
       </section>
@@ -91,8 +91,8 @@ const ProfilePage = () => {
 
       {/* Consistency Log */}
       <div className="px-6 mb-4">
-        <h2 className="text-xl font-semibold tracking-tight mb-0.5">Consistency Log</h2>
-        <p className="text-sm text-muted-foreground">A twelve week review of your practice</p>
+        <h2 className="text-xl font-semibold tracking-tight mb-0.5">坚持记录</h2>
+        <p className="text-sm text-muted-foreground">过去十二周的练习回顾</p>
       </div>
       <div className="px-6 flex gap-2 items-end">
         <div className="flex flex-col justify-between h-[100px] pb-0.5">
@@ -113,8 +113,8 @@ const ProfilePage = () => {
 
       {/* Chart */}
       <div className="px-6 mb-4">
-        <h2 className="text-xl font-semibold tracking-tight mb-0.5">Tension Relief</h2>
-        <p className="text-sm text-muted-foreground">Your muscular tension mapped</p>
+        <h2 className="text-xl font-semibold tracking-tight mb-0.5">紧张缓解</h2>
+        <p className="text-sm text-muted-foreground">你的肌肉紧张度变化</p>
       </div>
       <div className="px-6 mt-4 relative h-[140px] flex">
         <div className="flex flex-col justify-between h-full pr-3 border-r border-foreground/5 z-[2]">
@@ -150,13 +150,13 @@ const ProfilePage = () => {
       >
         <img
           src="https://images.pexels.com/photos/5938367/pexels-photo-5938367.jpeg?auto=compress&cs=tinysrgb&w=800"
-          alt="Facial Massage"
+          alt="面部按摩"
           className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-500"
           style={{ transform: heroHovered ? "scale(1.03)" : "scale(1)" }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent flex flex-col justify-between p-4 px-6">
           <div className="flex justify-between items-center">
-            <span className="text-[13px] text-card/90 font-medium">8 min</span>
+            <span className="text-[13px] text-card/90 font-medium">8 分钟</span>
             <div className="flex gap-1.5">
               {[0, 1, 2, 3].map((d) => (
                 <div key={d} className={`w-1.5 h-1.5 rounded-full ${d === 0 ? "bg-card" : "bg-card/40"}`} />
@@ -165,8 +165,8 @@ const ProfilePage = () => {
           </div>
           <div className="flex justify-between items-end">
             <div>
-              <div className="text-[13px] text-card/80 font-semibold uppercase tracking-wider mb-0.5">Up Next</div>
-              <div className="text-2xl font-semibold tracking-tight text-card">Jawline Contour</div>
+              <div className="text-[13px] text-card/80 font-semibold uppercase tracking-wider mb-0.5">下一个</div>
+              <div className="text-2xl font-semibold tracking-tight text-card">下颌线塑形</div>
             </div>
             <button className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer">
               <Play className="w-[18px] h-[18px]" fill="currentColor" />
@@ -207,11 +207,11 @@ const ProfilePage = () => {
           <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">
             +
           </div>
-          Visage Elite
+          尊享会员
         </div>
         <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-          Unlock progressive fascial programming<br />
-          with <span className="text-foreground font-semibold">Visage Elite</span>
+          解锁进阶筋膜训练课程<br />
+          升级 <span className="text-foreground font-semibold">尊享会员</span>
         </p>
       </div>
     </div>

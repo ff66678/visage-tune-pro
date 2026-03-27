@@ -3,27 +3,27 @@ import { useNavigate } from "react-router-dom";
 import { Bell, Star, Crown } from "lucide-react";
 
 const weekData = [
-  { label: "M", height: "40%", active: false },
-  { label: "T", height: "70%", active: false },
-  { label: "W", height: "90%", active: false },
-  { label: "T", height: "100%", active: true },
-  { label: "F", height: "0%", active: false },
-  { label: "S", height: "0%", active: false },
-  { label: "S", height: "0%", active: false },
+  { label: "一", height: "40%", active: false },
+  { label: "二", height: "70%", active: false },
+  { label: "三", height: "90%", active: false },
+  { label: "四", height: "100%", active: true },
+  { label: "五", height: "0%", active: false },
+  { label: "六", height: "0%", active: false },
+  { label: "日", height: "0%", active: false },
 ];
 
 const recommendedItems = [
   {
     id: 1,
     img: "https://images.pexels.com/photos/4465121/pexels-photo-4465121.jpeg?auto=compress&cs=tinysrgb&w=400",
-    tag: "Tired Eyes",
-    name: "Orbital De-puff",
+    tag: "眼部疲劳",
+    name: "眼眶消肿",
   },
   {
     id: 2,
     img: "https://images.pexels.com/photos/5938367/pexels-photo-5938367.jpeg?auto=compress&cs=tinysrgb&w=400",
-    tag: "Structure",
-    name: "Jawline Definition",
+    tag: "轮廓",
+    name: "下颌线塑形",
   },
 ];
 
@@ -42,8 +42,8 @@ const HomePage = () => {
             alt="Avatar"
           />
           <div className="flex flex-col">
-            <span className="text-sm text-muted-foreground">Good morning,</span>
-            <span className="text-base font-semibold text-foreground">Elena</span>
+            <span className="text-sm text-muted-foreground">早上好，</span>
+            <span className="text-base font-semibold text-foreground">小美</span>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -64,8 +64,8 @@ const HomePage = () => {
       {/* Weekly Progress */}
       <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-[15px] font-semibold">Weekly Progress</h2>
-          <span className="text-[13px] text-primary font-semibold">85% of goal</span>
+          <h2 className="text-[15px] font-semibold">每周进度</h2>
+          <span className="text-[13px] text-primary font-semibold">完成 85%</span>
         </div>
         <div className="flex justify-between items-end">
           {weekData.map((day, i) => (
@@ -89,14 +89,14 @@ const HomePage = () => {
       </div>
 
       {/* Today's Plan */}
-      <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">Today's Plan</h2>
+      <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">今日计划</h2>
       <div
         className="mx-6 rounded-3xl p-6 flex justify-between items-center text-primary-foreground"
         style={{ background: "var(--gradient-plan)", boxShadow: "0 10px 30px hsl(var(--primary-glow))" }}
       >
         <div>
-          <h3 className="text-xl font-semibold mb-1">Full Face Sculpt</h3>
-          <p className="text-[13px] opacity-90">15 min • High Intensity</p>
+          <h3 className="text-xl font-semibold mb-1">全脸雕塑</h3>
+          <p className="text-[13px] opacity-90">15 分钟 · 高强度</p>
         </div>
         <button
           className="bg-card text-primary border-none px-5 py-2.5 rounded-full font-semibold text-sm cursor-pointer transition-all"
@@ -109,12 +109,12 @@ const HomePage = () => {
             setTimeout(() => setStartClicked(false), 300);
           }}
         >
-          {startClicked ? "Starting..." : "Start Now"}
+          {startClicked ? "开始中..." : "立即开始"}
         </button>
       </div>
 
       {/* Recommended */}
-      <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">Recommended for You</h2>
+      <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">为你推荐</h2>
       <div className="flex overflow-x-auto gap-4 px-6 pb-4 no-scrollbar">
         {recommendedItems.map((item) => (
           <div
@@ -143,8 +143,8 @@ const HomePage = () => {
             <Star className="w-6 h-6" fill="currentColor" />
           </div>
           <div>
-            <div className="text-sm font-semibold">12 Day Streak</div>
-            <div className="text-xs text-muted-foreground">You're doing great, keep it up!</div>
+            <div className="text-sm font-semibold">连续打卡 12 天</div>
+            <div className="text-xs text-muted-foreground">太棒了，继续保持！</div>
           </div>
         </div>
       </div>
