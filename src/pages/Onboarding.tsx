@@ -355,6 +355,7 @@ const Onboarding = () => {
   const [time, setTime] = useState<string | null>(null);
   const [showLoading, setShowLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const toggleConcern = (c: string) => {
     setConcerns((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]);
