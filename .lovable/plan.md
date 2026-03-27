@@ -1,18 +1,40 @@
 
 
-## 解耦个人资料页与底部分析Tab
+## Capacitor iOS 原生应用配置计划
 
-### 问题
-`ProfileDetail`（头像点进去的页面）和底部 Tab 第三个页面共用同一个 `ProfilePage` 组件。未来底部 Tab 要换成别的内容，会影响头像页面。
+### 概述
+将当前 Web 应用通过 Capacitor 打包成 iOS 原生应用，使其可以上架 Apple App Store。
 
-### 方案
-1. **复制 `ProfilePage.tsx` → 新建 `ProfileDetailContent.tsx`**：将当前 `ProfilePage` 的完整内容复制为独立组件，专门给 `/profile` 路由使用。这样两个页面完全独立，互不影响。
+### 步骤
 
-2. **更新 `ProfileDetail.tsx`**：引用新的 `ProfileDetailContent` 替代 `ProfilePage`。
+**1. 安装 Capacitor 依赖**
+- 添加 `@capacitor/core`、`@capacitor/ios`、`@capacitor/android` 到 dependencies
+- 添加 `@capacitor/cli` 到 devDependencies
 
-3. **底部 Tab 的 `ProfilePage.tsx` 保持不变**：之后你可以随意替换底部 Tab 的内容，不会影响头像进入的个人页面。
+**2. 初始化 Capacitor 配置**
+- 在项目根目录创建 `capacitor.config.ts`：
+  - `appId`: `app.lovable.a760e7830c5e4cc7bc791683400b12d2`
+  - `appName`: `visage-tune-pro`
+  - `webDir`: `dist`（Vite 构建输出目录）
+  - 配置 `server.url` 指向沙盒预览地址以支持热更新调试
 
-### 涉及文件
-- `src/components/ProfileDetailContent.tsx`（新建，从 ProfilePage 复制独立出来）
-- `src/pages/ProfileDetail.tsx`（改为引用 ProfileDetailContent）
+**3. 本地构建与运行（需要你在自己电脑上操作）**
+
+完成代码配置后，你需要在本地执行以下步骤：
+
+1. 通过 Lovable 编辑器的 **Export to GitHub** 按钮将项目导出到你的 GitHub 仓库
+2. 在本地 `git clone` 或 `git pull` 项目
+3. 运行 `npm install`
+4. 运行 `npx cap add ios` 添加 iOS 平台
+5. 运行 `npm run build && npx cap sync` 同步 Web 资源到原生项目
+6. 运行 `npx cap open ios` 在 Xcode 中打开项目
+7. 在 Xcode 中配置签名证书，然后构建并运行
+
+### 前提条件
+- **Mac 电脑** + 安装 **Xcode**
+- **Apple 开发者账号**（$99/年），用于签名和上架
+- 如需真机调试，需要一台 iPhone
+
+### 参考资料
+配置完成后，建议阅读 Lovable 官方博客了解更多 Capacitor 开发细节：[Lovable Mobile Development Guide](https://docs.lovable.dev)
 
