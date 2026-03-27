@@ -363,6 +363,14 @@ const Onboarding = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
+  // When user logs in during onboarding auth step, move to paywall
+  useEffect(() => {
+    if (showAuth && user) {
+      setShowAuth(false);
+      setShowPaywall(true);
+    }
+  }, [user, showAuth]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
