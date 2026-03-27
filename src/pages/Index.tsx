@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import BottomTabBar from "@/components/BottomTabBar";
 import HomePage from "@/components/HomePage";
