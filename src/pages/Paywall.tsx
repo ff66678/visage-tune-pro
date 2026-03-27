@@ -1,14 +1,30 @@
 import { useState } from "react";
 import { X, Check, ChevronDown, ArrowRight } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Paywall = ({ onClose }: { onClose?: () => void }) => {
   const [selectedPlan, setSelectedPlan] = useState("annual");
-  const [promoCode, setPromoCode] = useState("");
+  const { user, setPaywallCompleted } = useAuth();
 
-  const handleStartTrial = () => {
-    if (onClose) {
-      onClose();
+  const markPaywallCompleted = async () => {
+    if (user) {
+      await supabase
+        .from("profiles")
+        .update({ paywall_completed: true })
+        .eq("user_id", user.id);
+      setPaywallCompleted(true);
     }
+  };
+
+  const handleStartTrial = async () => {
+    await markPaywallCompleted();
+    if (onClose) onClose();
+  };
+
+  const handleClose = async () => {
+    await markPaywallCompleted();
+    if (onClose) onClose();
   };
 
   const images = [
