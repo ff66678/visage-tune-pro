@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import BottomTabBar from "@/components/BottomTabBar";
 import HomePage from "@/components/HomePage";
 import LibraryPage from "@/components/LibraryPage";
@@ -7,7 +7,9 @@ import ProfilePage from "@/components/ProfilePage";
 const pages = [HomePage, LibraryPage, ProfilePage];
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = Number(searchParams.get("tab") || 0);
+  const setActiveTab = (tab: number) => setSearchParams({ tab: String(tab) }, { replace: true });
   const ActivePage = pages[activeTab];
 
   return (
