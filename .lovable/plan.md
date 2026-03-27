@@ -1,18 +1,26 @@
 
 
-## 首页 PRO 按钮可重新打开付费墙
-
-### 问题
-`PaywallRoute` 中如果 `paywallCompleted === true` 会直接重定向到 `/`，导致用户从首页点击 PRO 按钮进入 `/paywall` 时被立刻弹回首页。
+## 未付费用户点击内容跳转付费墙
 
 ### 方案
-去掉 `PaywallRoute` 中 `paywallCompleted` 的重定向逻辑。已完成付费墙的用户仍然可以访问 `/paywall` 查看订阅方案，只是在引导流程中不会被强制跳转到付费墙。
+利用 `AuthContext` 中已有的 `paywallCompleted` 状态，在用户点击课程内容时判断是否已付费。未付费用户跳转到 `/paywall`，已付费用户正常进入内容页。
 
-### 改动
+### 实施步骤
 
-**`src/App.tsx`**
-- `PaywallRoute` 中删除 `if (paywallCompleted) return <Navigate to="/" replace />;` 这一行
-- 保留未登录用户跳转到 `/onboarding` 的逻辑
+**1. 修改 `HomePage.tsx`**
+- 引入 `useAuth` 获取 `paywallCompleted`
+- 今日计划"立即开始"按钮：未付费时跳转 `/paywall`，已付费时跳转课程详情
+- 推荐课程卡片点击：同样逻辑
 
-涉及文件：`src/App.tsx`（1 行删除）
+**2. 修改 `CourseDetail.tsx`**
+- 引入 `useAuth` 获取 `paywallCompleted`
+- 课程详情页的"开始训练"按钮：未付费时跳转 `/paywall`，已付费时进入 `/workout/:id`
+
+**3. 修改 `LibraryPage.tsx`**（如果有课程点击入口）
+- 同样增加付费检查逻辑
+
+### 涉及文件
+- `src/components/HomePage.tsx` — 课程卡片和今日计划按钮增加付费检查
+- `src/pages/CourseDetail.tsx` — 开始训练按钮增加付费检查
+- `src/components/LibraryPage.tsx` — 如有点击入口同样处理
 
