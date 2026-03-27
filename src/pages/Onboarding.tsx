@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ArrowRight, Check, Droplets, Wind, Link, Heart, Sparkles, TrendingDown, Moon, Frown, Clock, Timer, Hourglass, Infinity, Rocket, CalendarCheck } from "lucide-react";
+import Paywall from "./Paywall";
 
 const TOTAL_STEPS = 6;
 
@@ -354,6 +355,7 @@ const Onboarding = () => {
   const [time, setTime] = useState<string | null>(null);
   const [showLoading, setShowLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   const toggleConcern = (c: string) => {
     setConcerns((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]);
@@ -379,8 +381,12 @@ const Onboarding = () => {
     if (step > 0) setStep(step - 1);
   };
 
+  if (showPaywall) {
+    return <Paywall onClose={() => navigate("/")} />;
+  }
+
   if (showSuccess) {
-    return <SuccessScreen onStart={() => navigate("/")} />;
+    return <SuccessScreen onStart={() => setShowPaywall(true)} />;
   }
 
   if (showLoading) {
