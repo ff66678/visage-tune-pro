@@ -160,15 +160,6 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
 
       {/* Promo & Legal */}
       <section className="px-6 mt-14 border-t border-border pt-8">
-        <div className="border-b border-border pb-3">
-          <input
-            type="text"
-            placeholder="输入优惠码 (PROMO CODE)"
-            className="w-full bg-transparent outline-none text-[13px] font-medium text-foreground placeholder:text-muted-foreground"
-            value={promoCode}
-            onChange={(e) => setPromoCode(e.target.value)}
-          />
-        </div>
 
         <div className="mt-8 space-y-6">
 
