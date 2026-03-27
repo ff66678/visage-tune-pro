@@ -17,10 +17,23 @@ const weekData = [
   { label: "日", height: "0%", active: false },
 ];
 
+const getGreeting = () => {
+  const h = new Date().getHours();
+  if (h < 12) return "早上好，";
+  if (h < 18) return "下午好，";
+  return "晚上好，";
+};
+
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
+  const { data: profile } = useProfile();
+  const { user } = useAuth();
+
+  const displayName = profile?.display_name || user?.email?.split("@")[0] || "用户";
+  const avatarUrl = profile?.avatar_url;
+  const initials = displayName.slice(0, 1).toUpperCase();
 
   const todayPlan = courses?.find((c) => c.is_today_plan);
   const recommended = courses?.filter((c) => c.is_featured) ?? [];
