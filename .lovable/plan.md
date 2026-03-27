@@ -1,21 +1,18 @@
 
 
-## 修复付费墙持久化：独立路由也写入数据库
+## 首页 PRO 按钮可重新打开付费墙
 
 ### 问题
-当前 `/paywall` 路由渲染的 `Paywall.tsx` 点击"开始免费试用"时只调用 `onClose`（即 `window.history.back()`），没有写入 `paywall_completed = true` 到数据库。所以每次重新打开都会再次显示付费墙。
+`PaywallRoute` 中如果 `paywallCompleted === true` 会直接重定向到 `/`，导致用户从首页点击 PRO 按钮进入 `/paywall` 时被立刻弹回首页。
 
-### 修复方案
+### 方案
+去掉 `PaywallRoute` 中 `paywallCompleted` 的重定向逻辑。已完成付费墙的用户仍然可以访问 `/paywall` 查看订阅方案，只是在引导流程中不会被强制跳转到付费墙。
 
-**修改 `Paywall.tsx`**
-- 引入 `useAuth` 和 `supabase`
-- `handleStartTrial` 中先写入 `paywall_completed = true` 到 profiles 表，再调用 `onClose`
-- X 关闭按钮同样标记为已完成（因为用户已看过付费墙）
+### 改动
 
-**修改 `App.tsx`**
-- `PaywallRoute` 的 `onClose` 改为导航到 `/`（而非 `history.back()`），因为完成后应进入首页
+**`src/App.tsx`**
+- `PaywallRoute` 中删除 `if (paywallCompleted) return <Navigate to="/" replace />;` 这一行
+- 保留未登录用户跳转到 `/onboarding` 的逻辑
 
-### 涉及文件
-- `src/pages/Paywall.tsx` — 添加数据库写入逻辑
-- `src/App.tsx` — 调整 `onClose` 导航目标
+涉及文件：`src/App.tsx`（1 行删除）
 
