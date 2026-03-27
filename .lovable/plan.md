@@ -1,18 +1,15 @@
 
 
-## 首页头像和名字真实化
+## 修复首页头像留白
+
+### 问题
+Avatar 组件有 `p-0.5` 内边距，导致头像图片无法占满圆形区域，出现空白间隙。
+
+### 方案
+移除 `p-0.5`，改用 `ring` 实现边框效果，这样头像图片可以完全填满容器。
 
 ### 改动
-修改 `src/components/HomePage.tsx`，从已有的 `useProfile` hook 读取用户真实头像和昵称，替换硬编码的"小美"和占位图片。
-
-### 实施步骤
-
-**1. 修改 `HomePage.tsx`**
-- 引入 `useProfile` hook
-- 头像：使用 `profile.avatar_url`，无头像时显示首字母 fallback
-- 名字：使用 `profile.display_name`，无昵称时显示邮箱用户名
-- 问候语根据当前时间动态显示（早上好/下午好/晚上好）
-
-### 涉及文件
-- `src/components/HomePage.tsx`（约 5-8 行改动）
+**`src/components/HomePage.tsx` 第 46 行**
+- 将 `border-[1.5px] border-primary p-0.5` 替换为 `ring-[1.5px] ring-primary`
+- `ring` 不占用内部空间，头像图片自然占满
 
