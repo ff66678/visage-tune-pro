@@ -49,7 +49,7 @@ const PlayIcon = () => (
 const WorkoutPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const navigate = useNavigate();
 
@@ -121,8 +121,13 @@ const WorkoutPlayer = () => {
           <h2 className="text-sm font-bold tracking-wide">紧致提升大师课</h2>
           
         </div>
-        <button className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
-          <Heart className="w-5 h-5" />
+        <button
+          onClick={() => setIsFavorited((prev) => !prev)}
+          className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform"
+        >
+          <Heart
+            className={`w-5 h-5 transition-all duration-300 ${isFavorited ? 'text-red-500 fill-red-500 scale-110' : 'text-white scale-100'}`}
+          />
         </button>
       </div>
 
