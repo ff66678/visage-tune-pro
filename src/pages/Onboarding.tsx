@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { ChevronLeft, ArrowRight, Check, Droplets, Wind, Link, Heart, Sparkles, TrendingDown, Moon, Frown, Clock, Timer, Hourglass, Infinity, Rocket, CalendarCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
