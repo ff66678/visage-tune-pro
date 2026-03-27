@@ -1,27 +1,20 @@
 
 
-## 首页每周进度真实化
+## 首页打卡天数真实化
 
-### 当前问题
-`weekData` 是硬编码的假数据，每天的高度和完成百分比都是固定值。
+### 问题
+"连续打卡 12 天" 是硬编码的假数据。
 
 ### 方案
-从 `useWorkoutLogs` 获取本周的练习记录，按星期一到星期日统计每天的练习次数，动态计算柱状图高度和完成百分比。
+`useWorkoutLogs.ts` 中的 `useWorkoutStats` 已经有 `streak` 计算逻辑（统计截止到今天的连续练习天数），直接在 `HomePage.tsx` 中引用即可。
 
-### 实施步骤
+### 改动
 
-**1. 在 `useWorkoutLogs.ts` 新增 `useWeeklyProgress` hook**
-- 计算本周一到周日的日期范围
-- 统计每天的练习次数
-- 每天高度 = `(当天次数 / 本周最大次数) * 100%`，无记录则 0%
-- 标记今天为 `active`
-- 计算完成百分比 = `有练习的天数 / 7 * 100%`
-
-**2. 修改 `HomePage.tsx`**
-- 删除硬编码的 `weekData`
-- 引入 `useWeeklyProgress`，用返回的动态数据渲染柱状图和百分比
+**`src/components/HomePage.tsx`**
+- 引入 `useWorkoutStats`
+- 将第 157 行 `连续打卡 12 天` 替换为 `连续打卡 {streak} 天`
+- 根据 streak 值动态显示鼓励文案（0 天："今天开始打卡吧！"，≥1 天："太棒了，继续保持！"）
 
 ### 涉及文件
-- `src/hooks/useWorkoutLogs.ts`（新增 `useWeeklyProgress`）
-- `src/components/HomePage.tsx`（替换静态 `weekData`）
+- `src/components/HomePage.tsx`（约 3 行改动）
 
