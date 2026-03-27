@@ -170,41 +170,57 @@ const ProgressPage = () => {
         />
       </div>
 
-      {/* Recent Photos */}
-      {pastPhotos.length > 0 && (
-        <div className="px-5 mt-8">
-          <h3 className="text-lg font-semibold tracking-tight mb-3">历史记录</h3>
-          <div className="grid grid-cols-3 gap-2">
-            {pastPhotos.map((photo) => (
-              <div key={photo.id} className="relative aspect-[3/4] rounded-xl overflow-hidden bg-surface">
-                <img
-                  src={photo.photo_url}
-                  alt={photo.photo_date}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-foreground/60 to-transparent p-2 pt-6">
-                  <span className="text-[11px] text-card font-medium">
-                    {new Date(photo.photo_date + "T00:00:00").toLocaleDateString("zh-CN", {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* History Section */}
+      <div className="px-5 mt-8">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold tracking-tight">历史记录</h3>
+          {recentPhotos.length > 0 && (
+            <span className="text-[13px] text-muted-foreground font-medium">
+              共 {recentPhotos.length} 天
+            </span>
+          )}
         </div>
-      )}
 
-      {/* Bottom tip */}
-      <div className="flex flex-col items-center text-center px-6 mt-8 mb-4">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <ImageIcon className="w-4 h-4" />
-          <p className="text-[13px] font-medium leading-relaxed">
-            已记录 {recentPhotos.length} 天 · 坚持见证蜕变 🌟
-          </p>
-        </div>
+        {pastPhotos.length > 0 ? (
+          <div className="grid grid-cols-3 gap-2.5">
+            {pastPhotos.map((photo) => {
+              const d = new Date(photo.photo_date + "T00:00:00");
+              const dayLabel = d.toLocaleDateString("zh-CN", { weekday: "short" });
+              const dateLabel = d.toLocaleDateString("zh-CN", { month: "short", day: "numeric" });
+              return (
+                <div
+                  key={photo.id}
+                  className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-surface group"
+                >
+                  <img
+                    src={photo.photo_url}
+                    alt={photo.photo_date}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 inset-x-0 p-2.5 flex flex-col">
+                    <span className="text-[10px] text-card/70 font-medium">{dayLabel}</span>
+                    <span className="text-[13px] text-card font-semibold">{dateLabel}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="bg-surface rounded-2xl p-8 flex flex-col items-center gap-3">
+            <div className="w-14 h-14 rounded-full bg-surface-elevated flex items-center justify-center">
+              <ImageIcon className="w-6 h-6 text-muted-foreground/50" />
+            </div>
+            <div className="text-center">
+              <p className="text-sm font-medium text-muted-foreground">还没有历史记录</p>
+              <p className="text-xs text-muted-foreground/70 mt-1">每天拍一张，见证你的蜕变之旅</p>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Bottom spacer */}
+      <div className="h-8" />
     </div>
   );
 };
