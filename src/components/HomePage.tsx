@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Bell, Star } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Bell, Star, Crown } from "lucide-react";
 
 const weekData = [
   { label: "M", height: "40%", active: false },
@@ -28,6 +29,7 @@ const recommendedItems = [
 
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="animate-fade-in">
@@ -44,10 +46,19 @@ const HomePage = () => {
             <span className="text-base font-semibold text-foreground">Elena</span>
           </div>
         </div>
-        <button className="relative bg-transparent border-none text-foreground cursor-pointer p-2 rounded-full hover:bg-foreground/5 transition-colors">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate("/paywall")}
+            className="bg-primary/10 border-none text-primary cursor-pointer px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-primary/15 transition-colors"
+          >
+            <Crown className="w-4 h-4" />
+            <span className="text-xs font-semibold">PRO</span>
+          </button>
+          <button className="relative bg-transparent border-none text-foreground cursor-pointer p-2 rounded-full hover:bg-foreground/5 transition-colors">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-background" />
+          </button>
+        </div>
       </nav>
 
       {/* Weekly Progress */}
