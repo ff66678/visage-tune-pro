@@ -8,6 +8,8 @@ import Index from "./pages/Index.tsx";
 import Auth from "./pages/Auth.tsx";
 import Paywall from "./pages/Paywall.tsx";
 import Onboarding from "./pages/Onboarding.tsx";
+import CourseDetail from "./pages/CourseDetail.tsx";
+import WorkoutPlayer from "./pages/WorkoutPlayer.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
