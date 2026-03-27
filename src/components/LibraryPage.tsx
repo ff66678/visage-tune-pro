@@ -100,7 +100,19 @@ const LibraryPage = () => {
             <div key={idx} className="mb-8">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold text-foreground">{category.title}</h2>
-                <span className="text-[13px] text-primary font-semibold cursor-pointer">查看全部</span>
+                <span
+                  className="text-[13px] text-primary font-semibold cursor-pointer"
+                  onClick={() => {
+                    const categoryKey = Object.entries({
+                      "眼部 & 上脸": "眼部",
+                      "下颌 & 轮廓": "下颌",
+                      "脸颊 & 光泽": "脸颊",
+                      "颈部护理": "颈部",
+                      "全脸训练": "全脸",
+                    }).find(([label]) => label === category.title)?.[1] || category.title;
+                    navigate(`/category/${encodeURIComponent(categoryKey)}`);
+                  }}
+                >查看全部</span>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {category.routines.map((routine) => (
