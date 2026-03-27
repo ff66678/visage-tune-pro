@@ -21,7 +21,7 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto no-scrollbar pb-6">
+        <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: "160px" }}>
           {/* Hero Image */}
           <div
             className="relative w-full overflow-hidden"
@@ -47,7 +47,7 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
             </div>
           </div>
 
-          {/* Pricing Plans - immediately after hero */}
+          {/* Pricing Plans */}
           <div className="px-5 mt-5">
             {/* Yearly Plan */}
             <div
@@ -103,22 +103,7 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
             </div>
           </div>
 
-          {/* CTA Button - visible on first screen */}
-          <div className="px-5 mt-5">
-            <button className="w-full bg-primary text-primary-foreground rounded-2xl py-4 font-bold text-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg">
-              开始7天免费试用
-            </button>
-            <p className="text-center mt-3 leading-relaxed px-2 text-[10px] text-muted-foreground">
-              试用结束后，您将被收取 ¥39.99/年。可在试用结束前在设置中随时取消，避免扣费。
-              <br />
-              继续使用即表示您同意我们的{" "}
-              <a href="#" className="underline">服务条款</a>
-              {" "}与{" "}
-              <a href="#" className="underline">隐私政策</a>
-            </p>
-          </div>
-
-          {/* Features - below fold */}
+          {/* Features */}
           <div className="px-5 mt-8 space-y-3">
             {[
               { icon: Wand2, title: "减少细纹", desc: "抚平皱纹，自然促进胶原蛋白生成。" },
@@ -159,6 +144,21 @@ const Paywall = ({ onClose }: { onClose?: () => void }) => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Fixed Bottom CTA */}
+        <div className="absolute bottom-0 left-0 w-full z-30 px-5 pb-8 pt-10" style={{ background: "linear-gradient(to top, hsl(var(--background)), hsl(var(--background)), transparent)" }}>
+          <button className="w-full bg-primary text-primary-foreground rounded-2xl py-4 font-bold text-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg">
+            开始7天免费试用
+          </button>
+          <p className="text-center mt-4 leading-relaxed px-2 text-[10px] text-muted-foreground">
+            试用结束后，您将被收取 ¥39.99/年。可在试用结束前在设置中随时取消，避免扣费。
+            <br />
+            继续使用即表示您同意我们的{" "}
+            <a href="#" className="underline">服务条款</a>
+            {" "}与{" "}
+            <a href="#" className="underline">隐私政策</a>
+          </p>
         </div>
       </div>
     </div>
