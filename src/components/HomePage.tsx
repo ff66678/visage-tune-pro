@@ -48,7 +48,7 @@ const HomePage = () => {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => navigate("/paywall")}
+            onClick={() => navigate("/membership")}
             className="bg-primary/10 border-none text-primary cursor-pointer px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-primary/15 transition-colors"
           >
             <Crown className="w-4 h-4" />
