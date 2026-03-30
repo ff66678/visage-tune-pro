@@ -96,11 +96,7 @@ const ProgressPage = () => {
           <PopoverContent className="w-auto p-0" align="start" sideOffset={8}>
             <Calendar
               mode="single"
-              selected={(() => {
-                const d = new Date(today);
-                d.setDate(today.getDate() + mondayOffset + weekOffset * 7);
-                return d;
-              })()}
+              selected={new Date(selectedDate + "T00:00:00")}
               onSelect={(date) => {
                 if (!date) return;
                 const diffDays = Math.floor((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
