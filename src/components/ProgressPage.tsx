@@ -88,14 +88,14 @@ const ProgressPage = () => {
         {/* Month nav */}
         <div className="flex justify-between items-center mb-4">
           <button
-            onClick={() => setWeekOffset((o) => o - 1)}
+            onClick={() => changeWeek(-1)}
             className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground hover:bg-surface transition-colors cursor-pointer"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <span className="text-base font-semibold tracking-tight">{displayMonth}</span>
           <button
-            onClick={() => setWeekOffset((o) => Math.min(o + 1, 0))}
+            onClick={() => changeWeek(1)}
             className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground hover:bg-surface transition-colors cursor-pointer disabled:opacity-30"
             disabled={weekOffset >= 0}
           >
