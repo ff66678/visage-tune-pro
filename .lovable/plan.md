@@ -1,23 +1,18 @@
 
 
-## Plan: 底部进度条使用真实计时数据
+## Plan: 缩小推荐卡片，一屏显示2个多
 
-### 问题
-底部进度条的已用时间 `04:12` 和进度宽度 `35%` 都是硬编码假数据。
+### 改动
+**文件**: `src/components/HomePage.tsx`
 
-### 方案
-用已有的 `seconds` 和 `totalSeconds` 状态计算真实进度：
+将推荐卡片从 `min-w-[240px] h-40` 改为 `min-w-[160px] h-28`，gap 从 `gap-4` 改为 `gap-3`，这样在 390px 宽度下一屏可以看到 2 个卡片多一点。
 
-- **已用时间** = `totalSeconds - seconds`，用 `formatTime()` 格式化
-- **总时长** = 从 `course.duration`（字符串如 `"8 分钟"`）解析秒数，同时用它初始化 `totalSeconds`（替换硬编码的 60）
-- **进度百分比** = `elapsed / totalSeconds * 100`
-- **右侧总时长** = `formatTime(totalSeconds)`
+同时缩小底部文字 padding 和字号，skeleton 也同步调小。
 
-### 改动文件
-- `src/pages/WorkoutPlayer.tsx`
-  - 解析 `course.duration` 字符串为秒数，用于初始化 `totalSeconds` 状态（默认 60s）
-  - 将 `totalSeconds` 从常量改为 state，在 course 加载后更新
-  - 第 126 行：`04:12` → `formatTime(totalSeconds - seconds)`
-  - 第 128 行：`width: "35%"` → `width: \`${((totalSeconds - seconds) / totalSeconds) * 100}%\``
-  - 第 130 行：`course?.duration || "12:00"` → `formatTime(totalSeconds)`
+### 具体改动
+- 第 127-128 行 skeleton: `min-w-[240px] h-40` → `min-w-[160px] h-28`
+- 第 131 行容器: `gap-4` → `gap-3`
+- 第 135 行卡片: `min-w-[240px] h-40` → `min-w-[160px] h-28`
+- 第 143 行底部遮罩: `p-4` → `p-2.5`
+- 第 147 行标题: `text-base` → `text-sm`
 
