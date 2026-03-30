@@ -64,7 +64,7 @@ const WorkoutPlayer = () => {
   }, [course?.duration]);
 
   const circumference = 283;
-  const dashOffset = circumference - (seconds / totalSeconds) * circumference;
+  const dashOffset = (1 - seconds / totalSeconds) * circumference;
   const elapsed = totalSeconds - seconds;
 
   useEffect(() => {
@@ -128,10 +128,6 @@ const WorkoutPlayer = () => {
       <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-20">
         <div className="relative w-48 h-48 flex items-center justify-center mb-8">
           <TimerRing dashOffset={dashOffset} />
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-5xl font-bold font-mono">{formatTime(seconds)}</span>
-            <span className="text-xs text-white/60 mt-1">{seconds > 0 ? "坚持住" : "完成！"}</span>
-          </div>
         </div>
         <div className="text-center">
           <h1 className="text-3xl font-bold mb-2">V字手势提升</h1>
