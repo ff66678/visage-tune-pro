@@ -176,19 +176,18 @@ const ProgressPage = () => {
               <div className="relative">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                    d.isToday && d.isSelected
+                    d.isSelected
                       ? "bg-primary text-primary-foreground shadow-md"
-                      : d.isSelected
-                      ? "bg-accent text-accent-foreground shadow-md"
                       : d.isToday
-                      ? "bg-primary/20 text-primary"
-                      : d.hasPhoto
-                      ? "ring-2 ring-primary text-primary"
+                      ? "border-2 border-primary text-primary"
                       : "text-foreground"
                   }`}
                 >
                   {d.date}
                 </div>
+                {d.hasPhoto && !d.isSelected && (
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
+                )}
               </div>
             </div>
           ))}
