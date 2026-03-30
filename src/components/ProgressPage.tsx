@@ -7,6 +7,13 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
+const formatLocalDate = (d: Date) => {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 const ProgressPage = () => {
   const navigate = useNavigate();
   const { data: profile } = useProfile();
@@ -16,7 +23,7 @@ const ProgressPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+  const todayStr = formatLocalDate(today);
   const [weekOffset, setWeekOffset] = useState(0);
   const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
   const [selectedDate, setSelectedDate] = useState(todayStr);
@@ -48,7 +55,7 @@ const ProgressPage = () => {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     const isToday = d.toDateString() === today.toDateString();
-    const dateStr = d.toISOString().split("T")[0];
+    const dateStr = formatLocalDate(d);
     const hasPhoto = photoDates.has(dateStr);
     const isSelected = dateStr === selectedDate;
     return { label, date: d.getDate(), isToday, hasPhoto, isSelected, dateStr };
@@ -105,7 +112,7 @@ const ProgressPage = () => {
                 todayMonday.setDate(today.getDate() + mondayOffset);
                 const weekDiff = Math.round((selectedMonday.getTime() - todayMonday.getTime()) / (1000 * 60 * 60 * 24 * 7));
                 setWeekOffset(Math.min(weekDiff, 0));
-                setSelectedDate(date.toISOString().split("T")[0]);
+                setSelectedDate(formatLocalDate(date));
               }}
               className={cn("p-3 pointer-events-auto")}
               modifiers={{ hasPhoto: recentPhotos.map(p => new Date(p.photo_date + "T00:00:00")) }}
