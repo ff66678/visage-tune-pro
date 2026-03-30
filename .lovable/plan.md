@@ -1,22 +1,50 @@
 
 
-## Plan: 让首页更紧凑充实
+## Plan: 添加"我的喜欢"和"最近播放"入口
 
-### 问题
-首页各模块之间间距过大（`mt-8`），且当没有 todayPlan 时"今日计划"区域完全空白，导致页面显得很空。
+### 需要做的事
 
-### 改动文件
-**`src/components/HomePage.tsx`**
+在打卡卡片上方添加两个并排的快捷入口卡片："我的喜欢"和"最近播放"，点击后跳转到对应页面。同时需要创建收藏功能的数据库支持。
 
-### 具体改动
+### 1. 创建 `favorites` 表（数据库迁移）
+```sql
+CREATE TABLE public.favorites (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL,
+  course_id uuid NOT NULL REFERENCES public.courses(id) ON DELETE CASCADE,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(user_id, course_id)
+);
+ALTER TABLE public.favorites ENABLE ROW LEVEL SECURITY;
+-- 用户只能读写自己的收藏
+CREATE POLICY "Users can read own favorites" ON public.favorites FOR SELECT TO authenticated USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own favorites" ON public.favorites FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can delete own favorites" ON public.favorites FOR DELETE TO authenticated USING (auth.uid() = user_id);
+```
 
-1. **缩小模块间距**：将"今日计划"和"为你推荐"标题的 `mt-8` 改为 `mt-5`，整体更紧凑
+### 2. 新建 `src/hooks/useFavorites.ts`
+- `useFavorites()`：查询当前用户的收藏课程列表（join courses 表）
+- `useToggleFavorite()`：添加/取消收藏的 mutation
 
-2. **今日计划无数据时显示 fallback**：当 `todayPlan` 为空时，显示一个鼓励卡片（如"今天还没有计划，去课程库看看吧"），避免空白
+### 3. 新建两个页面
+- **`src/pages/Favorites.tsx`**：我的喜欢页面，展示收藏的课程列表
+- **`src/pages/RecentlyPlayed.tsx`**：最近播放页面，复用 `useRecentCourses` 展示完整历史
 
-3. **新增"热门分类"快捷入口**：在每周进度和今日计划之间，添加一行分类图标按钮（从 courses 数据中提取 distinct categories），用横向排列的圆形图标展示，点击跳转到对应分类页面。这能有效填充空间并增加功能性
+### 4. 修改 `src/App.tsx`
+添加 `/favorites` 和 `/recently-played` 路由
 
-4. **连续打卡模块上移**：将 streak 卡片的 `mt-2` 改为紧跟推荐区域，减少底部空白
+### 5. 修改 `src/components/HomePage.tsx`
+在打卡卡片上方添加两个并排卡片：
 
-5. **新增"最近训练"区域**（如果用户有训练记录）：在推荐下方、打卡上方，用已有的 `useRecentCourses` hook 展示最近练过的课程，增加内容密度
+```text
+┌──────────────┐ ┌──────────────┐
+│ ♡ 我的喜欢    │ │ ▶ 最近播放    │
+│ 3 个课程      │ │ 5 个记录      │
+└──────────────┘ └──────────────┘
+```
+
+使用 `grid grid-cols-2 gap-3`，每个卡片带图标、标题和计数，点击跳转对应页面。
+
+### 6. 在课程详情页添加收藏按钮
+修改 `src/pages/CourseDetail.tsx`，在合适位置加一个心形收藏按钮，调用 `useToggleFavorite`。
 
