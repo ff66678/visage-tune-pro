@@ -48,9 +48,6 @@ const LibraryPage = () => {
       <header className="px-6 pt-8 pb-4 sticky top-0 bg-background/90 backdrop-blur-xl z-40">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold tracking-tight">课程库</h1>
-          <button className="bg-transparent border-none cursor-pointer text-foreground p-1">
-            <Settings className="w-6 h-6" />
-          </button>
         </div>
 
         <div className="bg-surface rounded-lg px-4 py-3 flex items-center gap-2.5 mb-4">
