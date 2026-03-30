@@ -14,6 +14,17 @@ const ProgressPage = () => {
 
   const today = new Date();
   const [weekOffset, setWeekOffset] = useState(0);
+  const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
+
+  const changeWeek = (dir: number) => {
+    const newOffset = dir < 0 ? weekOffset - 1 : Math.min(weekOffset + 1, 0);
+    if (newOffset === weekOffset) return;
+    setSlideDir(dir < 0 ? "right" : "left");
+    setTimeout(() => {
+      setWeekOffset(newOffset);
+      setSlideDir(null);
+    }, 200);
+  };
 
   // Compute the monday of the displayed week
   const dayOfWeek = today.getDay(); // 0=Sun
@@ -77,14 +88,14 @@ const ProgressPage = () => {
         {/* Month nav */}
         <div className="flex justify-between items-center mb-4">
           <button
-            onClick={() => setWeekOffset((o) => o - 1)}
+            onClick={() => changeWeek(-1)}
             className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground hover:bg-surface transition-colors cursor-pointer"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <span className="text-base font-semibold tracking-tight">{displayMonth}</span>
           <button
-            onClick={() => setWeekOffset((o) => Math.min(o + 1, 0))}
+            onClick={() => changeWeek(1)}
             className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground hover:bg-surface transition-colors cursor-pointer disabled:opacity-30"
             disabled={weekOffset >= 0}
           >
@@ -94,7 +105,13 @@ const ProgressPage = () => {
 
         {/* Day labels + dates — swipeable */}
         <div
-          className="flex justify-between items-center touch-pan-y"
+          className={`flex justify-between items-center touch-pan-y overflow-hidden transition-all duration-200 ease-out ${
+            slideDir === "left"
+              ? "opacity-0 -translate-x-4"
+              : slideDir === "right"
+              ? "opacity-0 translate-x-4"
+              : "opacity-100 translate-x-0"
+          }`}
           onTouchStart={(e) => {
             (e.currentTarget as any)._touchX = e.touches[0].clientX;
           }}
@@ -103,8 +120,7 @@ const ProgressPage = () => {
             if (startX === undefined) return;
             const diff = e.changedTouches[0].clientX - startX;
             if (Math.abs(diff) > 50) {
-              if (diff > 0) setWeekOffset((o) => o - 1);
-              else setWeekOffset((o) => Math.min(o + 1, 0));
+              changeWeek(diff > 0 ? -1 : 1);
             }
           }}
         >
