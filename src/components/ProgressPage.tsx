@@ -1,8 +1,11 @@
 import { useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, Calendar, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
+import { Camera, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useTodayPhoto, useProgressPhotos, useUploadProgressPhoto } from "@/hooks/useProgressPhotos";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 const ProgressPage = () => {
   const navigate = useNavigate();
@@ -73,9 +76,38 @@ const ProgressPage = () => {
     <div className="animate-fade-in">
       {/* Header */}
       <header className="flex justify-between items-center px-6 pt-6 pb-2">
-        <div className="w-9 h-9 rounded-full bg-surface-elevated flex items-center justify-center">
-          <Calendar className="w-5 h-5 text-muted-foreground" />
-        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="w-9 h-9 rounded-full bg-surface-elevated flex items-center justify-center cursor-pointer hover:bg-surface-hover transition-colors">
+              <CalendarIcon className="w-5 h-5 text-muted-foreground" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start" sideOffset={8}>
+            <Calendar
+              mode="single"
+              selected={(() => {
+                const d = new Date(today);
+                d.setDate(today.getDate() + mondayOffset + weekOffset * 7);
+                return d;
+              })()}
+              onSelect={(date) => {
+                if (!date) return;
+                const diffDays = Math.floor((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                const dayOfWeekSelected = date.getDay();
+                const mondayOffsetSelected = dayOfWeekSelected === 0 ? -6 : 1 - dayOfWeekSelected;
+                const selectedMonday = new Date(date);
+                selectedMonday.setDate(date.getDate() + mondayOffsetSelected);
+                const todayMonday = new Date(today);
+                todayMonday.setDate(today.getDate() + mondayOffset);
+                const weekDiff = Math.round((selectedMonday.getTime() - todayMonday.getTime()) / (1000 * 60 * 60 * 24 * 7));
+                setWeekOffset(Math.min(weekDiff, 0));
+              }}
+              className={cn("p-3 pointer-events-auto")}
+              modifiers={{ hasPhoto: recentPhotos.map(p => new Date(p.photo_date + "T00:00:00")) }}
+              modifiersStyles={{ hasPhoto: { fontWeight: 700, color: "hsl(var(--primary))" } }}
+            />
+          </PopoverContent>
+        </Popover>
         <h1 className="text-lg font-semibold tracking-tight">进度</h1>
         <button
           onClick={() => navigate("/profile")}
