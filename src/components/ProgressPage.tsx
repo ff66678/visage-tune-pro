@@ -139,7 +139,7 @@ const ProgressPage = () => {
 
         {/* Day labels + dates — swipeable */}
         <div
-          className={`flex justify-between items-center touch-pan-y overflow-hidden transition-all duration-200 ease-out ${
+          className={`flex justify-between items-center touch-pan-y overflow-visible py-1 transition-all duration-200 ease-out ${
             slideDir === "left"
               ? "opacity-0 -translate-x-4"
               : slideDir === "right"
