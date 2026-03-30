@@ -105,7 +105,13 @@ const ProgressPage = () => {
 
         {/* Day labels + dates — swipeable */}
         <div
-          className="flex justify-between items-center touch-pan-y"
+          className={`flex justify-between items-center touch-pan-y overflow-hidden transition-all duration-200 ease-out ${
+            slideDir === "left"
+              ? "opacity-0 -translate-x-4"
+              : slideDir === "right"
+              ? "opacity-0 translate-x-4"
+              : "opacity-100 translate-x-0"
+          }`}
           onTouchStart={(e) => {
             (e.currentTarget as any)._touchX = e.touches[0].clientX;
           }}
@@ -114,8 +120,7 @@ const ProgressPage = () => {
             if (startX === undefined) return;
             const diff = e.changedTouches[0].clientX - startX;
             if (Math.abs(diff) > 50) {
-              if (diff > 0) setWeekOffset((o) => o - 1);
-              else setWeekOffset((o) => Math.min(o + 1, 0));
+              changeWeek(diff > 0 ? -1 : 1);
             }
           }}
         >
