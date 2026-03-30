@@ -115,8 +115,6 @@ const ProgressPage = () => {
           ))}
         </div>
       </div>
-        ))}
-      </div>
 
       {/* Photo Card */}
       <div className="mx-5 mt-2 rounded-3xl bg-gradient-to-b from-primary/10 via-card to-card p-6 pt-8 flex flex-col items-center shadow-sm">
