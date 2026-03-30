@@ -92,8 +92,22 @@ const ProgressPage = () => {
           </button>
         </div>
 
-        {/* Day labels + dates */}
-        <div className="flex justify-between items-center">
+        {/* Day labels + dates — swipeable */}
+        <div
+          className="flex justify-between items-center touch-pan-y"
+          onTouchStart={(e) => {
+            (e.currentTarget as any)._touchX = e.touches[0].clientX;
+          }}
+          onTouchEnd={(e) => {
+            const startX = (e.currentTarget as any)._touchX as number | undefined;
+            if (startX === undefined) return;
+            const diff = e.changedTouches[0].clientX - startX;
+            if (Math.abs(diff) > 50) {
+              if (diff > 0) setWeekOffset((o) => o - 1);
+              else setWeekOffset((o) => Math.min(o + 1, 0));
+            }
+          }}
+        >
           {weekDates.map((d, i) => (
             <div key={i} className="flex flex-col items-center gap-2 flex-1">
               <span className="text-[12px] font-medium text-muted-foreground">{d.label}</span>
