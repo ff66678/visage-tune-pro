@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Gift, Star, Crown, Clock } from "lucide-react";
+import { Gift, Star, Crown, Clock, Dumbbell, Flame, Heart, Zap, BookOpen } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
-import { useWeeklyProgress, useWorkoutStats } from "@/hooks/useWorkoutLogs";
+import { useWeeklyProgress, useWorkoutStats, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
