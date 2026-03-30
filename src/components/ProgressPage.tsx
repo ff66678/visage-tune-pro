@@ -14,6 +14,17 @@ const ProgressPage = () => {
 
   const today = new Date();
   const [weekOffset, setWeekOffset] = useState(0);
+  const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
+
+  const changeWeek = (dir: number) => {
+    const newOffset = dir < 0 ? weekOffset - 1 : Math.min(weekOffset + 1, 0);
+    if (newOffset === weekOffset) return;
+    setSlideDir(dir < 0 ? "right" : "left");
+    setTimeout(() => {
+      setWeekOffset(newOffset);
+      setSlideDir(null);
+    }, 200);
+  };
 
   // Compute the monday of the displayed week
   const dayOfWeek = today.getDay(); // 0=Sun
