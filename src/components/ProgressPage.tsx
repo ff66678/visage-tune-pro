@@ -18,6 +18,7 @@ const ProgressPage = () => {
   const today = new Date();
   const [weekOffset, setWeekOffset] = useState(0);
   const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const changeWeek = (dir: number) => {
     const newOffset = dir < 0 ? weekOffset - 1 : Math.min(weekOffset + 1, 0);
