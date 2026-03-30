@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, Calendar, Sparkles, Loader2, ImageIcon } from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useTodayPhoto, useProgressPhotos, useUploadProgressPhoto } from "@/hooks/useProgressPhotos";
 
@@ -12,25 +12,29 @@ const ProgressPage = () => {
   const uploadMutation = useUploadProgressPhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Build current week dates
   const today = new Date();
-  const currentMonth = today.toLocaleDateString("zh-CN", { month: "long" });
+  const [weekOffset, setWeekOffset] = useState(0);
+
+  // Compute the monday of the displayed week
   const dayOfWeek = today.getDay(); // 0=Sun
   const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
   const monday = new Date(today);
-  monday.setDate(today.getDate() + mondayOffset);
+  monday.setDate(today.getDate() + mondayOffset + weekOffset * 7);
 
-  // Build a set of dates that have photos this week
+  // Month/year label based on the monday of the displayed week
+  const displayMonth = monday.toLocaleDateString("zh-CN", { year: "numeric", month: "long" });
+
+  // Build a set of dates that have photos
   const photoDates = new Set(recentPhotos.map((p) => p.photo_date));
 
-  const weekDays = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
-  const weekDates = weekDays.map((label, i) => {
+  const weekDayLabels = ["一", "二", "三", "四", "五", "六", "日"];
+  const weekDates = weekDayLabels.map((label, i) => {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     const isToday = d.toDateString() === today.toDateString();
     const dateStr = d.toISOString().split("T")[0];
     const hasPhoto = photoDates.has(dateStr);
-    return { label: isToday ? "今日" : label, date: d.getDate(), isToday, hasPhoto };
+    return { label, date: d.getDate(), isToday, hasPhoto };
   });
 
   const avatarUrl =
@@ -48,11 +52,9 @@ const ProgressPage = () => {
     if (file) {
       uploadMutation.mutate(file);
     }
-    // Reset so same file can be re-selected
     e.target.value = "";
   };
 
-  // Recent photos excluding today
   const todayStr = new Date().toISOString().split("T")[0];
   const pastPhotos = recentPhotos.filter((p) => p.photo_date !== todayStr);
 
@@ -60,10 +62,7 @@ const ProgressPage = () => {
     <div className="animate-fade-in">
       {/* Header */}
       <header className="flex justify-between items-center px-6 pt-6 pb-2">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Calendar className="w-5 h-5" />
-          <span className="text-base font-semibold">{currentMonth}</span>
-        </div>
+        <div />
         <h1 className="text-lg font-semibold tracking-tight">进度</h1>
         <button
           onClick={() => navigate("/profile")}
@@ -74,29 +73,48 @@ const ProgressPage = () => {
       </header>
 
       {/* Week Calendar Strip */}
-      <div className="flex justify-between items-center px-4 py-4">
-        {weekDates.map((d, i) => (
-          <div key={i} className="flex flex-col items-center gap-1.5 flex-1">
-            <span
-              className={`text-[11px] font-medium ${
-                d.isToday ? "text-primary" : "text-muted-foreground"
-              }`}
-            >
-              {d.label}
-            </span>
-            <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all relative ${
-                d.isToday
-                  ? "bg-card text-foreground shadow-md ring-2 ring-primary/20"
-                  : "text-foreground"
-              }`}
-            >
-              {d.date}
-              {d.hasPhoto && (
-                <div className="absolute -bottom-1 w-1.5 h-1.5 rounded-full bg-primary" />
-              )}
+      <div className="mx-4 mt-2 rounded-2xl bg-card p-4">
+        {/* Month nav */}
+        <div className="flex justify-between items-center mb-4">
+          <button
+            onClick={() => setWeekOffset((o) => o - 1)}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground hover:bg-surface transition-colors cursor-pointer"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <span className="text-base font-semibold tracking-tight">{displayMonth}</span>
+          <button
+            onClick={() => setWeekOffset((o) => Math.min(o + 1, 0))}
+            className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground hover:bg-surface transition-colors cursor-pointer disabled:opacity-30"
+            disabled={weekOffset >= 0}
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Day labels + dates */}
+        <div className="flex justify-between items-center">
+          {weekDates.map((d, i) => (
+            <div key={i} className="flex flex-col items-center gap-2 flex-1">
+              <span className="text-[12px] font-medium text-muted-foreground">{d.label}</span>
+              <div className="relative">
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
+                    d.isToday
+                      ? "bg-primary text-primary-foreground shadow-md"
+                      : "text-foreground"
+                  }`}
+                >
+                  {d.date}
+                </div>
+                {d.hasPhoto && !d.isToday && (
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
+                )}
+              </div>
             </div>
-          </div>
+          ))}
+        </div>
+      </div>
         ))}
       </div>
 
