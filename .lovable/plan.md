@@ -1,25 +1,19 @@
 
 
-## Plan: 修复日历日期选择偏移一天的 Bug
+## Plan: 修复月历中选中日期高亮错误
 
-### 问题分析
-`date.toISOString()` 会将日期转换为 UTC 时间，如果用户在 UTC+8 时区，点击 3月20日 时 `date` 是本地时间 `2026-03-20 00:00:00`，转为 UTC 后变成 `2026-03-19T16:00:00Z`，`.split("T")[0]` 就得到了 `"2026-03-19"`，导致偏移一天。
-
-同样，`weekDiff` 的计算也可能因为时区导致不准确。
+### 问题
+`Calendar` 组件的 `selected` 属性当前设置为当前周的周一，而不是用户实际选中的日期，导致日历中高亮的日期与实际选中的日期不一致。
 
 ### 方案
-在 `onSelect` 回调中，用本地时间方法构造日期字符串，替换 `toISOString()`：
+将 `selected` 属性改为基于 `selectedDate` 状态构造的 `Date` 对象：
 
 ```typescript
-const yyyy = date.getFullYear();
-const mm = String(date.getMonth() + 1).padStart(2, "0");
-const dd = String(date.getDate()).padStart(2, "0");
-const dateStr = `${yyyy}-${mm}-${dd}`;
-setSelectedDate(dateStr);
+selected={new Date(selectedDate + "T00:00:00")}
 ```
 
-同时检查组件中其他使用 `toISOString().split("T")[0]` 的地方（如 `todayStr`、`weekDates` 中的 `dateStr`），统一改为本地时间格式化，避免跨时区 bug。
+使用 `"T00:00:00"` 后缀确保解析为本地时间而非 UTC。
 
 ### 改动文件
-- `src/components/ProgressPage.tsx` — 将所有 `toISOString().split("T")[0]` 替换为本地日期格式化函数
+- `src/components/ProgressPage.tsx` — 将第 99-103 行的 `selected` IIFE 替换为 `new Date(selectedDate + "T00:00:00")`
 
