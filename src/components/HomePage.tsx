@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Gift, Star, Crown } from "lucide-react";
+import { Gift, Star, Crown, Clock } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
