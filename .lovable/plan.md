@@ -1,18 +1,23 @@
 
 
-## Plan: 简化周日历日期颜色方案
+## Plan: 底部进度条使用真实计时数据
 
 ### 问题
-当前日期圆圈有 5 种状态组合（今天+选中、选中、今天、有照片、普通），颜色混乱不清晰。
+底部进度条的已用时间 `04:12` 和进度宽度 `35%` 都是硬编码假数据。
 
 ### 方案
-简化为 3 种清晰层级：
+用已有的 `seconds` 和 `totalSeconds` 状态计算真实进度：
 
-1. **选中日期**（无论是否今天）：`bg-primary text-primary-foreground` — 实心主色圆圈
-2. **今天但未选中**：`border-2 border-primary text-primary` — 主色描边，无填充
-3. **有照片但未选中**：底部加一个小圆点指示器 `w-1.5 h-1.5 rounded-full bg-primary`
-4. **普通日期**：`text-foreground`
+- **已用时间** = `totalSeconds - seconds`，用 `formatTime()` 格式化
+- **总时长** = 从 `course.duration`（字符串如 `"8 分钟"`）解析秒数，同时用它初始化 `totalSeconds`（替换硬编码的 60）
+- **进度百分比** = `elapsed / totalSeconds * 100`
+- **右侧总时长** = `formatTime(totalSeconds)`
 
 ### 改动文件
-- `src/components/ProgressPage.tsx` — 简化第 178-188 行的条件样式逻辑，移除 `ring` 和 `accent` 样式，增加照片小圆点指示器
+- `src/pages/WorkoutPlayer.tsx`
+  - 解析 `course.duration` 字符串为秒数，用于初始化 `totalSeconds` 状态（默认 60s）
+  - 将 `totalSeconds` 从常量改为 state，在 course 加载后更新
+  - 第 126 行：`04:12` → `formatTime(totalSeconds - seconds)`
+  - 第 128 行：`width: "35%"` → `width: \`${((totalSeconds - seconds) / totalSeconds) * 100}%\``
+  - 第 130 行：`course?.duration || "12:00"` → `formatTime(totalSeconds)`
 
