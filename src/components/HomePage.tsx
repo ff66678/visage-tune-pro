@@ -124,27 +124,37 @@ const HomePage = () => {
       <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">为你推荐</h2>
       {isLoading ? (
         <div className="flex gap-4 px-6">
-          <Skeleton className="min-w-[160px] h-28 rounded-lg" />
-          <Skeleton className="min-w-[160px] h-28 rounded-lg" />
+          <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
+          <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
         </div>
       ) : (
-        <div className="flex overflow-x-auto gap-3 px-6 pb-4 no-scrollbar">
+        <div className="flex overflow-x-auto gap-4 px-6 pb-4 no-scrollbar">
           {recommended.map((item) => (
             <div
               key={item.id}
-              className="min-w-[160px] h-28 bg-surface-elevated rounded-lg relative overflow-hidden flex-shrink-0 cursor-pointer group"
+              className="min-w-[200px] bg-surface rounded-2xl overflow-hidden flex-shrink-0 cursor-pointer group"
               onClick={() => navigate(`/course/${item.id}`)}
             >
-              <img
-                src={item.image_url}
-                alt={item.title}
-                className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-2.5 bg-gradient-to-t from-foreground/70 to-transparent">
-                <span className="text-[10px] uppercase tracking-wider text-background/80 bg-accent-gold/90 px-1.5 py-0.5 rounded font-bold mb-1.5 inline-block">
-                  {item.tag}
-                </span>
-                <h3 className="text-sm font-semibold text-card m-0">{item.title}</h3>
+              <div className="relative h-[140px] overflow-hidden">
+                <img
+                  src={item.image_url}
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                {item.tag && (
+                  <span className="absolute bottom-2 left-2 text-[10px] uppercase tracking-wider text-background/90 bg-foreground/50 backdrop-blur-sm px-2 py-0.5 rounded-full font-bold">
+                    {item.tag}
+                  </span>
+                )}
+              </div>
+              <div className="p-3">
+                <h3 className="text-sm font-semibold text-foreground mb-1.5 line-clamp-1">{item.title}</h3>
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <span className="text-[11px]">{item.difficulty}</span>
+                  <span className="text-[11px]">·</span>
+                  <Clock className="w-3 h-3" />
+                  <span className="text-[11px]">{item.duration}</span>
+                </div>
               </div>
             </div>
           ))}
