@@ -44,9 +44,28 @@ const WorkoutPlayer = () => {
   const navigate = useNavigate();
   const { data: course } = useCourse(id);
 
-  const totalSeconds = 60;
+  const parseDuration = (dur: string | undefined): number => {
+    if (!dur) return 60;
+    const nums = dur.match(/(\d+)/g);
+    if (!nums) return 60;
+    if (dur.includes("分") || dur.includes("min")) return parseInt(nums[0]) * 60 + (nums[1] ? parseInt(nums[1]) : 0);
+    if (dur.includes(":")) return parseInt(nums[0]) * 60 + (nums[1] ? parseInt(nums[1]) : 0);
+    return parseInt(nums[0]) * 60;
+  };
+
+  const [totalSeconds, setTotalSeconds] = useState(60);
+
+  useEffect(() => {
+    if (course?.duration) {
+      const parsed = parseDuration(course.duration);
+      setTotalSeconds(parsed);
+      setSeconds(parsed);
+    }
+  }, [course?.duration]);
+
   const circumference = 283;
   const dashOffset = circumference - (seconds / totalSeconds) * circumference;
+  const elapsed = totalSeconds - seconds;
 
   useEffect(() => {
     if (isPlaying && seconds > 0) {
@@ -123,11 +142,11 @@ const WorkoutPlayer = () => {
       {/* Controls Bar */}
       <div className="relative z-10 border-t border-white/10 px-6 pt-6 pb-12 bg-white/5 backdrop-blur-3xl">
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-[10px] font-mono text-white/50">04:12</span>
+          <span className="text-[10px] font-mono text-white/50">{formatTime(elapsed)}</span>
           <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <div className="h-full rounded-full" style={{ width: "35%", background: "linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%)" }} />
+            <div className="h-full rounded-full" style={{ width: `${totalSeconds > 0 ? (elapsed / totalSeconds) * 100 : 0}%`, background: "linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%)" }} />
           </div>
-          <span className="text-[10px] font-mono text-white/50">{course?.duration || "12:00"}</span>
+          <span className="text-[10px] font-mono text-white/50">{formatTime(totalSeconds)}</span>
         </div>
         <div className="flex justify-center items-center">
           <div className="flex items-center gap-8">
