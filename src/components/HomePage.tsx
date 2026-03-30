@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Gift, Star, Crown, Clock } from "lucide-react";
+import { Gift, Star, Crown, Clock, Dumbbell, Flame, Heart, Zap, BookOpen } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
-import { useWeeklyProgress, useWorkoutStats } from "@/hooks/useWorkoutLogs";
+import { useWeeklyProgress, useWorkoutStats, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
+
+const categoryIcons: Record<string, React.ReactNode> = {
+  力量: <Dumbbell className="w-5 h-5" />,
+  有氧: <Flame className="w-5 h-5" />,
+  瑜伽: <Heart className="w-5 h-5" />,
+  HIIT: <Zap className="w-5 h-5" />,
+};
+const defaultCategoryIcon = <BookOpen className="w-5 h-5" />;
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -22,6 +30,7 @@ const HomePage = () => {
   const { data: courses, isLoading } = useCourses();
   const { data: profile } = useProfile();
   const { user } = useAuth();
+  const { data: recentCourses = [] } = useRecentCourses();
 
   const displayName = profile?.display_name || user?.email?.split("@")[0] || "用户";
   const avatarUrl = profile?.avatar_url;
@@ -31,6 +40,19 @@ const HomePage = () => {
   const { streak } = useWorkoutStats();
   const todayPlan = courses?.find((c) => c.is_today_plan);
   const recommended = courses?.filter((c) => c.is_featured) ?? [];
+
+  const categories = useMemo(() => {
+    if (!courses) return [];
+    const seen = new Set<string>();
+    return courses
+      .map((c) => c.category)
+      .filter((cat) => {
+        if (seen.has(cat)) return false;
+        seen.add(cat);
+        return true;
+      })
+      .slice(0, 5);
+  }, [courses]);
 
   return (
     <div className="animate-fade-in">
@@ -91,8 +113,28 @@ const HomePage = () => {
         </div>
       </div>
 
+      {/* Category Shortcuts */}
+      {categories.length > 0 && (
+        <div className="px-6 mt-4 mb-1">
+          <div className="flex gap-3 overflow-x-auto no-scrollbar">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => navigate(`/category/${encodeURIComponent(cat)}`)}
+                className="flex flex-col items-center gap-1.5 min-w-[56px] bg-transparent border-none cursor-pointer group"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-surface flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
+                  {categoryIcons[cat] || defaultCategoryIcon}
+                </div>
+                <span className="text-[11px] text-muted-foreground font-medium">{cat}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Today's Plan */}
-      <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">今日计划</h2>
+      <h2 className="px-6 mt-5 mb-3 text-lg font-semibold tracking-tight">今日计划</h2>
       {isLoading ? (
         <div className="mx-6"><Skeleton className="h-24 rounded-3xl" /></div>
       ) : todayPlan ? (
@@ -118,17 +160,28 @@ const HomePage = () => {
             {startClicked ? "开始中..." : "立即开始"}
           </button>
         </div>
-      ) : null}
+      ) : (
+        <div
+          className="mx-6 rounded-3xl p-5 bg-surface flex items-center justify-between cursor-pointer hover:bg-surface-elevated transition-colors"
+          onClick={() => navigate("/library")}
+        >
+          <div>
+            <h3 className="text-sm font-semibold text-foreground mb-0.5">今天还没有计划</h3>
+            <p className="text-xs text-muted-foreground">去课程库挑选一个吧 →</p>
+          </div>
+          <BookOpen className="w-8 h-8 text-muted-foreground/40" />
+        </div>
+      )}
 
       {/* Recommended */}
-      <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">为你推荐</h2>
+      <h2 className="px-6 mt-5 mb-3 text-lg font-semibold tracking-tight">为你推荐</h2>
       {isLoading ? (
         <div className="flex gap-4 px-6">
           <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
           <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
         </div>
       ) : (
-        <div className="flex overflow-x-auto gap-4 px-6 pb-4 no-scrollbar">
+        <div className="flex overflow-x-auto gap-4 px-6 pb-2 no-scrollbar">
           {recommended.map((item) => (
             <div
               key={item.id}
@@ -161,8 +214,39 @@ const HomePage = () => {
         </div>
       )}
 
+      {/* Recent Training */}
+      {recentCourses.length > 0 && (
+        <div className="px-6 mt-4">
+          <h2 className="text-[15px] font-semibold mb-3">最近训练</h2>
+          <div className="flex flex-col gap-2.5">
+            {recentCourses.map((course: any) => (
+              <div
+                key={course.id}
+                className="bg-surface rounded-2xl p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-surface-elevated transition-colors"
+                onClick={() => navigate(`/course/${course.id}`)}
+              >
+                <img
+                  src={course.image_url}
+                  alt={course.title}
+                  className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-semibold text-foreground line-clamp-1">{course.title}</h3>
+                  <div className="flex items-center gap-2 text-muted-foreground mt-0.5">
+                    <span className="text-[11px]">{course.difficulty}</span>
+                    <span className="text-[11px]">·</span>
+                    <Clock className="w-3 h-3" />
+                    <span className="text-[11px]">{course.duration}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Streak */}
-      <div className="px-5 mt-2 mb-6">
+      <div className="px-5 mt-4 mb-6">
         <div className="bg-surface rounded-xl p-4 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
             <Star className="w-6 h-6" fill="currentColor" />
