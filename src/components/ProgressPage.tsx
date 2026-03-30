@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Camera, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
+import { Camera, Calendar, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useTodayPhoto, useProgressPhotos, useUploadProgressPhoto } from "@/hooks/useProgressPhotos";
 
@@ -73,7 +73,9 @@ const ProgressPage = () => {
     <div className="animate-fade-in">
       {/* Header */}
       <header className="flex justify-between items-center px-6 pt-6 pb-2">
-        <div />
+        <div className="w-9 h-9 rounded-full bg-card flex items-center justify-center shadow-sm">
+          <Calendar className="w-5 h-5 text-muted-foreground" />
+        </div>
         <h1 className="text-lg font-semibold tracking-tight">进度</h1>
         <button
           onClick={() => navigate("/profile")}
