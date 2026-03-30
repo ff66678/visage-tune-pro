@@ -105,6 +105,7 @@ const ProgressPage = () => {
                 todayMonday.setDate(today.getDate() + mondayOffset);
                 const weekDiff = Math.round((selectedMonday.getTime() - todayMonday.getTime()) / (1000 * 60 * 60 * 24 * 7));
                 setWeekOffset(Math.min(weekDiff, 0));
+                setSelectedDate(date.toISOString().split("T")[0]);
               }}
               className={cn("p-3 pointer-events-auto")}
               modifiers={{ hasPhoto: recentPhotos.map(p => new Date(p.photo_date + "T00:00:00")) }}
