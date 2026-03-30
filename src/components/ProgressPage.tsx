@@ -16,8 +16,10 @@ const ProgressPage = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
   const [weekOffset, setWeekOffset] = useState(0);
   const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
+  const [selectedDate, setSelectedDate] = useState(todayStr);
 
   const changeWeek = (dir: number) => {
     const newOffset = dir < 0 ? weekOffset - 1 : Math.min(weekOffset + 1, 0);
@@ -48,14 +50,17 @@ const ProgressPage = () => {
     const isToday = d.toDateString() === today.toDateString();
     const dateStr = d.toISOString().split("T")[0];
     const hasPhoto = photoDates.has(dateStr);
-    return { label, date: d.getDate(), isToday, hasPhoto };
+    const isSelected = dateStr === selectedDate;
+    return { label, date: d.getDate(), isToday, hasPhoto, isSelected, dateStr };
   });
 
   const avatarUrl =
     profile?.avatar_url ||
     "https://images.pexels.com/photos/3750717/pexels-photo-3750717.jpeg?auto=compress&cs=tinysrgb&w=400&h=400&dpr=2";
 
-  const displayPhoto = todayPhoto?.photo_url || null;
+  const isSelectedToday = selectedDate === todayStr;
+  const selectedPhoto = recentPhotos.find((p) => p.photo_date === selectedDate);
+  const displayPhoto = selectedPhoto?.photo_url || null;
 
   const handleTakePhoto = () => {
     fileInputRef.current?.click();
@@ -69,7 +74,6 @@ const ProgressPage = () => {
     e.target.value = "";
   };
 
-  const todayStr = new Date().toISOString().split("T")[0];
   const pastPhotos = recentPhotos.filter((p) => p.photo_date !== todayStr);
 
   return (
@@ -159,13 +163,21 @@ const ProgressPage = () => {
           }}
         >
           {weekDates.map((d, i) => (
-            <div key={i} className="flex flex-col items-center gap-2 flex-1">
+            <div
+              key={i}
+              className="flex flex-col items-center gap-2 flex-1 cursor-pointer"
+              onClick={() => setSelectedDate(d.dateStr)}
+            >
               <span className="text-[12px] font-medium text-muted-foreground">{d.label}</span>
               <div className="relative">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
-                    d.isToday
+                    d.isToday && d.isSelected
                       ? "bg-primary text-primary-foreground shadow-md"
+                      : d.isSelected
+                      ? "bg-accent text-accent-foreground shadow-md"
+                      : d.isToday
+                      ? "bg-primary/20 text-primary"
                       : d.hasPhoto
                       ? "ring-2 ring-primary text-primary"
                       : "text-foreground"
@@ -220,25 +232,31 @@ const ProgressPage = () => {
 
         {/* Text */}
         <h2 className="text-xl font-semibold tracking-tight mb-1.5">
-          {displayPhoto ? "今天已记录 ✅" : "记录今天的你 ✨"}
+          {displayPhoto
+            ? isSelectedToday ? "今天已记录 ✅" : `${new Date(selectedDate + "T00:00:00").toLocaleDateString("zh-CN", { month: "long", day: "numeric" })} 的记录`
+            : isSelectedToday ? "记录今天的你 ✨" : "这天没有记录"}
         </h2>
         <p className="text-sm text-muted-foreground font-medium mb-6">
-          {displayPhoto ? "明天继续坚持哦" : "每一天都是新的开始"}
+          {displayPhoto
+            ? isSelectedToday ? "明天继续坚持哦" : "记录你的变化"
+            : isSelectedToday ? "每一天都是新的开始" : "坚持记录，见证蜕变"}
         </p>
 
-        {/* Camera Button */}
-        <button
-          onClick={handleTakePhoto}
-          disabled={uploadMutation.isPending}
-          className="w-full max-w-[280px] py-3.5 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center gap-2.5 text-base font-semibold border-none cursor-pointer shadow-md hover:opacity-90 transition-opacity disabled:opacity-50"
-        >
-          {uploadMutation.isPending ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            <Camera className="w-5 h-5" />
-          )}
-          {displayPhoto ? "重新拍照" : "拍照"}
-        </button>
+        {/* Camera Button — only show for today */}
+        {isSelectedToday && (
+          <button
+            onClick={handleTakePhoto}
+            disabled={uploadMutation.isPending}
+            className="w-full max-w-[280px] py-3.5 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center gap-2.5 text-base font-semibold border-none cursor-pointer shadow-md hover:opacity-90 transition-opacity disabled:opacity-50"
+          >
+            {uploadMutation.isPending ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Camera className="w-5 h-5" />
+            )}
+            {displayPhoto ? "重新拍照" : "拍照"}
+          </button>
+        )}
         <input
           ref={fileInputRef}
           type="file"
