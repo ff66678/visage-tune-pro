@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Camera, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
