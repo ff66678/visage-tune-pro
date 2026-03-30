@@ -1,27 +1,13 @@
 
 
-## Plan: 点击周历日期显示对应照片
+## Plan: 月历点击日期同步切换到对应记录
 
-### 现状
-目前照片卡片只显示今天的照片 (`todayPhoto`)，点击周历上的其他日期没有任何反应。
+### 问题
+当前点击月历中的日期只会切换周视图的周偏移，但不会更新 `selectedDate`，导致照片卡片不会显示对应日期的记录。
 
 ### 方案
-
-**1. 添加选中日期状态**
-- 新增 `selectedDate` state，默认为今天的日期字符串
-- 点击周历上的日期时更新 `selectedDate`
-
-**2. 根据选中日期显示照片**
-- 从 `recentPhotos` 中查找 `selectedDate` 对应的照片来显示，而不是只用 `todayPhoto`
-- 照片卡片的文案根据是否是今天动态调整（今天显示"记录今天的你"，过去的日期显示该日期信息）
-
-**3. 周历日期样式**
-- 给当前选中的日期增加选中态样式（如果选中的不是今天，用区别于今天的高亮样式）
-- 日期项添加 `cursor-pointer` 和点击事件
-
-**4. 拍照按钮逻辑**
-- 只有选中今天时才显示拍照按钮，选中过去日期时隐藏或禁用
+在 `ProgressPage.tsx` 的 `Calendar` 的 `onSelect` 回调中，除了现有的 `setWeekOffset` 逻辑外，增加一行 `setSelectedDate(date.toISOString().split("T")[0])` 来同步更新选中日期。
 
 ### 改动文件
-- `src/components/ProgressPage.tsx` — 添加 `selectedDate` state，日期点击处理，条件渲染照片和按钮
+- `src/components/ProgressPage.tsx` — 在 `onSelect` 回调第 107 行附近添加 `setSelectedDate`
 
