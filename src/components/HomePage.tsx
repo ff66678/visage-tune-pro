@@ -124,15 +124,15 @@ const HomePage = () => {
       <h2 className="px-6 mt-8 mb-3 text-lg font-semibold tracking-tight">为你推荐</h2>
       {isLoading ? (
         <div className="flex gap-4 px-6">
-          <Skeleton className="min-w-[240px] h-40 rounded-lg" />
-          <Skeleton className="min-w-[240px] h-40 rounded-lg" />
+          <Skeleton className="min-w-[160px] h-28 rounded-lg" />
+          <Skeleton className="min-w-[160px] h-28 rounded-lg" />
         </div>
       ) : (
-        <div className="flex overflow-x-auto gap-4 px-6 pb-4 no-scrollbar">
+        <div className="flex overflow-x-auto gap-3 px-6 pb-4 no-scrollbar">
           {recommended.map((item) => (
             <div
               key={item.id}
-              className="min-w-[240px] h-40 bg-surface-elevated rounded-lg relative overflow-hidden flex-shrink-0 cursor-pointer group"
+              className="min-w-[160px] h-28 bg-surface-elevated rounded-lg relative overflow-hidden flex-shrink-0 cursor-pointer group"
               onClick={() => navigate(`/course/${item.id}`)}
             >
               <img
@@ -140,11 +140,11 @@ const HomePage = () => {
                 alt={item.title}
                 className="w-full h-full object-cover opacity-90 group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-foreground/70 to-transparent">
+              <div className="absolute bottom-0 left-0 right-0 p-2.5 bg-gradient-to-t from-foreground/70 to-transparent">
                 <span className="text-[10px] uppercase tracking-wider text-background/80 bg-accent-gold/90 px-1.5 py-0.5 rounded font-bold mb-1.5 inline-block">
                   {item.tag}
                 </span>
-                <h3 className="text-base font-semibold text-card m-0">{item.title}</h3>
+                <h3 className="text-sm font-semibold text-card m-0">{item.title}</h3>
               </div>
             </div>
           ))}
