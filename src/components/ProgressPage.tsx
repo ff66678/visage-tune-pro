@@ -76,7 +76,7 @@ const ProgressPage = () => {
     <div className="animate-fade-in">
       {/* Header */}
       <header className="flex justify-between items-center px-6 pt-6 pb-2">
-        <Popover>
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
           <PopoverTrigger asChild>
             <button className="w-9 h-9 rounded-full bg-surface-elevated flex items-center justify-center cursor-pointer hover:bg-surface-hover transition-colors">
               <CalendarIcon className="w-5 h-5 text-muted-foreground" />
@@ -92,7 +92,6 @@ const ProgressPage = () => {
               })()}
               onSelect={(date) => {
                 if (!date) return;
-                const diffDays = Math.floor((date.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
                 const dayOfWeekSelected = date.getDay();
                 const mondayOffsetSelected = dayOfWeekSelected === 0 ? -6 : 1 - dayOfWeekSelected;
                 const selectedMonday = new Date(date);
@@ -101,6 +100,7 @@ const ProgressPage = () => {
                 todayMonday.setDate(today.getDate() + mondayOffset);
                 const weekDiff = Math.round((selectedMonday.getTime() - todayMonday.getTime()) / (1000 * 60 * 60 * 24 * 7));
                 setWeekOffset(Math.min(weekDiff, 0));
+                setCalendarOpen(false);
               }}
               className={cn("p-3 pointer-events-auto")}
               modifiers={{ hasPhoto: recentPhotos.map(p => new Date(p.photo_date + "T00:00:00")) }}
