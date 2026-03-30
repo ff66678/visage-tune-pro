@@ -166,14 +166,13 @@ const ProgressPage = () => {
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
                     d.isToday
                       ? "bg-primary text-primary-foreground shadow-md"
+                      : d.hasPhoto
+                      ? "ring-2 ring-primary text-primary"
                       : "text-foreground"
                   }`}
                 >
                   {d.date}
                 </div>
-                {d.hasPhoto && !d.isToday && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
-                )}
               </div>
             </div>
           ))}
