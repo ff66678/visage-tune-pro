@@ -73,7 +73,7 @@ const ProgressPage = () => {
     <div className="animate-fade-in">
       {/* Header */}
       <header className="flex justify-between items-center px-6 pt-6 pb-2">
-        <div className="w-9 h-9 rounded-full bg-card flex items-center justify-center shadow-sm">
+        <div className="w-9 h-9 rounded-full bg-surface-elevated flex items-center justify-center">
           <Calendar className="w-5 h-5 text-muted-foreground" />
         </div>
         <h1 className="text-lg font-semibold tracking-tight">进度</h1>
@@ -86,7 +86,7 @@ const ProgressPage = () => {
       </header>
 
       {/* Week Calendar Strip */}
-      <div className="mx-4 mt-2 rounded-2xl bg-card p-4">
+      <div className="mx-4 mt-2 rounded-2xl bg-surface p-4">
         {/* Month nav */}
         <div className="flex justify-between items-center mb-4">
           <button
