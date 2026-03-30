@@ -73,16 +73,16 @@ const ProgressPage = () => {
     <div className="animate-fade-in">
       {/* Header */}
       <header className="flex justify-between items-center px-6 pt-6 pb-2">
-        <div className="w-9 h-9 rounded-full bg-card flex items-center justify-center shadow-sm">
-          <Calendar className="w-5 h-5 text-muted-foreground" />
-        </div>
-        <h1 className="text-lg font-semibold tracking-tight">进度</h1>
         <button
           onClick={() => navigate("/profile")}
           className="w-9 h-9 rounded-full overflow-hidden border-2 border-primary/20 bg-card cursor-pointer p-0"
         >
           <img src={avatarUrl} alt="头像" className="w-full h-full object-cover" />
         </button>
+        <h1 className="text-lg font-semibold tracking-tight">进度</h1>
+        <div className="w-9 h-9 rounded-full bg-card flex items-center justify-center shadow-sm">
+          <Calendar className="w-5 h-5 text-muted-foreground" />
+        </div>
       </header>
 
       {/* Week Calendar Strip */}
