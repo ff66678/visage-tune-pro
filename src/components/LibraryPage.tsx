@@ -143,7 +143,7 @@ const LibraryPage = () => {
                 placeholder="搜索课程..."
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
-                className="border-none bg-transparent text-sm text-foreground w-full outline-none placeholder:text-muted-foreground font-sans"
+                className="border-none bg-transparent text-base text-foreground w-full outline-none placeholder:text-muted-foreground font-sans"
               />
             </div>
             <button
