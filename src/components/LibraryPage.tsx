@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Clock, Heart, Star, ChevronRight, SlidersHorizontal, Trophy } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
@@ -28,12 +28,20 @@ const LibraryPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState<"default" | "rating" | "duration">("default");
   const [showSort, setShowSort] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
   const { data: favoriteIds } = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
   const { user } = useAuth();
 
+  useEffect(() => {
+    const container = document.querySelector('.no-scrollbar');
+    if (!container) return;
+    const onScroll = () => setScrolled(container.scrollTop > 20);
+    container.addEventListener('scroll', onScroll);
+    return () => container.removeEventListener('scroll', onScroll);
+  }, []);
   const featuredCourse = useMemo(() => {
     if (!courses) return null;
     return courses.find((c) => c.is_featured) || courses[0] || null;
@@ -110,55 +118,57 @@ const LibraryPage = () => {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <header className="px-6 pt-8 pb-2 sticky top-0 bg-background/90 backdrop-blur-xl z-40">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-bold tracking-tight">课程库</h1>
+      <header className={`px-6 sticky top-0 bg-background/90 backdrop-blur-xl z-40 transition-all duration-300 ${scrolled ? 'pt-2 pb-1' : 'pt-8 pb-2'}`}>
+        <div className={`transition-all duration-300 overflow-hidden ${scrolled ? 'max-h-0 opacity-0 mb-0' : 'max-h-40 opacity-100 mb-4'}`}>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-2xl font-bold tracking-tight">课程库</h1>
+          </div>
+
+          {/* Search */}
+          <div className="flex gap-2">
+            <div className="flex-1 bg-surface rounded-2xl px-4 py-3 flex items-center gap-2.5 shadow-sm">
+              <Search className="w-[18px] h-[18px] text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="搜索课程..."
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                className="border-none bg-transparent text-sm text-foreground w-full outline-none placeholder:text-muted-foreground font-sans"
+              />
+            </div>
+            <button
+              onClick={() => setShowSort(!showSort)}
+              className="w-12 h-12 rounded-2xl bg-surface flex items-center justify-center shadow-sm active:scale-95 transition-transform"
+            >
+              <SlidersHorizontal className="w-[18px] h-[18px] text-muted-foreground" />
+            </button>
+          </div>
+
+          {/* Sort options */}
+          {showSort && (
+            <div className="flex gap-2 mt-3 animate-fade-in">
+              {[
+                { key: "default" as const, label: "默认" },
+                { key: "rating" as const, label: "按评分" },
+                { key: "duration" as const, label: "按时长" },
+              ].map((s) => (
+                <button
+                  key={s.key}
+                  onClick={() => { setSortBy(s.key); setShowSort(false); }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                    sortBy === s.key
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-surface-elevated text-muted-foreground"
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Search */}
-        <div className="flex gap-2 mb-4">
-          <div className="flex-1 bg-surface rounded-2xl px-4 py-3 flex items-center gap-2.5 shadow-sm">
-            <Search className="w-[18px] h-[18px] text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="搜索课程..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="border-none bg-transparent text-sm text-foreground w-full outline-none placeholder:text-muted-foreground font-sans"
-            />
-          </div>
-          <button
-            onClick={() => setShowSort(!showSort)}
-            className="w-12 h-12 rounded-2xl bg-surface flex items-center justify-center shadow-sm active:scale-95 transition-transform"
-          >
-            <SlidersHorizontal className="w-[18px] h-[18px] text-muted-foreground" />
-          </button>
-        </div>
-
-        {/* Sort options */}
-        {showSort && (
-          <div className="flex gap-2 mb-3 animate-fade-in">
-            {[
-              { key: "default" as const, label: "默认" },
-              { key: "rating" as const, label: "按评分" },
-              { key: "duration" as const, label: "按时长" },
-            ].map((s) => (
-              <button
-                key={s.key}
-                onClick={() => { setSortBy(s.key); setShowSort(false); }}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                  sortBy === s.key
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-surface-elevated text-muted-foreground"
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Filter tabs */}
+        {/* Filter tabs - always visible */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
           {filters.map((filter) => (
             <button
