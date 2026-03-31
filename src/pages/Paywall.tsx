@@ -15,7 +15,6 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [showSuccess, setShowSuccess] = useState(false);
 
   const handleStartTrial = () => {
     setShowSuccess(true);
