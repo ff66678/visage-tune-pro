@@ -37,6 +37,19 @@ const AnalysisPage = () => {
 
   const latestPhoto = photos[0];
 
+  const requireAuth = () => {
+    if (!user) {
+      navigate("/auth");
+      return true;
+    }
+    return false;
+  };
+
+  const handleCameraClick = () => {
+    if (requireAuth()) return;
+    fileInputRef.current?.click();
+  };
+
   const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
