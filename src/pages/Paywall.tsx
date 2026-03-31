@@ -188,7 +188,10 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
             onClick={() => setSelectedPlan("monthly")}
           >
             <div className="flex justify-between items-start">
-              <span className="text-[17px] font-semibold text-foreground">月度订阅</span>
+              <div className="flex flex-col">
+                <span className="text-[17px] font-semibold text-foreground">月度订阅</span>
+                <span className="text-[14px] font-semibold text-primary mt-1">7天免费试用</span>
+              </div>
               <span className="text-[17px] font-semibold text-foreground">¥25.00/月</span>
             </div>
             <p className="text-[10px] text-muted-foreground mt-8 uppercase tracking-wide font-medium">
