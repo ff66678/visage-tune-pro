@@ -104,32 +104,34 @@ const HomePage = () => {
         </div>
       </nav>
 
-      {/* Weekly Progress */}
-      <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-[15px] font-semibold">每周进度</h2>
-          <span className="text-[13px] text-primary font-semibold">完成 {percentage}%</span>
-        </div>
-        <div className="flex justify-between items-end">
-          {weekData.map((day, i) => (
-            <div key={i} className="flex flex-col items-center gap-2">
-              <div className="w-8 h-[60px] bg-surface-elevated rounded-lg relative overflow-hidden">
-                <div
-                  className="absolute bottom-0 left-0 w-full bg-primary rounded-lg transition-all duration-1000"
-                  style={{ height: day.height }}
-                />
+      {/* Weekly Progress - only for logged in users */}
+      {user && (
+        <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-[15px] font-semibold">每周进度</h2>
+            <span className="text-[13px] text-primary font-semibold">完成 {percentage}%</span>
+          </div>
+          <div className="flex justify-between items-end">
+            {weekData.map((day, i) => (
+              <div key={i} className="flex flex-col items-center gap-2">
+                <div className="w-8 h-[60px] bg-surface-elevated rounded-lg relative overflow-hidden">
+                  <div
+                    className="absolute bottom-0 left-0 w-full bg-primary rounded-lg transition-all duration-1000"
+                    style={{ height: day.height }}
+                  />
+                </div>
+                <span
+                  className={`text-[11px] font-medium ${
+                    day.active ? "text-foreground font-bold" : "text-muted-foreground"
+                  }`}
+                >
+                  {day.label}
+                </span>
               </div>
-              <span
-                className={`text-[11px] font-medium ${
-                  day.active ? "text-foreground font-bold" : "text-muted-foreground"
-                }`}
-              >
-                {day.label}
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Category Shortcuts */}
       {categories.length > 0 && (
