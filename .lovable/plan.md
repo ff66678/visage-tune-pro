@@ -1,39 +1,17 @@
 
 
-## Plan: 未登录状态下也能看到内容
-
-### 问题
-`courses` 表的 RLS 策略设置为 `TO authenticated`，未登录用户无法读取课程数据，导致首页和课程库为空。
+## Plan: 未登录时也显示每周进度、喜欢、最近播放等模块
 
 ### 改动
 
-**1. 数据库迁移 — 添加匿名读取策略**
+**`src/components/HomePage.tsx`**
 
-给 `courses` 表添加一条新的 RLS 策略，允许匿名用户也能读取：
+移除以下模块的 `{user && ...}` 条件判断，让它们始终显示：
 
-```sql
-CREATE POLICY "Anyone can read courses"
-  ON public.courses
-  FOR SELECT
-  TO anon
-  USING (true);
-```
+1. **每周进度**（第108行）：移除 `{user && (`，未登录时数据为空会显示全部空柱子 + 0%，视觉上正常
+2. **我的喜欢 & 最近播放**（第269行）：移除 `{user && (`，未登录时显示 0 个课程 / 0 个记录，点击时跳转登录页
+3. **连续打卡**（第299行）：移除 `{user && (`，未登录时显示"连续打卡 0 天"+"今天开始打卡吧！"
+4. **最近训练**（第238行）：保持 `recentCourses.length > 0` 判断即可，移除 `user &&`，未登录时 recentCourses 为空数组自然不显示
 
-**2. `src/components/HomePage.tsx` — 未登录时隐藏个人数据模块**
-
-未登录时隐藏以下模块（数据为空没意义）：
-- 每周进度
-- 最近训练
-- 我的喜欢 / 最近播放
-- 连续打卡
-
-保留展示：
-- 分类快捷入口
-- 今日计划（显示"去课程库挑选"的空状态）
-- 为你推荐
-
-### 不变的部分
-- `useCourses` hook 不变（不依赖 user）
-- 其他表（workout_logs、favorites 等）保持 `authenticated` 策略不变
-- 课程库页面自动修复（也用 `useCourses`）
+对于未登录用户点击"我的喜欢"和"最近播放"，改为跳转 `/auth` 而非原页面。
 
