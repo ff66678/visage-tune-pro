@@ -20,6 +20,7 @@ const SettingsDrawer = ({ open, onOpenChange }: SettingsDrawerProps) => {
   const handleSignOut = async () => {
     await signOut();
     onOpenChange(false);
+    navigate("/");
   };
 
   return (
