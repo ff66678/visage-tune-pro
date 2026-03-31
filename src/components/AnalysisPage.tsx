@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
