@@ -223,7 +223,7 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
         </div>
       </section>
 
-      <div className="h-40" />
+      <div className="h-36" />
 
       {/* Fixed Bottom CTA */}
       <div
