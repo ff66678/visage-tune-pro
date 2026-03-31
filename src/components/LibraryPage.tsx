@@ -12,8 +12,11 @@ const filters = [
   { label: "眼部", emoji: "👁" },
   { label: "下颌", emoji: "🦴" },
   { label: "脸颊", emoji: "✨" },
+  { label: "全脸", emoji: "💎" },
   { label: "额头", emoji: "🧠" },
   { label: "颈部", emoji: "💆" },
+  { label: "太阳穴", emoji: "🌟" },
+  { label: "法令纹", emoji: "✋" },
 ];
 
 const difficultyColor = (d: string) => {
