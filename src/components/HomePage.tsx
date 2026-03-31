@@ -250,6 +250,34 @@ const HomePage = () => {
         </div>
       )}
 
+      {/* My Favorites & Recently Played */}
+      <div className="px-6 mt-4 grid grid-cols-2 gap-3">
+        <div
+          className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
+          onClick={() => navigate("/favorites")}
+        >
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+            <Heart className="w-5 h-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-foreground">我的喜欢</h3>
+            <p className="text-[11px] text-muted-foreground">{favCount} 个课程</p>
+          </div>
+        </div>
+        <div
+          className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
+          onClick={() => navigate("/recently-played")}
+        >
+          <div className="w-10 h-10 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
+            <Play className="w-5 h-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-foreground">最近播放</h3>
+            <p className="text-[11px] text-muted-foreground">{recentCourses.length} 个记录</p>
+          </div>
+        </div>
+      </div>
+
       {/* Streak */}
       <div className="px-5 mt-4 mb-6">
         <div className="bg-surface rounded-xl p-4 flex items-center gap-4">
