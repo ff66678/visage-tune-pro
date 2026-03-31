@@ -34,13 +34,8 @@ const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
   const latestPhoto = photos[0];
 
   const handleAnalyze = async () => {
-    if (!latestPhoto) return;
-    setAnalyzing(true);
-    try {
-      await runAnalysis.mutateAsync(latestPhoto.photo_url);
-    } finally {
-      setAnalyzing(false);
-    }
+    if (!latestPhoto || runAnalysis.isPending) return;
+    await runAnalysis.mutateAsync(latestPhoto.photo_url);
   };
 
   // Recommend courses based on weak areas
