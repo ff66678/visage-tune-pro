@@ -34,9 +34,19 @@ const HomePage = () => {
   const { user } = useAuth();
   const { data: recentCourses = [] } = useRecentCourses();
 
-  const displayName = profile?.display_name || user?.email?.split("@")[0] || "用户";
-  const avatarUrl = profile?.avatar_url;
+  const displayName = user
+    ? (profile?.display_name || user?.email?.split("@")[0] || "用户")
+    : "游客";
+  const avatarUrl = user ? profile?.avatar_url : undefined;
   const initials = displayName.slice(0, 1).toUpperCase();
+
+  const handleAvatarClick = () => {
+    if (user) {
+      navigate("/profile");
+    } else {
+      navigate("/auth");
+    }
+  };
 
   const { data: favorites = [] } = useFavorites();
   const favCount = favorites.length;
