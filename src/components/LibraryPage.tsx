@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Clock, Heart, Star, ChevronRight, SlidersHorizontal, Trophy } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
