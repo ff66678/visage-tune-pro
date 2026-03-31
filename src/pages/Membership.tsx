@@ -113,7 +113,7 @@ const MembershipPage = () => {
               <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180" />
             </button>
             <button className="w-full flex items-center justify-between p-4 text-left">
-              <span className="text-sm font-medium text-destructive">取消订阅</span>
+              <span className="text-sm font-medium text-muted-foreground">取消订阅</span>
               <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180" />
             </button>
           </div>
