@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { X, Check, ChevronDown, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,6 +16,10 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleStartTrial = () => {
     if (!user) {
