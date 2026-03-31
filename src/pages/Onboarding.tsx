@@ -488,7 +488,7 @@ const Onboarding = () => {
         {step === 5 && <PlanStep timeLabel={time || "10 分钟"} />}
 
         {/* Bottom CTA */}
-        <div className="sticky bottom-0 left-0 w-full p-6 pt-12 mt-auto" style={{ background: 'linear-gradient(to top, hsl(var(--background)) 60%, transparent)' }}>
+        <div className="absolute bottom-0 left-0 w-full p-6 pt-12" style={{ background: 'linear-gradient(to top, hsl(var(--background)) 60%, transparent)' }}>
           <button onClick={handleNext} disabled={!canContinue()}
             className="w-full bg-primary text-primary-foreground rounded-2xl py-5 font-bold text-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg disabled:opacity-50 disabled:scale-100">
             {step === 5 ? "开启我的旅程" : "继续"} <ArrowRight className="w-5 h-5" />
