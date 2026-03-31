@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { ChevronLeft, ArrowRight, Check, Droplets, Wind, Link, Heart, Sparkles, TrendingDown, Moon, Frown, Clock, Timer, Hourglass, Infinity, Rocket, CalendarCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -351,15 +351,7 @@ const SuccessScreen = ({ onStart }: { onStart: () => void }) => (
 // Main Onboarding Component
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, setOnboardingCompleted } = useAuth();
-
-  const completeOnboarding = async () => {
-    if (user) {
-      await supabase.from("profiles").update({ onboarding_completed: true } as any).eq("user_id", user.id);
-      setOnboardingCompleted(true);
-      navigate("/");
-    }
-  };
+  const { user, setOnboardingCompleted, onboardingCompleted, loading } = useAuth();
 
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<string | null>(null);
@@ -370,6 +362,27 @@ const Onboarding = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+
+  // When user logs in during onboarding auth step, move to paywall
+  useEffect(() => {
+    if (showAuth && user) {
+      setShowAuth(false);
+      setShowPaywall(true);
+    }
+  }, [user, showAuth]);
+
+  // 已完成引导的用户直接跳转首页
+  if (!loading && user && onboardingCompleted === true) {
+    return <Navigate to="/" replace />;
+  }
+
+  const completeOnboarding = async () => {
+    if (user) {
+      await supabase.from("profiles").update({ onboarding_completed: true } as any).eq("user_id", user.id);
+      setOnboardingCompleted(true);
+      navigate("/");
+    }
+  };
 
   const toggleConcern = (c: string) => {
     setConcerns((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]);
@@ -406,13 +419,7 @@ const Onboarding = () => {
     }
   };
 
-  // When user logs in during onboarding auth step, move to paywall
-  useEffect(() => {
-    if (showAuth && user) {
-      setShowAuth(false);
-      setShowPaywall(true);
-    }
-  }, [user, showAuth]);
+
 
   const completeOnboardingWithPayment = async () => {
     if (user) {
