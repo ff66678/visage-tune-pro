@@ -1,33 +1,29 @@
 
 
-## Plan: 分析和记录页面允许未登录用户浏览
+## Plan: 分析页未登录/无数据时显示完整页面布局
+
+### 问题
+当前 `AnalysisPage.tsx` 第83行有一个 early return：`if (!latestPhoto && !loadingLatest)` 直接返回一个简单的空状态（只有一个相机图标和按钮），跳过了整个页面布局。
 
 ### 改动
 
-**1. `src/components/BottomTabBar.tsx`**
+**`src/components/AnalysisPage.tsx`**
 
-将分析和记录 tab 的 `requiresAuth` 改为 `false`，让未登录用户也能切换到这两个页面：
+删除第83-120行的 early return 空状态块。让页面始终渲染完整布局：
 
-```tsx
-{ icon: ScanFace, label: "分析", requiresAuth: false },
-{ icon: Camera, label: "记录", requiresAuth: false },
-```
+- **椭圆相框**：无照片时显示相机占位图标（已有这个逻辑在第155行）
+- **分析按钮**：始终显示，点击触发拍照
+- **评分卡片区域**：无 `latest` 数据时显示占位状态（如 `--` 或 `0`），而非隐藏
+- **详细指标**：无数据时显示空进度条 + 占位文字
+- **推荐课程和推荐好物**：始终显示（已有逻辑，`getRecommendedCourses` 无数据时取前3个课程）
 
-**2. `src/components/AnalysisPage.tsx`**
-
-- 拍照按钮（`fileInputRef.current?.click()`）：点击前检查 `user`，未登录跳 `/auth`
-- 推荐课程点击（`navigate(/course/...)`）：未登录跳 `/auth`
-- 推荐商品链接：未登录跳 `/auth`（阻止默认跳转）
-- 页面内容本身正常展示（无照片的空状态、历史分析结果等照常显示）
-
-**3. `src/components/ProgressPage.tsx`**
-
-- 拍照上传按钮：点击前检查 `user`，未登录跳 `/auth`
-- 页面布局和日历等 UI 正常展示
-
-两个页面都需要从 `useAuth()` 获取 `user`。
+具体改法：
+1. 删除 `if (!latestPhoto && !loadingLatest)` 的 early return
+2. 在评分卡片区域加 `{!latest ? (占位UI) : (原有内容)}`，显示 `--` 和空进度条
+3. 推荐课程部分去掉 `latest &&` 条件，让无数据时也显示课程推荐
 
 ### 不变的部分
-- 已登录用户体验完全不变
-- 数据查询 hooks 在无用户时返回空数据，页面自然显示空状态
+- 拍照上传和分析流程不变
+- 已有分析数据的展示不变
+- 推荐好物模块不变
 
