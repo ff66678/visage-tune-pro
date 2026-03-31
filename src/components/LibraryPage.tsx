@@ -153,30 +153,30 @@ const LibraryPage = () => {
               <SlidersHorizontal className="w-[18px] h-[18px] text-muted-foreground" />
             </button>
           </div>
-
-          {/* Sort options */}
-          {showSort && (
-            <div className="flex gap-2 mt-3 animate-fade-in">
-              {[
-                { key: "default" as const, label: "默认" },
-                { key: "rating" as const, label: "按评分" },
-                { key: "duration" as const, label: "按时长" },
-              ].map((s) => (
-                <button
-                  key={s.key}
-                  onClick={() => { setSortBy(s.key); setShowSort(false); }}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-                    sortBy === s.key
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-surface-elevated text-muted-foreground"
-                  }`}
-                >
-                  {s.label}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
+
+        {/* Sort options - outside collapsible to avoid overflow:hidden clipping */}
+        {showSort && (
+          <div className="flex gap-2 mt-3 mb-2 animate-fade-in">
+            {[
+              { key: "default" as const, label: "默认" },
+              { key: "rating" as const, label: "按评分" },
+              { key: "duration" as const, label: "按时长" },
+            ].map((s) => (
+              <button
+                key={s.key}
+                onClick={() => { setSortBy(s.key); setShowSort(false); }}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                  sortBy === s.key
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-surface-elevated text-muted-foreground"
+                }`}
+              >
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Filter tabs - always visible */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
