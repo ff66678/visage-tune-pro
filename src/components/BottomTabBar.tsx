@@ -11,8 +11,8 @@ interface BottomTabBarProps {
 const tabs = [
   { icon: Home, label: "首页", requiresAuth: false },
   { icon: BookOpen, label: "课程", requiresAuth: false },
-  { icon: ScanFace, label: "分析", requiresAuth: true },
-  { icon: Camera, label: "记录", requiresAuth: true },
+  { icon: ScanFace, label: "分析", requiresAuth: false },
+  { icon: Camera, label: "记录", requiresAuth: false },
 ];
 
 const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {

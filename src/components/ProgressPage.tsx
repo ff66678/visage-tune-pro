@@ -72,6 +72,10 @@ const ProgressPage = () => {
   const displayPhoto = selectedPhoto?.photo_url || null;
 
   const handleTakePhoto = () => {
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
     fileInputRef.current?.click();
   };
 

@@ -295,9 +295,15 @@ const AnalysisPage = () => {
             {products.map((product) => (
               <a
                 key={product.id}
-                href={product.purchase_url || "#"}
-                target="_blank"
+                href={user ? (product.purchase_url || "#") : "#"}
+                target={user ? "_blank" : undefined}
                 rel="noopener noreferrer"
+                onClick={(e) => {
+                  if (!user) {
+                    e.preventDefault();
+                    navigate("/auth");
+                  }
+                }}
                 className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden transition-colors active:bg-muted"
               >
                 <div className="relative aspect-square">
