@@ -6,6 +6,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWeeklyProgress, useWorkoutStats, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { useFavorites } from "@/hooks/useFavorites";
+import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
