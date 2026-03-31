@@ -2,6 +2,7 @@ import { useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Camera, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTodayPhoto, useProgressPhotos, useUploadProgressPhoto } from "@/hooks/useProgressPhotos";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
