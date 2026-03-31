@@ -176,13 +176,16 @@ const ProfileDetailContent = () => {
           className="inline-flex items-center gap-2 bg-card border border-foreground/[0.04] px-4 py-2 pl-2 rounded-full text-sm font-semibold shadow-sm mb-4 cursor-pointer"
         >
           <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">
-            +
+            {isPaid ? "✓" : "+"}
           </div>
-          尊享会员
+          {isPaid ? "会员中心" : "尊享会员"}
         </button>
         <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-          解锁进阶筋膜训练课程<br />
-          升级 <span className="text-foreground font-semibold">尊享会员</span>
+          {isPaid ? (
+            <>已解锁全部进阶课程<br />点击管理 <span className="text-foreground font-semibold">会员权益</span></>
+          ) : (
+            <>解锁进阶筋膜训练课程<br />升级 <span className="text-foreground font-semibold">尊享会员</span></>
+          )}
         </p>
       </div>
 
