@@ -119,8 +119,17 @@ const LibraryPage = () => {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <header className={`px-6 sticky top-0 bg-background/90 backdrop-blur-xl z-40 transition-all duration-300 ${scrolled ? 'pt-2 pb-1' : 'pt-8 pb-2'}`}>
-        <div className={`transition-all duration-300 overflow-hidden ${scrolled ? 'max-h-0 opacity-0 mb-0' : 'max-h-40 opacity-100 mb-4'}`}>
+      <header className={`px-6 sticky top-0 bg-background/90 backdrop-blur-xl z-40 transition-all duration-500 ease-in-out ${scrolled ? 'pt-2 pb-1' : 'pt-8 pb-2'}`}>
+        <div
+          ref={collapseRef}
+          className="overflow-hidden transition-all duration-500 ease-in-out"
+          style={{
+            maxHeight: scrolled ? 0 : collapseRef.current?.scrollHeight || 200,
+            opacity: scrolled ? 0 : 1,
+            transform: scrolled ? 'translateY(-8px)' : 'translateY(0)',
+            marginBottom: scrolled ? 0 : 16,
+          }}
+        >
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl font-bold tracking-tight">课程库</h1>
           </div>
