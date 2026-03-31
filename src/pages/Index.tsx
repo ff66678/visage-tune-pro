@@ -22,7 +22,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
-      <div ref={scrollRef} className="w-full max-w-[480px] min-h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
+      <div ref={scrollRef} className="w-full max-w-[480px] h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
         <ActivePage />
         <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
