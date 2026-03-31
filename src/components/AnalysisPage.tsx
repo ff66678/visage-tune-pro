@@ -266,7 +266,10 @@ const AnalysisPage = () => {
             {recommendedCourses.map((course) => (
               <button
                 key={course.id}
-                onClick={() => navigate(`/course/${course.id}`)}
+                onClick={() => {
+                  if (requireAuth()) return;
+                  navigate(`/course/${course.id}`);
+                }}
                 className="w-full flex items-center gap-3 rounded-2xl bg-card border border-border p-3 text-left transition-colors active:bg-muted"
               >
                 <img
