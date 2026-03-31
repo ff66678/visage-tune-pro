@@ -263,12 +263,11 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* My Favorites & Recently Played - only for logged in users */}
-      {user && (
-        <div className="px-6 mt-4 grid grid-cols-2 gap-3">
+      {/* My Favorites & Recently Played */}
+      <div className="px-6 mt-4 grid grid-cols-2 gap-3">
           <div
             className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
-            onClick={() => navigate("/favorites")}
+            onClick={() => navigate(user ? "/favorites" : "/auth")}
           >
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
               <Heart className="w-5 h-5" />
