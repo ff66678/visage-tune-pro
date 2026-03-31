@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Loader2, Camera, Sparkles } from "lucide-react";
+import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useFaceAnalysis";
 import { useProgressPhotos } from "@/hooks/useProgressPhotos";
@@ -22,7 +22,7 @@ const levelLabel = (level: string) => {
   return map[level] || level;
 };
 
-const AnalysisPage = () => {
+const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
   const { data: history = [] } = useFaceAnalyses();
@@ -30,18 +30,12 @@ const AnalysisPage = () => {
   const { data: courses = [] } = useCourses();
   const { data: products = [] } = useProducts();
   const runAnalysis = useRunAnalysis();
-  const [analyzing, setAnalyzing] = useState(false);
 
   const latestPhoto = photos[0];
 
   const handleAnalyze = async () => {
-    if (!latestPhoto) return;
-    setAnalyzing(true);
-    try {
-      await runAnalysis.mutateAsync(latestPhoto.photo_url);
-    } finally {
-      setAnalyzing(false);
-    }
+    if (!latestPhoto || runAnalysis.isPending) return;
+    await runAnalysis.mutateAsync(latestPhoto.photo_url);
   };
 
   // Recommend courses based on weak areas
@@ -88,7 +82,7 @@ const AnalysisPage = () => {
   const recommendedCourses = getRecommendedCourses();
 
   return (
-    <div className="px-5 pt-14 pb-8 space-y-5">
+    <div ref={ref} className="px-5 pt-14 pb-8 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-foreground">面部分析</h1>
@@ -128,12 +122,12 @@ const AnalysisPage = () => {
         <div className="p-4">
           <Button
             onClick={handleAnalyze}
-            disabled={analyzing || !latestPhoto}
+            disabled={runAnalysis.isPending || !latestPhoto}
             className="w-full rounded-xl h-11"
           >
-            {analyzing ? (
+            {runAnalysis.isPending ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
                 AI 分析中…
               </>
             ) : (
@@ -289,6 +283,8 @@ const AnalysisPage = () => {
       )}
     </div>
   );
-};
+});
+
+AnalysisPage.displayName = "AnalysisPage";
 
 export default AnalysisPage;
