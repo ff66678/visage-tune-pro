@@ -1,41 +1,41 @@
 
 
-## Plan: 课程库头部滚动时收起，只保留筛选标签
+## Plan: 优化课程库头部收起动画，使过渡更丝滑
 
-### 思路
-监听滚动容器的 scroll 事件，当用户向下滚动时，隐藏标题和搜索栏，只保留底部的筛选标签（全部、眼部、下颌...）。向上滚回顶部时恢复显示。
+### 问题
+当前使用 `max-h-0` / `max-h-40` + `opacity` 切换，过渡生硬，因为 `max-height` 动画不精确（估算值与实际高度不匹配导致速度不均匀）。
 
 ### 改动
 
 **`src/components/LibraryPage.tsx`**
 
-1. 添加 `scrolled` 状态，监听父容器滚动事件（通过 `useEffect` 监听最近的可滚动父容器）
-2. 标题区域（`h1 课程库`）和搜索栏区域在 `scrolled` 为 true 时通过 `max-height: 0 + overflow: hidden + opacity: 0` 做过渡动画隐藏
-3. 筛选标签区域始终显示
-4. 使用 CSS transition 实现平滑收起效果
+1. **用 `useRef` 获取实际高度**：给可折叠区域加 ref，用 `scrollHeight` 作为 `max-height` 的目标值，让动画与实际内容高度匹配
+2. **缓动函数改为 `ease-in-out`**：比 `ease-out` 更自然
+3. **延长动画时长**：从 `duration-300` 改为 `duration-500`
+4. **加 `transform` 微位移**：收起时加 `translateY(-8px)`，展开时 `translateY(0)`，增加层次感
+5. **header padding 过渡时长同步**：统一为 `duration-500 ease-in-out`
 
+具体样式改为：
 ```tsx
-const [scrolled, setScrolled] = useState(false);
-
-useEffect(() => {
-  const container = document.querySelector('.no-scrollbar');
-  if (!container) return;
-  const onScroll = () => setScrolled(container.scrollTop > 20);
-  container.addEventListener('scroll', onScroll);
-  return () => container.removeEventListener('scroll', onScroll);
-}, []);
+// 可折叠区域
+<div 
+  ref={collapseRef}
+  className="overflow-hidden transition-all duration-500 ease-in-out"
+  style={{
+    maxHeight: scrolled ? 0 : collapseRef.current?.scrollHeight || 200,
+    opacity: scrolled ? 0 : 1,
+    transform: scrolled ? 'translateY(-8px)' : 'translateY(0)',
+    marginBottom: scrolled ? 0 : 16,
+  }}
+>
 ```
 
-标题和搜索栏包裹在一个 div 中，根据 `scrolled` 切换样式：
+header 整体：
 ```tsx
-<div className={`transition-all duration-300 overflow-hidden ${
-  scrolled ? 'max-h-0 opacity-0 mb-0' : 'max-h-40 opacity-100 mb-4'
-}`}>
-  {/* 标题 */}
-  {/* 搜索栏 */}
-  {/* 排序选项 */}
-</div>
+<header className={`... transition-all duration-500 ease-in-out ${scrolled ? 'pt-2 pb-1' : 'pt-8 pb-2'}`}>
 ```
 
-header 的 `pt-8` 在滚动后改为 `pt-2` 减少顶部间距。
+### 不变的部分
+- 滚动监听逻辑不变
+- 筛选标签、内容区域不变
 
