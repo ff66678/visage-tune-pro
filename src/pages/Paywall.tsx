@@ -137,7 +137,7 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
       <section className="px-6 mt-12 flex flex-col gap-4">
         {/* Annual */}
         <div
-          className={`relative rounded-2xl border-2 bg-card p-5 px-[20px] cursor-pointer shadow-sm transition-transform active:scale-[0.98] ${
+          className={`relative rounded-2xl border-2 bg-card p-5 cursor-pointer shadow-sm transition-transform active:scale-[0.98] ${
             selectedPlan === "annual" ? "border-primary" : "border-border"
           }`}
           onClick={() => setSelectedPlan("annual")}
@@ -223,13 +223,13 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
         </div>
       </section>
 
-      <div className="h-36" />
+      <div className="h-40" />
 
       {/* Fixed Bottom CTA */}
       <div
-        className="fixed bottom-0 left-0 right-0 p-6 pt-10 z-20"
+        className="fixed bottom-0 left-0 right-0 p-6 pt-16 z-20"
         style={{
-          background: "linear-gradient(to top, hsl(var(--background)) 50%, transparent)",
+          background: "linear-gradient(to top, hsl(var(--background)) 60%, transparent)",
         }}
       >
         <button

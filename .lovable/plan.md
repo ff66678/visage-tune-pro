@@ -1,14 +1,44 @@
 
-## Plan: 调整底部 CTA 渐变起始位置，露出价格数字
 
-用户希望底部固定的 CTA 区域稍微往上收一点渐变，让年度订阅卡片上的 "¥12.50/月" 刚好露出来。
+## Plan: 登录后返回付费墙
+
+### 问题根因
+
+`AuthRoute`（App.tsx 第48行）在检测到用户已登录时，无条件重定向到 `/`，覆盖了 `returnTo` 参数。Google OAuth 登录后回到 `/auth?returnTo=...` 页面时，`AuthRoute` 先于 Auth 组件的逻辑执行，直接跳到首页。
 
 ### 改动
 
-**`src/pages/Paywall.tsx`**
+**1. `src/App.tsx` — `AuthRoute` 组件**
 
-1. 底部 CTA 的 `pt-16` 改为 `pt-10`，减少顶部内边距（渐变覆盖区域变小）
-2. 渐变从 `60%` 改为 `50%`，让实色区域更紧凑
-3. 底部占位 `h-40` 改为 `h-36`，微调滚动空间
+读取 URL 中的 `returnTo` 参数，登录后重定向到该路径：
 
-这样渐变遮罩会少遮一点内容，刚好让价格数字露出来。
+```tsx
+const AuthRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+  if (loading) return null;
+  if (user) {
+    const returnTo = new URLSearchParams(location.search).get("returnTo") || "/";
+    return <Navigate to={returnTo} replace />;
+  }
+  return <>{children}</>;
+};
+```
+
+需要在已有 import 中加上 `useLocation`。
+
+**2. `src/pages/Auth.tsx` — Google 登录 redirect_uri**
+
+将 Google OAuth 的 `redirect_uri` 改为带上 `returnTo` 参数，确保 OAuth 回调后仍保留返回路径：
+
+```tsx
+const handleGoogleLogin = async () => {
+  const { error } = await lovable.auth.signInWithOAuth("google", {
+    redirect_uri: `${window.location.origin}/auth?returnTo=${encodeURIComponent(returnTo)}`,
+  });
+};
+```
+
+### 流程验证
+游客 → 课程页 → 付费墙 → 点订阅 → `/auth?returnTo=/course/xxx?showPaywall=true` → Google 登录 → OAuth 回调到 `/auth?returnTo=...` → `AuthRoute` 读取 `returnTo` → 重定向到 `/course/xxx?showPaywall=true` → 付费墙显示
+
