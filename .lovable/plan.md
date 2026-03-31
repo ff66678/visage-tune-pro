@@ -1,42 +1,23 @@
 
 
-## Plan: 添加 PWA 可安装功能（仅安装到桌面，无离线支持）
+## Plan: 修复移动端输入框聚焦时页面缩放问题
 
-### 思路
-不使用 Service Worker，只添加 `manifest.json` + 移动端 meta 标签，让用户可以通过浏览器"添加到主屏幕"把应用像原生 App 一样打开。
+### 问题
+iOS Safari 在聚焦 `font-size` 小于 16px 的输入框时会自动缩放页面。当前搜索框使用 `text-sm`（14px），触发了这个行为。
 
 ### 改动
 
-**1. 创建 `public/manifest.json`**
+**1. `src/components/LibraryPage.tsx`**
 
-```json
-{
-  "name": "Visage Tune Pro",
-  "short_name": "Visage",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
-  "icons": [
-    { "src": "/placeholder.svg", "sizes": "192x192", "type": "image/svg+xml" },
-    { "src": "/placeholder.svg", "sizes": "512x512", "type": "image/svg+xml" }
-  ]
-}
+搜索框 input 的 className 中将 `text-sm` 改为 `text-base`（16px），防止 iOS 自动缩放。
+
+**2. `index.html`**
+
+在 viewport meta 标签中添加 `maximum-scale=1`，作为全局防缩放保险：
+
+```html
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
 ```
 
-**2. 更新 `index.html`**
-
-在 `<head>` 中添加：
-- `<link rel="manifest" href="/manifest.json">`
-- `<meta name="theme-color" content="#000000">`
-- `<meta name="apple-mobile-web-app-capable" content="yes">`
-- `<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">`
-- `<link rel="apple-touch-icon" href="/placeholder.svg">`
-
-同时把 `<title>` 改为 "Visage Tune Pro"。
-
-### 说明
-- 不涉及 `vite-plugin-pwa`，不注册 Service Worker，不会影响编辑器预览
-- PWA 安装功能仅在发布后的正式域名生效（需 HTTPS）
-- 后续可替换 `placeholder.svg` 为正式 App 图标（建议提供 192x192 和 512x512 的 PNG）
+这两处改动配合使用，彻底解决输入框聚焦缩放问题。
 
