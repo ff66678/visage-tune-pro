@@ -12,6 +12,7 @@ interface PaywallProps {
 const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
   const [selectedPlan, setSelectedPlan] = useState("annual");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showAllPlans, setShowAllPlans] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -159,30 +160,39 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
           </p>
         </div>
 
-        {/* Monthly */}
-        <div
-          className={`rounded-2xl border-2 p-5 cursor-pointer transition-all active:scale-[0.98] ${
-            selectedPlan === "monthly"
-              ? "bg-card border-primary"
-              : "bg-card/60 border-border hover:bg-card"
-          }`}
-          onClick={() => setSelectedPlan("monthly")}
-        >
-          <div className="flex justify-between items-start">
-            <span className="text-[17px] font-semibold text-foreground">月度订阅</span>
-            <span className="text-[17px] font-semibold text-foreground">¥25.00/月</span>
-          </div>
-          <p className="text-[10px] text-muted-foreground mt-8 uppercase tracking-wide font-medium">
-            按月扣费 ¥25，可随时取消。自动续订至 2025年5月4日。
-          </p>
+        {/* View all toggle */}
+        <div className="flex justify-center">
+          <button
+            onClick={() => setShowAllPlans(!showAllPlans)}
+            className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest hover:text-foreground transition-colors"
+          >
+            {showAllPlans ? "收起选项" : "查看所有选项"}
+            <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${showAllPlans ? "rotate-180" : ""}`} />
+          </button>
         </div>
 
-        {/* View all */}
-        <div className="flex justify-center mt-2">
-          <button className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest hover:text-foreground transition-colors">
-            查看所有选项
-            <ChevronDown className="w-3 h-3" />
-          </button>
+        {/* Monthly — collapsible */}
+        <div
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            showAllPlans ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div
+            className={`rounded-2xl border-2 p-5 cursor-pointer transition-all active:scale-[0.98] ${
+              selectedPlan === "monthly"
+                ? "bg-card border-primary"
+                : "bg-card/60 border-border hover:bg-card"
+            }`}
+            onClick={() => setSelectedPlan("monthly")}
+          >
+            <div className="flex justify-between items-start">
+              <span className="text-[17px] font-semibold text-foreground">月度订阅</span>
+              <span className="text-[17px] font-semibold text-foreground">¥25.00/月</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-8 uppercase tracking-wide font-medium">
+              按月扣费 ¥25，可随时取消。自动续订至 2025年5月4日。
+            </p>
+          </div>
         </div>
       </section>
 
