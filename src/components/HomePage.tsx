@@ -279,7 +279,7 @@ const HomePage = () => {
           </div>
           <div
             className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
-            onClick={() => navigate("/recently-played")}
+            onClick={() => navigate(user ? "/recently-played" : "/auth")}
           >
             <div className="w-10 h-10 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
               <Play className="w-5 h-5" />
