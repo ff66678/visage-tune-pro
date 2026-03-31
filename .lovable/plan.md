@@ -1,17 +1,38 @@
 
 
-## Plan: 未登录时也显示每周进度、喜欢、最近播放等模块
+## Plan: 未登录用户在付费墙点击订阅时跳转登录页
+
+### 逻辑流程
+未登录点击"开始训练" → 显示付费墙 → 点击订阅按钮 → 跳转登录页（带 returnTo）→ 登录后返回课程页
 
 ### 改动
 
-**`src/components/HomePage.tsx`**
+**1. `src/pages/CourseDetail.tsx`**
 
-移除以下模块的 `{user && ...}` 条件判断，让它们始终显示：
+`handleStartWorkout` 中移除登录检查，未付费用户统一显示付费墙（无论是否登录）：
 
-1. **每周进度**（第108行）：移除 `{user && (`，未登录时数据为空会显示全部空柱子 + 0%，视觉上正常
-2. **我的喜欢 & 最近播放**（第269行）：移除 `{user && (`，未登录时显示 0 个课程 / 0 个记录，点击时跳转登录页
-3. **连续打卡**（第299行）：移除 `{user && (`，未登录时显示"连续打卡 0 天"+"今天开始打卡吧！"
-4. **最近训练**（第238行）：保持 `recentCourses.length > 0` 判断即可，移除 `user &&`，未登录时 recentCourses 为空数组自然不显示
+```tsx
+const handleStartWorkout = () => {
+  if (isPaid) {
+    navigate(`/workout/${course!.id}`);
+  } else {
+    setShowContentGate(true); // 不管登录与否都显示付费墙
+  }
+};
+```
 
-对于未登录用户点击"我的喜欢"和"最近播放"，改为跳转 `/auth` 而非原页面。
+将 `user` 传给 Paywall 组件，让付费墙知道用户是否已登录。
+
+**2. `src/pages/Paywall.tsx`**
+
+- 接收新 prop `user`（或从 `useAuth` 获取）
+- 在 `handleStartTrial` 中：未登录时 `navigate("/auth?returnTo=当前路径")`，已登录时走原有付费流程
+
+**3. `src/pages/Auth.tsx`**
+
+登录成功后读取 `returnTo` 参数并跳转回去（而非默认首页）。
+
+### 不变的部分
+- 付费墙 UI、定价卡片不变
+- 已登录已付费用户流程不变
 
