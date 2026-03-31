@@ -132,7 +132,7 @@ const AnalysisPage = () => {
             ) : (
               <>
                 <Sparkles className="w-4 h-4 mr-2" />
-                {latest ? "重新分析" : "开始 AI 分析"}
+                {latest ? "面部分析" : "开始 AI 分析"}
               </>
             )}
           </Button>
