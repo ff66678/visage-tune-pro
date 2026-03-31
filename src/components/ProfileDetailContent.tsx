@@ -107,7 +107,7 @@ const ProfileDetailContent = () => {
 
       {/* 1. Stats Card */}
       <div className="px-5 mt-8">
-        <div className="bg-card rounded-3xl p-6 flex flex-col items-center">
+        <div className="bg-surface rounded-3xl p-6 flex flex-col items-center">
           {/* Badge */}
           <div className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center mb-3">
             <span className="text-3xl font-bold text-primary tabular-nums">{practiceDays}</span>
@@ -146,7 +146,7 @@ const ProfileDetailContent = () => {
 
       {/* 2. Continuity Card */}
       <div className="px-5 mt-4">
-        <div className="bg-card rounded-3xl p-6 flex flex-col">
+        <div className="bg-surface rounded-3xl p-6 flex flex-col">
           {/* 3 streak stats */}
           <div className="grid grid-cols-3 gap-4 w-full mb-5">
             <div className="flex flex-col items-center gap-1">
@@ -258,7 +258,7 @@ const ProfileDetailContent = () => {
       {/* Encouragement card */}
       {practiceDays > 0 && (
         <div className="px-5 mt-4">
-          <div className="bg-card rounded-3xl p-5 flex flex-col items-center text-center">
+          <div className="bg-surface rounded-3xl p-5 flex flex-col items-center text-center">
             <p className="text-sm text-foreground font-medium leading-relaxed">
               🌟 你的练习之旅已经达到 <span className="text-primary font-semibold">{practiceDays}</span> 天
             </p>
