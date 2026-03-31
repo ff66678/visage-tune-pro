@@ -466,8 +466,7 @@ const Onboarding = () => {
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
-      <div className="w-full max-w-[480px] min-h-screen relative flex flex-col">
-        <div className="flex-1 overflow-y-auto no-scrollbar pb-32">
+      <div className="w-full max-w-[480px] min-h-screen relative flex flex-col no-scrollbar overflow-y-auto">
         {/* Header with progress */}
         <div className="pt-14 px-6 pb-6">
           <div className="flex items-center gap-4 mb-8">
@@ -487,10 +486,9 @@ const Onboarding = () => {
         {step === 3 && <ConcernsStep selected={concerns} onToggle={toggleConcern} />}
         {step === 4 && <TimeStep selected={time} onSelect={setTime} />}
         {step === 5 && <PlanStep timeLabel={time || "10 分钟"} />}
-        </div>
 
-        {/* Bottom CTA - fixed position */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-6 pt-12 z-50" style={{ background: 'linear-gradient(to top, hsl(var(--background)) 60%, transparent)' }}>
+        {/* Bottom CTA */}
+        <div className="absolute bottom-0 left-0 w-full p-6 pt-12" style={{ background: 'linear-gradient(to top, hsl(var(--background)) 60%, transparent)' }}>
           <button onClick={handleNext} disabled={!canContinue()}
             className="w-full bg-primary text-primary-foreground rounded-2xl py-5 font-bold text-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all shadow-lg disabled:opacity-50 disabled:scale-100">
             {step === 5 ? "开启我的旅程" : "继续"} <ArrowRight className="w-5 h-5" />
