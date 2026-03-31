@@ -26,7 +26,18 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
         if (error) throw error;
         toast.success("登录成功！");
         navigate(returnTo, { replace: true });
-        const { error } = await supabase.auth.signUp({
+      } else {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+            data: { full_name: name },
+          },
+        });
+        if (signUpError) throw signUpError;
+        toast.success("注册成功！请查看邮箱确认。");
+      }
           email,
           password,
           options: {
