@@ -440,7 +440,7 @@ const Onboarding = () => {
   }
 
   if (showAuth) {
-    return <Auth />;
+    return <Auth showClose={false} />;
   }
 
   if (showSuccess) {
