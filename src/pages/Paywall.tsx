@@ -223,13 +223,13 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
         </div>
       </section>
 
-      <div className="h-40" />
+      <div className="h-36" />
 
       {/* Fixed Bottom CTA */}
       <div
-        className="fixed bottom-0 left-0 right-0 p-6 pt-16 z-20"
+        className="fixed bottom-0 left-0 right-0 p-6 pt-10 z-20"
         style={{
-          background: "linear-gradient(to top, hsl(var(--background)) 60%, transparent)",
+          background: "linear-gradient(to top, hsl(var(--background)) 50%, transparent)",
         }}
       >
         <button
