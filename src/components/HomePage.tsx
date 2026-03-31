@@ -273,7 +273,7 @@ const HomePage = () => {
       <div className="px-6 mt-4 grid grid-cols-2 gap-3">
           <div
             className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
-            onClick={() => navigate(user ? "/favorites" : "/auth")}
+            onClick={() => navigate(user ? "/favorites" : `/auth?returnTo=${encodeURIComponent(`${location.pathname}${location.search}`)}`)}
           >
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
               <Heart className="w-5 h-5" />
@@ -285,7 +285,7 @@ const HomePage = () => {
           </div>
           <div
             className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
-            onClick={() => navigate(user ? "/recently-played" : "/auth")}
+            onClick={() => navigate(user ? "/recently-played" : `/auth?returnTo=${encodeURIComponent(`${location.pathname}${location.search}`)}`)}
           >
             <div className="w-10 h-10 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
               <Play className="w-5 h-5" />

@@ -265,7 +265,7 @@ const AnalysisPage = () => {
                 onClick={(e) => {
                   if (!user) {
                     e.preventDefault();
-                    navigate("/auth");
+                    navigateToAuth();
                   }
                 }}
                 className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden transition-colors active:bg-muted"

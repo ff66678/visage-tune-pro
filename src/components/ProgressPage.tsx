@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Camera, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,6 +17,7 @@ const formatLocalDate = (d: Date) => {
 
 const ProgressPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const { data: todayPhoto } = useTodayPhoto();
@@ -71,9 +72,14 @@ const ProgressPage = () => {
   const selectedPhoto = recentPhotos.find((p) => p.photo_date === selectedDate);
   const displayPhoto = selectedPhoto?.photo_url || null;
 
+  const navigateToAuth = () => {
+    const returnTo = `${location.pathname}${location.search}`;
+    navigate(`/auth?returnTo=${encodeURIComponent(returnTo)}`);
+  };
+
   const handleTakePhoto = () => {
     if (!user) {
-      navigate("/auth");
+      navigateToAuth();
       return;
     }
     fileInputRef.current?.click();
