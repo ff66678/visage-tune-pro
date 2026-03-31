@@ -138,7 +138,7 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
       </section>
 
       {/* Pricing Plans */}
-      <section className="px-6 mt-12 flex flex-col gap-4">
+      <section className="px-6 mt-8 flex flex-col gap-4">
         {/* Annual */}
         <div
           className={`relative rounded-2xl border-2 bg-card p-5 cursor-pointer shadow-sm transition-transform active:scale-[0.98] ${
