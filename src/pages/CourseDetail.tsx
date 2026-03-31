@@ -2,13 +2,16 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
+import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import Paywall from "@/pages/Paywall";
 
 const CourseDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { data: favoriteIds = new Set() } = useFavoriteIds();
+  const toggleFavorite = useToggleFavorite();
+  const isFavorited = id ? favoriteIds.has(id) : false;
   const [showContentGate, setShowContentGate] = useState(false);
   const navigate = useNavigate();
   const { data: course, isLoading } = useCourse(id);
@@ -74,7 +77,7 @@ const CourseDetail = () => {
             <Share2 className="w-5 h-5" />
           </button>
           <button
-            onClick={() => setIsFavorited(!isFavorited)}
+            onClick={() => id && toggleFavorite.mutate({ courseId: id, isFavorited })}
             className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center shadow-sm transition-colors"
             style={{ color: isFavorited ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}
           >
