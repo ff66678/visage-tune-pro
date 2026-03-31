@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useFaceAnalysis";
 import { useProgressPhotos } from "@/hooks/useProgressPhotos";
 import { useCourses } from "@/hooks/useCourses";
+import { useProducts } from "@/hooks/useProducts";
 
 const gradeColor = (grade: string) => {
   if (grade.startsWith("A")) return "text-emerald-600";
@@ -27,6 +28,7 @@ const AnalysisPage = () => {
   const { data: history = [] } = useFaceAnalyses();
   const { data: photos = [] } = useProgressPhotos();
   const { data: courses = [] } = useCourses();
+  const { data: products = [] } = useProducts();
   const runAnalysis = useRunAnalysis();
   const [analyzing, setAnalyzing] = useState(false);
 
@@ -240,6 +242,47 @@ const AnalysisPage = () => {
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
               </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {/* Recommended Products */}
+      {products.length > 0 && (
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">推荐好物</h3>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
+            {products.map((product) => (
+              <a
+                key={product.id}
+                href={product.purchase_url || "#"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden transition-colors active:bg-muted"
+              >
+                <div className="relative aspect-square">
+                  {product.image_url && (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                  {product.tag && (
+                    <span className="absolute top-2 left-2 bg-primary/90 text-primary-foreground text-[10px] px-2 py-0.5 rounded-full">
+                      {product.tag}
+                    </span>
+                  )}
+                </div>
+                <div className="p-2.5 space-y-1">
+                  <div className="text-xs font-medium text-foreground line-clamp-2 leading-tight">{product.name}</div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-bold text-primary">¥{Number(product.price).toFixed(0)}</span>
+                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                      <ChevronRight className="w-3.5 h-3.5 text-primary-foreground" />
+                    </div>
+                  </div>
+                </div>
+              </a>
             ))}
           </div>
         </div>
