@@ -13,7 +13,10 @@ const CourseDetail = () => {
   const { data: favoriteIds = new Set() } = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
   const isFavorited = id ? favoriteIds.has(id) : false;
-  const [showContentGate, setShowContentGate] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [showContentGate, setShowContentGate] = useState(
+    searchParams.get("showPaywall") === "true"
+  );
   const navigate = useNavigate();
   const { data: course, isLoading } = useCourse(id);
   const { isPaid, markPaid } = usePaywallStatus();

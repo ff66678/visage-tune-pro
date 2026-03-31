@@ -20,7 +20,7 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
     if (!user) {
       // 未登录，跳转登录页并带上返回路径
       const currentPath = location.pathname;
-      navigate(`/auth?returnTo=${encodeURIComponent(currentPath)}`);
+      navigate(`/auth?returnTo=${encodeURIComponent(currentPath + "?showPaywall=true")}`);
       return;
     }
     setShowSuccess(true);
