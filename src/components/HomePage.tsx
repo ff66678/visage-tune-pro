@@ -290,11 +290,9 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      )}
 
-      {/* Streak - only for logged in users */}
-      {user && (
-        <div className="px-5 mt-4 mb-6">
+      {/* Streak */}
+      <div className="px-5 mt-4 mb-6">
           <div className="bg-surface rounded-xl p-4 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
               <Star className="w-6 h-6" fill="currentColor" />
@@ -305,7 +303,6 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 };
