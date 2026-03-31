@@ -7,6 +7,8 @@ import { toast } from "sonner";
 
 const Auth = ({ showClose = true }: { showClose?: boolean }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = new URLSearchParams(location.search).get("returnTo") || "/";
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
