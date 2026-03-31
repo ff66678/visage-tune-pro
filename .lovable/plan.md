@@ -1,44 +1,27 @@
 
 
-## Plan: 分析页底部添加推荐商品模块
+## Plan: 分析页添加拍照功能
 
-### 概览
-在分析页底部新增"为你推荐"商品卡片区域，参考截图的横向滚动卡片设计（标签 + 图片 + 名称 + 价格 + 添加按钮）。商品数据存在数据库中。
+### 问题
+当前分析页只使用"记录"页的已有照片，用户无法直接在分析页拍照。需要让用户能在分析页直接拍照（调用摄像头），拍完后自动上传并触发 AI 分析。
 
-### 改动
+### 改动文件
 
-**1. 数据库迁移 — 创建 `products` 表**
-```sql
-CREATE TABLE public.products (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  name text NOT NULL,
-  description text,
-  price decimal(10,2) NOT NULL,
-  image_url text,
-  tag text,              -- 如"针对下颌线条"、"针对眼部提升"
-  category text,
-  purchase_url text,     -- 外部购买链接
-  is_active boolean DEFAULT true,
-  sort_order integer DEFAULT 0,
-  created_at timestamptz DEFAULT now()
-);
-ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view active products"
-  ON public.products FOR SELECT
-  USING (is_active = true);
-```
+**`src/components/AnalysisPage.tsx`**
 
-**2. 新建 `src/hooks/useProducts.ts`**
-- `useProducts()` — 查询所有 active 商品，按 sort_order 排序
+1. **添加拍照入口**：在 Hero 区域顶部添加一个隐藏的 `<input type="file" accept="image/*" capture="user">`（调用前置摄像头），以及一个相机按钮
+2. **无照片状态改造**：把"去拍照"按钮改为直接触发本页拍照，而不是跳转到记录页
+3. **拍照流程**：
+   - 用户点击拍照按钮 → 调用 `useUploadProgressPhoto` 上传照片到存储桶
+   - 上传成功后自动刷新照片列表，照片显示在 Hero 区域
+   - 用户再点"面部分析"按钮触发 AI 分析
+4. **有照片时也可重新拍照**：在照片区域右上角添加一个小相机图标按钮，允许用户重新拍一张
 
-**3. 修改 `src/components/AnalysisPage.tsx`**
-在"为你推荐课程"下方新增商品区域：
-- 标题行："推荐好物" + "查看全部"
-- 横向滚动卡片列表（`overflow-x-auto flex gap-3`），每个卡片：
-  - 左上角彩色标签（tag，如"针对下颌线条"）
-  - 商品图片（圆角）
-  - 商品名称
-  - 价格（¥xx.xx）
-  - 右下角圆形"+"按钮（点击跳转 purchase_url）
-- 风格与 APP 暖色调一致，卡片用 `bg-card` + `border-border`
+### 交互逻辑
+- 点击拍照 → 系统相机打开（前置） → 拍照完成 → 自动上传 → 照片显示在页面 → 用户点"面部分析" → AI 分析
+- 上传中显示 loading 状态
+
+### 不变的部分
+- 评分卡片、详细指标、推荐课程、推荐好物等模块不变
+- Edge Function 和数据库结构不变
 
