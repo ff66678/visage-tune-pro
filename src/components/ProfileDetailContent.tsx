@@ -5,6 +5,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useWorkoutStats, useHeatmapData, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { useCourses } from "@/hooks/useCourses";
 import SettingsDrawer from "@/components/SettingsDrawer";
+import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 
 const heatColors: Record<number, string> = {
   0: "bg-surface-elevated",
