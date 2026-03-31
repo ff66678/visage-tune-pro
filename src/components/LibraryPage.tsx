@@ -285,128 +285,177 @@ const LibraryPage = () => {
               </div>
             )}
 
-            {/* Category Groups */}
-            {groupedCategories.map((category, idx) => (
-              <div key={idx} className="mb-8">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-[3px] h-5 rounded-full bg-primary" />
-                    <h2 className="text-lg font-semibold text-foreground">{category.title}</h2>
-                  </div>
-                  <span
-                    className="text-[13px] text-primary font-semibold cursor-pointer flex items-center gap-0.5"
-                    onClick={() => {
-                      const categoryKey = Object.entries({
-                        "眼部 & 上脸": "眼部",
-                        "下颌 & 轮廓": "下颌",
-                        "脸颊 & 光泽": "脸颊",
-                        "颈部护理": "颈部",
-                        "全脸训练": "全脸",
-                      }).find(([label]) => label === category.title)?.[1] || category.title;
-                      navigate(`/category/${encodeURIComponent(categoryKey)}`);
-                    }}
-                  >
-                    查看全部
-                    <ChevronRight className="w-4 h-4" />
-                  </span>
-                </div>
-
-                {/* First item = featured large card */}
-                {category.routines.length > 0 && (
-                  <div
-                    className="relative w-full h-[160px] rounded-2xl overflow-hidden mb-4 cursor-pointer active:scale-[0.98] transition-transform"
-                    onClick={() => navigate(`/course/${category.routines[0].id}`)}
-                  >
-                    <img
-                      src={category.routines[0].image_url}
-                      alt={category.routines[0].title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                    {/* Fav button */}
-                    <button
-                      className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
-                      onClick={(e) => handleToggleFav(e, category.routines[0].id)}
+            {/* Global Sort Mode */}
+            {sortBy !== "default" ? (
+              <div className="mt-4">
+                <h2 className="text-base font-semibold text-foreground mb-3">
+                  {sortBy === "rating" ? "按评分排序" : "按时长排序"}
+                  <span className="text-muted-foreground text-xs ml-2">({globalSortedCourses.length} 个课程)</span>
+                </h2>
+                <div className="grid grid-cols-2 gap-3">
+                  {globalSortedCourses.map((routine) => (
+                    <div
+                      key={routine.id}
+                      className="bg-card rounded-2xl overflow-hidden shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
+                      onClick={() => navigate(`/course/${routine.id}`)}
                     >
-                      <Heart
-                        className={`w-4 h-4 ${
-                          favoriteIds?.has(category.routines[0].id)
-                            ? "fill-primary text-primary"
-                            : "text-white"
-                        }`}
-                      />
-                    </button>
-                    <div className="absolute top-2.5 left-2.5">
-                      <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-full ${difficultyColor(category.routines[0].difficulty)}`}>
-                        {category.routines[0].difficulty}
-                      </span>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <h3 className="text-white text-sm font-bold mb-1">{category.routines[0].title}</h3>
-                      <div className="flex items-center gap-3 text-white/80 text-[11px]">
-                        <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{category.routines[0].duration}</span>
-                        {category.routines[0].rating && (
-                          <span className="flex items-center gap-0.5"><Star className="w-3 h-3 fill-amber-400 text-amber-400" />{category.routines[0].rating}</span>
-                        )}
+                      <div className="relative">
+                        <img
+                          src={routine.image_url}
+                          alt={routine.title}
+                          className="w-full h-[110px] object-cover"
+                        />
+                        <div className="absolute top-2 left-2">
+                          <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
+                            {routine.difficulty}
+                          </span>
+                        </div>
+                        <button
+                          className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
+                          onClick={(e) => handleToggleFav(e, routine.id)}
+                        >
+                          <Heart
+                            className={`w-3.5 h-3.5 ${
+                              favoriteIds?.has(routine.id)
+                                ? "fill-primary text-primary"
+                                : "text-white"
+                            }`}
+                          />
+                        </button>
+                      </div>
+                      <div className="p-2.5">
+                        <h3 className="text-sm font-semibold mb-1 text-foreground line-clamp-1">{routine.title}</h3>
+                        <div className="flex items-center justify-between">
+                          <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {routine.duration}
+                          </div>
+                          {routine.rating && (
+                            <div className="flex items-center gap-0.5">
+                              <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                              <span className="text-[10px] text-muted-foreground">{routine.rating}</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-
-                {/* Rest in 2-col grid */}
-                {category.routines.length > 1 && (
-                  <div className="grid grid-cols-2 gap-3">
-                    {category.routines.slice(1).map((routine) => (
-                      <div
-                        key={routine.id}
-                        className="bg-card rounded-2xl overflow-hidden shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
-                        onClick={() => navigate(`/course/${routine.id}`)}
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Category Groups */}
+                {groupedCategories.map((category, idx) => (
+                  <div key={idx} className="mb-8">
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="flex items-center gap-2">
+                        <div className="w-[3px] h-5 rounded-full bg-primary" />
+                        <h2 className="text-lg font-semibold text-foreground">{category.title}</h2>
+                      </div>
+                      <span
+                        className="text-[13px] text-primary font-semibold cursor-pointer flex items-center gap-0.5"
+                        onClick={() => navigate(`/category/${encodeURIComponent(category.key)}`)}
                       >
-                        <div className="relative">
-                          <img
-                            src={routine.image_url}
-                            alt={routine.title}
-                            className="w-full h-[110px] object-cover"
+                        查看全部
+                        <ChevronRight className="w-4 h-4" />
+                      </span>
+                    </div>
+
+                    {category.routines.length > 0 && (
+                      <div
+                        className="relative w-full h-[160px] rounded-2xl overflow-hidden mb-4 cursor-pointer active:scale-[0.98] transition-transform"
+                        onClick={() => navigate(`/course/${category.routines[0].id}`)}
+                      >
+                        <img
+                          src={category.routines[0].image_url}
+                          alt={category.routines[0].title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                        <button
+                          className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
+                          onClick={(e) => handleToggleFav(e, category.routines[0].id)}
+                        >
+                          <Heart
+                            className={`w-4 h-4 ${
+                              favoriteIds?.has(category.routines[0].id)
+                                ? "fill-primary text-primary"
+                                : "text-white"
+                            }`}
                           />
-                          <div className="absolute top-2 left-2">
-                            <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
-                              {routine.difficulty}
-                            </span>
-                          </div>
-                          <button
-                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
-                            onClick={(e) => handleToggleFav(e, routine.id)}
-                          >
-                            <Heart
-                              className={`w-3.5 h-3.5 ${
-                                favoriteIds?.has(routine.id)
-                                  ? "fill-primary text-primary"
-                                  : "text-white"
-                              }`}
-                            />
-                          </button>
+                        </button>
+                        <div className="absolute top-2.5 left-2.5">
+                          <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-full ${difficultyColor(category.routines[0].difficulty)}`}>
+                            {category.routines[0].difficulty}
+                          </span>
                         </div>
-                        <div className="p-2.5">
-                          <h3 className="text-sm font-semibold mb-1 text-foreground line-clamp-1">{routine.title}</h3>
-                          <div className="flex items-center justify-between">
-                            <div className="text-[11px] text-muted-foreground flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              {routine.duration}
-                            </div>
-                            {routine.rating && (
-                              <div className="flex items-center gap-0.5">
-                                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                                <span className="text-[10px] text-muted-foreground">{routine.rating}</span>
-                              </div>
+                        <div className="absolute bottom-0 left-0 right-0 p-3">
+                          <h3 className="text-white text-sm font-bold mb-1">{category.routines[0].title}</h3>
+                          <div className="flex items-center gap-3 text-white/80 text-[11px]">
+                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{category.routines[0].duration}</span>
+                            {category.routines[0].rating && (
+                              <span className="flex items-center gap-0.5"><Star className="w-3 h-3 fill-amber-400 text-amber-400" />{category.routines[0].rating}</span>
                             )}
                           </div>
                         </div>
                       </div>
-                    ))}
+                    )}
+
+                    {category.routines.length > 1 && (
+                      <div className="grid grid-cols-2 gap-3">
+                        {category.routines.slice(1).map((routine) => (
+                          <div
+                            key={routine.id}
+                            className="bg-card rounded-2xl overflow-hidden shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
+                            onClick={() => navigate(`/course/${routine.id}`)}
+                          >
+                            <div className="relative">
+                              <img
+                                src={routine.image_url}
+                                alt={routine.title}
+                                className="w-full h-[110px] object-cover"
+                              />
+                              <div className="absolute top-2 left-2">
+                                <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
+                                  {routine.difficulty}
+                                </span>
+                              </div>
+                              <button
+                                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
+                                onClick={(e) => handleToggleFav(e, routine.id)}
+                              >
+                                <Heart
+                                  className={`w-3.5 h-3.5 ${
+                                    favoriteIds?.has(routine.id)
+                                      ? "fill-primary text-primary"
+                                      : "text-white"
+                                  }`}
+                                />
+                              </button>
+                            </div>
+                            <div className="p-2.5">
+                              <h3 className="text-sm font-semibold mb-1 text-foreground line-clamp-1">{routine.title}</h3>
+                              <div className="flex items-center justify-between">
+                                <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+                                  <Clock className="w-3 h-3" />
+                                  {routine.duration}
+                                </div>
+                                {routine.rating && (
+                                  <div className="flex items-center gap-0.5">
+                                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                    <span className="text-[10px] text-muted-foreground">{routine.rating}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                ))}
+              </>
+            )}
           </>
         )}
       </div>
