@@ -61,7 +61,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/paywall" element={<ProtectedRoute><Paywall onClose={() => window.history.back()} /></ProtectedRoute>} />
             <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/course/:id" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
+            <Route path="/course/:id" element={<CourseDetail />} />
             <Route path="/membership" element={<ProtectedRoute><Membership /></ProtectedRoute>} />
             <Route path="/gift" element={<GiftPage />} />
             <Route path="/profile" element={<ProtectedRoute><ProfileDetail /></ProtectedRoute>} />
