@@ -5,6 +5,7 @@ import { useCourse } from "@/hooks/useCourses";
 import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePaywallStatus } from "@/hooks/usePaywallStatus";
+import { useToast } from "@/hooks/use-toast";
 import Paywall from "@/pages/Paywall";
 
 const CourseDetail = () => {
@@ -16,6 +17,26 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const { data: course, isLoading } = useCourse(id);
   const { isPaid, markPaid } = usePaywallStatus();
+  const { toast } = useToast();
+
+  const handleShare = async () => {
+    if (!course) return;
+    const shareData = {
+      title: course.title,
+      text: course.description || course.title,
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({ title: "链接已复制到剪贴板" });
+      }
+    } catch (e) {
+      // User cancelled share
+    }
+  };
 
   const handleStartWorkout = () => {
     if (isPaid) {
@@ -73,7 +94,7 @@ const CourseDetail = () => {
           <ChevronLeft className="w-5 h-5" />
         </button>
         <div className="flex gap-3">
-          <button className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
+          <button onClick={handleShare} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
             <Share2 className="w-5 h-5" />
           </button>
           <button
