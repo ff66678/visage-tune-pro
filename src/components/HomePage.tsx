@@ -6,6 +6,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWeeklyProgress, useWorkoutStats, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { useFavorites } from "@/hooks/useFavorites";
+import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
@@ -39,6 +40,7 @@ const HomePage = () => {
 
   const { data: favorites = [] } = useFavorites();
   const favCount = favorites.length;
+  const { isPaid } = usePaywallStatus();
 
   const { weekData, percentage } = useWeeklyProgress();
   const { streak } = useWorkoutStats();
@@ -73,13 +75,15 @@ const HomePage = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigate("/membership")}
-            className="bg-primary/10 border-none text-primary cursor-pointer px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-primary/15 transition-colors"
-          >
-            <Crown className="w-4 h-4" />
-            <span className="text-xs font-semibold">PRO</span>
-          </button>
+          {!isPaid && (
+            <button
+              onClick={() => navigate("/membership")}
+              className="bg-primary/10 border-none text-primary cursor-pointer px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-primary/15 transition-colors"
+            >
+              <Crown className="w-4 h-4" />
+              <span className="text-xs font-semibold">PRO</span>
+            </button>
+          )}
           <button
             onClick={() => navigate("/gift")}
             className="relative bg-transparent border-none text-foreground cursor-pointer p-2 rounded-full hover:bg-foreground/5 transition-colors"
