@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
@@ -13,7 +13,10 @@ const CourseDetail = () => {
   const { data: favoriteIds = new Set() } = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
   const isFavorited = id ? favoriteIds.has(id) : false;
-  const [showContentGate, setShowContentGate] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [showContentGate, setShowContentGate] = useState(
+    searchParams.get("showPaywall") === "true"
+  );
   const navigate = useNavigate();
   const { data: course, isLoading } = useCourse(id);
   const { isPaid, markPaid } = usePaywallStatus();
