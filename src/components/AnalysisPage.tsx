@@ -110,6 +110,14 @@ const AnalysisPage = () => {
 
   return (
     <div className="px-5 pt-14 pb-8 space-y-5">
+      <input
+        type="file"
+        accept="image/*"
+        capture="user"
+        ref={fileInputRef}
+        onChange={handleCapture}
+        className="hidden"
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-foreground">面部分析</h1>
