@@ -104,9 +104,8 @@ const HomePage = () => {
         </div>
       </nav>
 
-      {/* Weekly Progress - only for logged in users */}
-      {user && (
-        <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
+      {/* Weekly Progress */}
+      <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-[15px] font-semibold">每周进度</h2>
             <span className="text-[13px] text-primary font-semibold">完成 {percentage}%</span>
