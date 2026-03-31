@@ -232,8 +232,8 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* Recent Training - only for logged in users */}
-      {user && recentCourses.length > 0 && (
+      {/* Recent Training */}
+      {recentCourses.length > 0 && (
         <div className="px-6 mt-4">
           <h2 className="text-[15px] font-semibold mb-3">最近训练</h2>
           <div className="flex flex-col gap-2.5">
