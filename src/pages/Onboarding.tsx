@@ -351,7 +351,12 @@ const SuccessScreen = ({ onStart }: { onStart: () => void }) => (
 // Main Onboarding Component
 const Onboarding = () => {
   const navigate = useNavigate();
-  const { user, setOnboardingCompleted } = useAuth();
+  const { user, setOnboardingCompleted, onboardingCompleted, loading } = useAuth();
+
+  // 已完成引导的用户直接跳转首页
+  if (!loading && user && onboardingCompleted === true) {
+    return <Navigate to="/" replace />;
+  }
 
   const completeOnboarding = async () => {
     if (user) {
