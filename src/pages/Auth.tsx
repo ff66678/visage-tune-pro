@@ -5,7 +5,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { Mail, Lock, User, Eye, EyeOff, X } from "lucide-react";
 import { toast } from "sonner";
 
-const Auth = () => {
+const Auth = ({ showClose = true }: { showClose?: boolean }) => {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
