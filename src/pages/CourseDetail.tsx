@@ -5,6 +5,7 @@ import { useCourse } from "@/hooks/useCourses";
 import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePaywallStatus } from "@/hooks/usePaywallStatus";
+import { useToast } from "@/hooks/use-toast";
 import Paywall from "@/pages/Paywall";
 
 const CourseDetail = () => {
