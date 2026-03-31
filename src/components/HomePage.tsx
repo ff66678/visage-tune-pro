@@ -34,9 +34,19 @@ const HomePage = () => {
   const { user } = useAuth();
   const { data: recentCourses = [] } = useRecentCourses();
 
-  const displayName = profile?.display_name || user?.email?.split("@")[0] || "用户";
-  const avatarUrl = profile?.avatar_url;
+  const displayName = user
+    ? (profile?.display_name || user?.email?.split("@")[0] || "用户")
+    : "游客";
+  const avatarUrl = user ? profile?.avatar_url : undefined;
   const initials = displayName.slice(0, 1).toUpperCase();
+
+  const handleAvatarClick = () => {
+    if (user) {
+      navigate("/profile");
+    } else {
+      navigate("/auth");
+    }
+  };
 
   const { data: favorites = [] } = useFavorites();
   const favCount = favorites.length;
@@ -65,7 +75,7 @@ const HomePage = () => {
       {/* Top Nav */}
       <nav className="flex justify-between items-center px-6 pt-8 pb-4 sticky top-0 bg-background/85 backdrop-blur-xl z-40">
         <div className="flex items-center gap-3">
-          <Avatar className="w-10 h-10 ring-[1.5px] ring-primary cursor-pointer" onClick={() => navigate("/profile")}>
+          <Avatar className="w-10 h-10 ring-[1.5px] ring-primary cursor-pointer" onClick={handleAvatarClick}>
             {avatarUrl && <AvatarImage src={avatarUrl} alt="Avatar" />}
             <AvatarFallback className="text-sm font-semibold bg-primary/10 text-primary">{initials}</AvatarFallback>
           </Avatar>
