@@ -44,8 +44,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AuthRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
   if (loading) return null;
-  if (user) return <Navigate to="/" replace />;
+  if (user) {
+    const returnTo = new URLSearchParams(location.search).get("returnTo") || "/";
+    return <Navigate to={returnTo} replace />;
+  }
   return <>{children}</>;
 };
 

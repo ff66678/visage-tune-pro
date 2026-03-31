@@ -47,7 +47,7 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
 
   const handleGoogleLogin = async () => {
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}/auth?returnTo=${encodeURIComponent(returnTo)}`,
     });
     if (error) {
       toast.error("Google 登录失败");
