@@ -160,16 +160,18 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
           </p>
         </div>
 
-        {/* View all toggle */}
-        <div className="flex justify-center">
-          <button
-            onClick={() => setShowAllPlans(!showAllPlans)}
-            className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest hover:text-foreground transition-colors"
-          >
-            {showAllPlans ? "收起选项" : "查看所有选项"}
-            <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${showAllPlans ? "rotate-180" : ""}`} />
-          </button>
-        </div>
+        {/* View all toggle — hidden after clicked */}
+        {!showAllPlans && (
+          <div className="flex justify-center">
+            <button
+              onClick={() => setShowAllPlans(true)}
+              className="text-[11px] font-semibold text-muted-foreground flex items-center gap-1.5 uppercase tracking-widest hover:text-foreground transition-colors"
+            >
+              查看所有选项
+              <ChevronDown className="w-3 h-3" />
+            </button>
+          </div>
+        )}
 
         {/* Monthly — collapsible */}
         <div
