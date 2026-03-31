@@ -24,14 +24,23 @@ const levelLabel = (level: string) => {
 
 const AnalysisPage = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
   const { data: history = [] } = useFaceAnalyses();
   const { data: photos = [] } = useProgressPhotos();
   const { data: courses = [] } = useCourses();
   const { data: products = [] } = useProducts();
   const runAnalysis = useRunAnalysis();
+  const { mutateAsync: uploadPhoto, isPending: isUploading } = useUploadProgressPhoto();
 
   const latestPhoto = photos[0];
+
+  const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await uploadPhoto(file);
+    e.target.value = "";
+  };
 
   const handleAnalyze = async () => {
     if (!latestPhoto || runAnalysis.isPending) return;
