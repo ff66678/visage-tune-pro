@@ -38,16 +38,6 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
         if (signUpError) throw signUpError;
         toast.success("注册成功！请查看邮箱确认。");
       }
-          email,
-          password,
-          options: {
-            emailRedirectTo: window.location.origin,
-            data: { full_name: name },
-          },
-        });
-        if (error) throw error;
-        toast.success("注册成功！请查看邮箱确认。");
-      }
     } catch (error: any) {
       toast.error(error.message || "操作失败");
     } finally {
