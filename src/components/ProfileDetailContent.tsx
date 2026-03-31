@@ -23,6 +23,7 @@ const ProfileDetailContent = () => {
   const { data: recentCourses = [] } = useRecentCourses();
   const { data: allCourses = [] } = useCourses();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { isPaid } = usePaywallStatus();
   const [heroHovered, setHeroHovered] = useState(false);
 
   // Next recommended course: first featured course not in recent
