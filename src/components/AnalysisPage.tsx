@@ -1,4 +1,3 @@
-import { forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,7 @@ const levelLabel = (level: string) => {
   return map[level] || level;
 };
 
-const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
+const AnalysisPage = () => {
   const navigate = useNavigate();
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
   const { data: history = [] } = useFaceAnalyses();
@@ -82,7 +81,7 @@ const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
   const recommendedCourses = getRecommendedCourses();
 
   return (
-    <div ref={ref} className="px-5 pt-14 pb-8 space-y-5">
+    <div className="px-5 pt-14 pb-8 space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-foreground">面部分析</h1>
@@ -196,23 +195,8 @@ const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       )}
 
-      {/* History */}
-      {history.length > 1 && (
-        <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">历史记录</h3>
-          <div className="space-y-2">
-            {history.slice(0, 5).map((a) => (
-              <div key={a.id} className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{a.analysis_date}</span>
-                <div className="flex items-center gap-3">
-                  <span className="text-foreground">弹性 {a.elasticity_score}</span>
-                  <span className={`font-medium ${gradeColor(a.health_grade)}`}>{a.health_grade}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+
+
 
       {/* Recommended Courses */}
       {latest && recommendedCourses.length > 0 && (
@@ -283,8 +267,6 @@ const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
       )}
     </div>
   );
-});
-
-AnalysisPage.displayName = "AnalysisPage";
+};
 
 export default AnalysisPage;
