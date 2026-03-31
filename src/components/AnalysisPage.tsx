@@ -122,12 +122,12 @@ const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
         <div className="p-4">
           <Button
             onClick={handleAnalyze}
-            disabled={analyzing || !latestPhoto}
+            disabled={runAnalysis.isPending || !latestPhoto}
             className="w-full rounded-xl h-11"
           >
-            {analyzing ? (
+            {runAnalysis.isPending ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
                 AI 分析中…
               </>
             ) : (
