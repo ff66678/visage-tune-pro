@@ -29,6 +29,7 @@ const LibraryPage = () => {
   const [sortBy, setSortBy] = useState<"default" | "rating" | "duration">("default");
   const [showSort, setShowSort] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const collapseRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
   const { data: favoriteIds } = useFavoriteIds();
