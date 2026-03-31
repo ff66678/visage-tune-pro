@@ -5,6 +5,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useWorkoutStats, useHeatmapData, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { useCourses } from "@/hooks/useCourses";
 import SettingsDrawer from "@/components/SettingsDrawer";
+import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 
 const heatColors: Record<number, string> = {
   0: "bg-surface-elevated",
@@ -22,6 +23,7 @@ const ProfileDetailContent = () => {
   const { data: recentCourses = [] } = useRecentCourses();
   const { data: allCourses = [] } = useCourses();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { isPaid } = usePaywallStatus();
   const [heroHovered, setHeroHovered] = useState(false);
 
   // Next recommended course: first featured course not in recent
@@ -170,7 +172,7 @@ const ProfileDetailContent = () => {
       {/* Promo */}
       <div className="flex flex-col items-center text-center px-6 mt-8 mb-12">
         <button
-          onClick={() => navigate("/paywall")}
+          onClick={() => navigate(isPaid ? "/membership" : "/paywall")}
           className="inline-flex items-center gap-2 bg-card border border-foreground/[0.04] px-4 py-2 pl-2 rounded-full text-sm font-semibold shadow-sm mb-4 cursor-pointer"
         >
           <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">
