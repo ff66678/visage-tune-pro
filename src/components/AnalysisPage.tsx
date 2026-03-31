@@ -21,7 +21,7 @@ const levelLabel = (level: string) => {
   return map[level] || level;
 };
 
-const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
+const AnalysisPage = () => {
   const navigate = useNavigate();
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
   const { data: history = [] } = useFaceAnalyses();
