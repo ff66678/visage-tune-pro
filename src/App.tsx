@@ -16,6 +16,7 @@ import GiftPage from "./pages/GiftPage.tsx";
 import ProfileDetail from "./pages/ProfileDetail.tsx";
 import Favorites from "./pages/Favorites.tsx";
 import RecentlyPlayed from "./pages/RecentlyPlayed.tsx";
+import LanguageSettings from "./pages/LanguageSettings.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
