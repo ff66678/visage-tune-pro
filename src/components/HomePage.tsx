@@ -38,6 +38,9 @@ const HomePage = () => {
   const avatarUrl = profile?.avatar_url;
   const initials = displayName.slice(0, 1).toUpperCase();
 
+  const { data: favorites = [] } = useFavorites();
+  const favCount = favorites.length;
+
   const { weekData, percentage } = useWeeklyProgress();
   const { streak } = useWorkoutStats();
   const todayPlan = courses?.find((c) => c.is_today_plan);

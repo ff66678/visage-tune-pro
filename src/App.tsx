@@ -65,6 +65,8 @@ const App = () => (
             <Route path="/gift" element={<GiftPage />} />
             <Route path="/profile" element={<ProtectedRoute><ProfileDetail /></ProtectedRoute>} />
             <Route path="/category/:category" element={<ProtectedRoute><CategoryAll /></ProtectedRoute>} />
+            <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+            <Route path="/recently-played" element={<ProtectedRoute><RecentlyPlayed /></ProtectedRoute>} />
             <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
