@@ -12,6 +12,7 @@ interface PaywallProps {
 const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
   const [selectedPlan, setSelectedPlan] = useState("annual");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showAllPlans, setShowAllPlans] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
