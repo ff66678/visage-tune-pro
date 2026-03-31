@@ -130,7 +130,6 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-      )}
 
       {/* Category Shortcuts */}
       {categories.length > 0 && (
