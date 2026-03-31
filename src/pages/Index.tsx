@@ -16,12 +16,13 @@ const Index = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo(0, 0);
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
-      <div ref={scrollRef} className="w-full max-w-[480px] min-h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
+      <div ref={scrollRef} className="w-full max-w-[480px] h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
         <ActivePage />
         <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
