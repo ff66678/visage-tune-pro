@@ -17,6 +17,10 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const handleStartTrial = () => {
     if (!user) {
       // 未登录，跳转登录页并带上返回路径
