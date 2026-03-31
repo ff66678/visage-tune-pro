@@ -189,32 +189,32 @@ const HomePage = () => {
           <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
         </div>
       ) : (
-        <div className="flex overflow-x-auto gap-4 px-6 pb-2 no-scrollbar">
+        <div className="flex gap-3 overflow-x-auto pb-2 px-6 scrollbar-hide">
           {recommended.map((item) => (
             <div
               key={item.id}
-              className="min-w-[200px] bg-surface rounded-2xl overflow-hidden flex-shrink-0 cursor-pointer group"
+              className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden cursor-pointer transition-colors active:bg-muted"
               onClick={() => navigate(`/course/${item.id}`)}
             >
-              <div className="relative h-[140px] overflow-hidden">
+              <div className="relative aspect-square overflow-hidden">
                 <img
                   src={item.image_url}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover"
                 />
                 {item.tag && (
-                  <span className="absolute bottom-2 left-2 text-[10px] uppercase tracking-wider text-background/90 bg-foreground/50 backdrop-blur-sm px-2 py-0.5 rounded-full font-bold">
+                  <span className="absolute top-2 left-2 bg-primary/90 text-primary-foreground text-[10px] px-2 py-0.5 rounded-full">
                     {item.tag}
                   </span>
                 )}
               </div>
-              <div className="p-3">
-                <h3 className="text-sm font-semibold text-foreground mb-1.5 line-clamp-1">{item.title}</h3>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <span className="text-[11px]">{item.difficulty}</span>
-                  <span className="text-[11px]">·</span>
-                  <Clock className="w-3 h-3" />
-                  <span className="text-[11px]">{item.duration}</span>
+              <div className="p-2.5 space-y-1">
+                <div className="text-xs font-medium text-foreground line-clamp-2 leading-tight">{item.title}</div>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] text-muted-foreground">{item.difficulty} · {item.duration}</span>
+                  <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                    <ChevronRight className="w-3.5 h-3.5 text-primary-foreground" />
+                  </div>
                 </div>
               </div>
             </div>
