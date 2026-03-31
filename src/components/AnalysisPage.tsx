@@ -201,7 +201,7 @@ const AnalysisPage = () => {
       {/* Recommended Courses */}
       {latest && recommendedCourses.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">为你推荐</h3>
+          <h3 className="text-sm font-semibold text-foreground">推荐课程</h3>
           <div className="space-y-2">
             {recommendedCourses.map((course) => (
               <button
