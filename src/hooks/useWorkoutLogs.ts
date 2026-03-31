@@ -43,6 +43,9 @@ export const useWorkoutStats = () => {
 
   const totalWorkouts = logs.length;
 
+  // Total duration in seconds
+  const totalDuration = logs.reduce((acc, l) => acc + (l.duration_seconds || 0), 0);
+
   // Active weeks: count distinct ISO weeks
   const activeWeeks = new Set(
     logs.map((l) => {
@@ -71,11 +74,27 @@ export const useWorkoutStats = () => {
     checkDay.setDate(checkDay.getDate() - 1);
   }
 
+  // Longest streak
+  const sortedDays = Array.from(daySet).sort((a, b) => a - b);
+  let longestStreak = 0;
+  let currentRun = 0;
+  for (let i = 0; i < sortedDays.length; i++) {
+    if (i === 0 || sortedDays[i] - sortedDays[i - 1] === 86400000) {
+      currentRun++;
+    } else {
+      currentRun = 1;
+    }
+    longestStreak = Math.max(longestStreak, currentRun);
+  }
+
   // Distinct categories worked
   const courseMap = new Map(courses?.map((c) => [c.id, c.category]) ?? []);
   const categories = new Set(logs.map((l) => courseMap.get(l.course_id)).filter(Boolean)).size;
 
-  return { totalWorkouts, activeWeeks, streak, categories };
+  // Distinct practice days
+  const practiceDays = daySet.size;
+
+  return { totalWorkouts, activeWeeks, streak, longestStreak, categories, totalDuration, practiceDays };
 };
 
 export const useWeeklyProgress = () => {
