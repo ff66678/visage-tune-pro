@@ -1,23 +1,42 @@
 
 
-## Plan: 修复移动端输入框聚焦时页面缩放问题
+## Plan: 修复排序逻辑 — 全局排序 + 补全分类
 
 ### 问题
-iOS Safari 在聚焦 `font-size` 小于 16px 的输入框时会自动缩放页面。当前搜索框使用 `text-sm`（14px），触发了这个行为。
+
+1. **排序只在分类内部生效**：选"按时长"后，只在每个分类内部排，不是全局排序，视觉上看起来顺序不对
+2. **分类首个课程强制变大卡片**：排序后第一个课程变成大卡片，打乱了排序的视觉连续性
+3. **缺少分类标签**："全脸"、"太阳穴"、"法令纹"在数据库有数据但筛选栏里没有
+4. **分类筛选匹配逻辑有误**：用显示名（"眼部 & 上脸"）去 includes 匹配原始分类名（"眼部"），不够精确
 
 ### 改动
 
-**1. `src/components/LibraryPage.tsx`**
+**`src/components/LibraryPage.tsx`**
 
-搜索框 input 的 className 中将 `text-sm` 改为 `text-base`（16px），防止 iOS 自动缩放。
+1. **全局排序模式**：当 `sortBy` 不是 `default` 时，不按分类分组，把所有课程拉平成一个列表，统一用 2 列网格展示（不使用大卡片），按评分降序或时长升序排列
 
-**2. `index.html`**
-
-在 viewport meta 标签中添加 `maximum-scale=1`，作为全局防缩放保险：
-
-```html
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+2. **补全筛选标签**：
+```
+全部🔥 眼部👁 下颌🦴 脸颊✨ 全脸💎 额头🧠 颈部💆 太阳穴🌟 法令纹✋
 ```
 
-这两处改动配合使用，彻底解决输入框聚焦缩放问题。
+3. **补全 categoryLabels**：加上 `全脸 → 全脸训练`、`太阳穴 → 太阳穴护理`、`法令纹 → 法令纹改善`、`额头 → 额头紧致`
+
+4. **修复筛选匹配**：在 `categoryMap` 中保留原始 `key`，筛选时用 `key === activeFilter` 而非 `title.includes()`
+
+### 渲染逻辑
+
+```text
+sortBy === "default"
+  → 按分类分组，首个大卡片 + 其余网格（当前逻辑）
+
+sortBy === "rating" | "duration"
+  → 隐藏分类标题和大卡片
+  → 所有课程统一 2 列网格，全局排序
+```
+
+### 不变的部分
+- 精选 Banner、热门排行不变
+- 收藏、难度标签等交互不变
+- 搜索逻辑不变
 
