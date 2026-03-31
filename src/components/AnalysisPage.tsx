@@ -99,7 +99,7 @@ const AnalysisPage = () => {
           <p className="text-sm text-muted-foreground">拍一张照片，开始面部分析</p>
         </div>
         <Button
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleCameraClick}
           disabled={isUploading}
           className="rounded-full px-6"
         >
