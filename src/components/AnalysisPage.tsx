@@ -162,28 +162,26 @@ const AnalysisPage = () => {
       </div>
 
       {/* Score Cards */}
-      {latest && (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <TrendingUp className="w-3.5 h-3.5" />
-              弹性评分
-            </div>
-            <div className="text-3xl font-bold text-foreground">{latest.elasticity_score}</div>
-            <div className="text-xs text-muted-foreground">/100</div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <TrendingUp className="w-3.5 h-3.5" />
+            弹性评分
           </div>
-          <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Shield className="w-3.5 h-3.5" />
-              健康等级
-            </div>
-            <div className={`text-3xl font-bold ${gradeColor(latest.health_grade)}`}>
-              {latest.health_grade}
-            </div>
-            <div className="text-xs text-muted-foreground">综合评估</div>
-          </div>
+          <div className="text-3xl font-bold text-foreground">{latest ? latest.elasticity_score : "--"}</div>
+          <div className="text-xs text-muted-foreground">/100</div>
         </div>
-      )}
+        <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Shield className="w-3.5 h-3.5" />
+            健康等级
+          </div>
+          <div className={`text-3xl font-bold ${latest ? gradeColor(latest.health_grade) : "text-muted-foreground"}`}>
+            {latest ? latest.health_grade : "--"}
+          </div>
+          <div className="text-xs text-muted-foreground">综合评估</div>
+        </div>
+      </div>
 
       {/* Detail Scores */}
       {latest && (
