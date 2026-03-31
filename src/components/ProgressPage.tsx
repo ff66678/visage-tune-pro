@@ -17,6 +17,7 @@ const formatLocalDate = (d: Date) => {
 
 const ProgressPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: profile } = useProfile();
   const { data: todayPhoto } = useTodayPhoto();
   const { data: recentPhotos = [] } = useProgressPhotos();
