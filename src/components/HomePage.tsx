@@ -40,6 +40,7 @@ const HomePage = () => {
 
   const { data: favorites = [] } = useFavorites();
   const favCount = favorites.length;
+  const { isPaid } = usePaywallStatus();
 
   const { weekData, percentage } = useWeeklyProgress();
   const { streak } = useWorkoutStats();
