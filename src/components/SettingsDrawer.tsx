@@ -46,7 +46,7 @@ const SettingsDrawer = ({ open, onOpenChange }: SettingsDrawerProps) => {
           <div className="h-px bg-border my-1" />
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-destructive hover:bg-destructive/10 transition-colors text-left font-medium"
+            className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-foreground hover:bg-muted transition-colors text-left font-medium"
           >
             <LogOut className="w-5 h-5" />
             退出登录
