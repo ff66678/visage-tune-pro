@@ -22,7 +22,7 @@ const levelLabel = (level: string) => {
   return map[level] || level;
 };
 
-const AnalysisPage = () => {
+const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
   const { data: history = [] } = useFaceAnalyses();
@@ -30,7 +30,6 @@ const AnalysisPage = () => {
   const { data: courses = [] } = useCourses();
   const { data: products = [] } = useProducts();
   const runAnalysis = useRunAnalysis();
-  const [analyzing, setAnalyzing] = useState(false);
 
   const latestPhoto = photos[0];
 
