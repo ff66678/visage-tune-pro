@@ -123,59 +123,65 @@ const AnalysisPage = () => {
       </div>
 
       {/* Photo + Analysis Hero */}
-      <div className="relative rounded-2xl overflow-hidden bg-card border border-border shadow-sm">
-        {latestPhoto && (
-          <div className="relative aspect-[3/4] max-h-[360px] overflow-hidden">
-            <img
-              src={latestPhoto.photo_url}
-              alt="最近照片"
-              className="w-full h-full object-cover"
-            />
-            {/* Overlay labels when analysis exists */}
-            {latest && (
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent">
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-foreground flex items-center gap-1">
-                  <Eye className="w-3 h-3" />
-                  眼部 {latest.eye_contour_score}
-                </div>
-                <div className="absolute top-14 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-foreground flex items-center gap-1">
-                  <Smile className="w-3 h-3" />
-                  法令纹 {levelLabel(latest.nasolabial_level)}
-                </div>
-                <div className="absolute bottom-16 left-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-medium text-foreground flex items-center gap-1">
-                  <Shield className="w-3 h-3" />
-                  下颌 {levelLabel(latest.jawline_level)}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+      <div className="rounded-3xl bg-gradient-to-b from-primary/10 via-card to-card p-6 pt-8 flex flex-col items-center shadow-sm">
+        {/* Oval Photo Frame */}
+        <div className="relative mb-8">
+          <Sparkles className="absolute -top-3 -left-6 w-5 h-5 text-accent-gold/60" />
+          <Sparkles className="absolute top-1/4 -left-8 w-4 h-4 text-accent-gold/40" />
+          <Sparkles className="absolute -bottom-2 -right-6 w-5 h-5 text-accent-gold/50" />
+          <Sparkles className="absolute top-8 -right-8 w-4 h-4 text-accent-gold/30" />
 
-        {/* Analyze button */}
-        <div className="p-4">
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploading || runAnalysis.isPending}
-            className="w-full rounded-xl h-11"
-          >
-            {isUploading ? (
-              <>
-                <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
-                上传中…
-              </>
-            ) : runAnalysis.isPending ? (
-              <>
-                <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
-                AI 分析中…
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4 mr-2" />
-                面部分析
-              </>
-            )}
-          </Button>
+          <div className="w-[240px] h-[300px] rounded-[50%] border-[6px] border-surface-elevated/80 bg-surface-elevated/40 flex items-center justify-center p-3 shadow-inner">
+            <div className="w-full h-full rounded-[50%] overflow-hidden bg-surface flex items-center justify-center">
+              {isUploading ? (
+                <span className="inline-block h-8 w-8 rounded-full border-2 border-primary/40 border-t-primary animate-spin" />
+              ) : latestPhoto ? (
+                <img
+                  src={latestPhoto.photo_url}
+                  alt="最近照片"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Camera className="w-10 h-10 text-muted-foreground/50" />
+              )}
+            </div>
+          </div>
+
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-surface-elevated" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 rounded-full bg-surface-elevated" />
+          <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-surface-elevated" />
+          <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-surface-elevated" />
         </div>
+
+        <h2 className="text-xl font-semibold tracking-tight mb-1.5">
+          {latest ? `健康等级 ${latest.health_grade}` : "开始面部分析 ✨"}
+        </h2>
+        <p className="text-sm text-muted-foreground font-medium mb-6">
+          {latest ? `弹性评分 ${latest.elasticity_score}/100` : "拍一张照片，AI 为你分析"}
+        </p>
+
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading || runAnalysis.isPending}
+          className="w-full max-w-[280px] py-3.5 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center gap-2.5 text-base font-semibold border-none cursor-pointer shadow-md hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          {isUploading ? (
+            <>
+              <span className="inline-block h-5 w-5 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
+              上传中…
+            </>
+          ) : runAnalysis.isPending ? (
+            <>
+              <span className="inline-block h-5 w-5 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
+              AI 分析中…
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-5 h-5" />
+              面部分析
+            </>
+          )}
+        </button>
       </div>
 
       {/* Score Cards */}
