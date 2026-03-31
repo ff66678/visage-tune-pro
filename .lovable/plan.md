@@ -1,29 +1,19 @@
 
 
-## Plan: 修复引导页重复显示的 Bug
+## Plan: 退出登录后不再显示引导页
 
-### 问题分析
-`/onboarding` 路由是公开的，没有检查用户是否已完成引导。当已登录用户（已完成引导）访问 `/onboarding` 时，会重新走一遍流程。同时 `ProtectedRoute` 在用户未登录时也会重定向到 `/onboarding`，这是正确的，但引导页本身缺少"已完成则跳过"的逻辑。
+### 问题
+`ProtectedRoute` 中，未登录用户被重定向到 `/onboarding`（第33行）。退出后用户变为未登录状态，所以访问任何受保护页面都会跳到引导页。
 
 ### 改动
 
-**`src/pages/Onboarding.tsx`**
+**`src/App.tsx`**
 
-在 `Onboarding` 组件顶部添加检查逻辑：
-- 从 `useAuth()` 取 `onboardingCompleted` 和 `loading`
-- 如果用户已登录且 `onboardingCompleted === true`，直接 `<Navigate to="/" replace />`
-- 这样已完成引导的用户无论何时访问 `/onboarding` 都会被跳转回首页
+将 `ProtectedRoute` 中未登录用户的重定向目标从 `/onboarding` 改为 `/auth`：
 
 ```tsx
-const { user, setOnboardingCompleted, onboardingCompleted, loading } = useAuth();
-
-// 已完成引导的用户直接跳转首页
-if (!loading && user && onboardingCompleted === true) {
-  return <Navigate to="/" replace />;
-}
+if (!user) return <Navigate to="/auth" replace />;
 ```
 
-### 不变的部分
-- 引导步骤内容、付费墙逻辑、数据库写入逻辑全部不变
-- `ProtectedRoute` 逻辑不变
+这样退出登录后会跳转到登录页，而不是引导页。新用户注册登录后，如果 `onboardingCompleted === false`，仍会被引导到 `/onboarding`（第41行逻辑不变）。
 
