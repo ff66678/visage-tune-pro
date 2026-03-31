@@ -234,8 +234,8 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* Recent Training */}
-      {recentCourses.length > 0 && (
+      {/* Recent Training - only for logged in users */}
+      {user && recentCourses.length > 0 && (
         <div className="px-6 mt-4">
           <h2 className="text-[15px] font-semibold mb-3">最近训练</h2>
           <div className="flex flex-col gap-2.5">
@@ -265,46 +265,50 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* My Favorites & Recently Played */}
-      <div className="px-6 mt-4 grid grid-cols-2 gap-3">
-        <div
-          className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
-          onClick={() => navigate("/favorites")}
-        >
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
-            <Heart className="w-5 h-5" />
+      {/* My Favorites & Recently Played - only for logged in users */}
+      {user && (
+        <div className="px-6 mt-4 grid grid-cols-2 gap-3">
+          <div
+            className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
+            onClick={() => navigate("/favorites")}
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+              <Heart className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold text-foreground">我的喜欢</h3>
+              <p className="text-[11px] text-muted-foreground">{favCount} 个课程</p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-semibold text-foreground">我的喜欢</h3>
-            <p className="text-[11px] text-muted-foreground">{favCount} 个课程</p>
+          <div
+            className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
+            onClick={() => navigate("/recently-played")}
+          >
+            <div className="w-10 h-10 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
+              <Play className="w-5 h-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold text-foreground">最近播放</h3>
+              <p className="text-[11px] text-muted-foreground">{recentCourses.length} 个记录</p>
+            </div>
           </div>
         </div>
-        <div
-          className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
-          onClick={() => navigate("/recently-played")}
-        >
-          <div className="w-10 h-10 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
-            <Play className="w-5 h-5" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-semibold text-foreground">最近播放</h3>
-            <p className="text-[11px] text-muted-foreground">{recentCourses.length} 个记录</p>
-          </div>
-        </div>
-      </div>
+      )}
 
-      {/* Streak */}
-      <div className="px-5 mt-4 mb-6">
-        <div className="bg-surface rounded-xl p-4 flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
-            <Star className="w-6 h-6" fill="currentColor" />
-          </div>
-          <div>
-            <div className="text-sm font-semibold">连续打卡 {streak} 天</div>
-            <div className="text-xs text-muted-foreground">{streak > 0 ? "太棒了，继续保持！" : "今天开始打卡吧！"}</div>
+      {/* Streak - only for logged in users */}
+      {user && (
+        <div className="px-5 mt-4 mb-6">
+          <div className="bg-surface rounded-xl p-4 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
+              <Star className="w-6 h-6" fill="currentColor" />
+            </div>
+            <div>
+              <div className="text-sm font-semibold">连续打卡 {streak} 天</div>
+              <div className="text-xs text-muted-foreground">{streak > 0 ? "太棒了，继续保持！" : "今天开始打卡吧！"}</div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
