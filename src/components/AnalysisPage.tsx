@@ -283,6 +283,8 @@ const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
       )}
     </div>
   );
-};
+});
+
+AnalysisPage.displayName = "AnalysisPage";
 
 export default AnalysisPage;

@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Home, BookOpen, ScanFace, Camera } from "lucide-react";
 
 interface BottomTabBarProps {
@@ -12,9 +13,9 @@ const tabs = [
   { icon: Camera, label: "记录" },
 ];
 
-const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
+const BottomTabBar = forwardRef<HTMLElement, BottomTabBarProps>(({ activeTab, onTabChange }, ref) => {
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] h-[84px] bg-surface/95 backdrop-blur-xl flex justify-around items-center pb-5 border-t border-foreground/5 z-50">
+    <nav ref={ref} className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] h-[84px] bg-surface/95 backdrop-blur-xl flex justify-around items-center pb-5 border-t border-foreground/5 z-50">
       {tabs.map((tab, i) => (
         <button
           key={tab.label}
@@ -29,6 +30,8 @@ const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
       ))}
     </nav>
   );
-};
+});
+
+BottomTabBar.displayName = "BottomTabBar";
 
 export default BottomTabBar;
