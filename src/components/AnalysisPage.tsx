@@ -184,36 +184,34 @@ const AnalysisPage = () => {
       </div>
 
       {/* Detail Scores */}
-      {latest && (
-        <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">详细指标</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Eye className="w-4 h-4" /> 眼部轮廓
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-24 h-2 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full bg-primary rounded-full" style={{ width: `${latest.eye_contour_score}%` }} />
-                </div>
-                <span className="text-sm font-medium text-foreground w-8 text-right">{latest.eye_contour_score}</span>
-              </div>
+      <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
+        <h3 className="text-sm font-semibold text-foreground">详细指标</h3>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Eye className="w-4 h-4" /> 眼部轮廓
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Smile className="w-4 h-4" /> 法令纹
+            <div className="flex items-center gap-2">
+              <div className="w-24 h-2 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-primary rounded-full" style={{ width: `${latest ? latest.eye_contour_score : 0}%` }} />
               </div>
-              <span className="text-sm font-medium text-foreground">{levelLabel(latest.nasolabial_level)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Shield className="w-4 h-4" /> 下颌线条
-              </div>
-              <span className="text-sm font-medium text-foreground">{levelLabel(latest.jawline_level)}</span>
+              <span className="text-sm font-medium text-foreground w-8 text-right">{latest ? latest.eye_contour_score : "--"}</span>
             </div>
           </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Smile className="w-4 h-4" /> 法令纹
+            </div>
+            <span className="text-sm font-medium text-foreground">{latest ? levelLabel(latest.nasolabial_level) : "--"}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Shield className="w-4 h-4" /> 下颌线条
+            </div>
+            <span className="text-sm font-medium text-foreground">{latest ? levelLabel(latest.jawline_level) : "--"}</span>
+          </div>
         </div>
-      )}
+      </div>
 
 
 
