@@ -52,17 +52,17 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-6">
-      <div className="w-full max-w-[400px] relative">
-        {/* Close Button */}
-        {showClose && (
-          <button
-            onClick={() => navigate("/")}
-            className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-surface flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        )}
+    <div className="min-h-screen bg-background flex items-center justify-center px-6 relative">
+      {/* Close Button */}
+      {showClose && (
+        <button
+          onClick={() => navigate("/")}
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors z-10"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      )}
+      <div className="w-full max-w-[400px]">
         {/* Logo / Header */}
         <div className="text-center mb-10">
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
