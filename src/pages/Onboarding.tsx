@@ -363,6 +363,14 @@ const Onboarding = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
+  // When user logs in during onboarding auth step, move to paywall
+  useEffect(() => {
+    if (showAuth && user) {
+      setShowAuth(false);
+      setShowPaywall(true);
+    }
+  }, [user, showAuth]);
+
   // 已完成引导的用户直接跳转首页
   if (!loading && user && onboardingCompleted === true) {
     return <Navigate to="/" replace />;
