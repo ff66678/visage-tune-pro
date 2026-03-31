@@ -30,7 +30,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-  if (!user) return <Navigate to="/onboarding" replace />;
+  if (!user) return <Navigate to="/auth" replace />;
   if (onboardingCompleted === null) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
