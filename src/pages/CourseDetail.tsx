@@ -17,6 +17,26 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const { data: course, isLoading } = useCourse(id);
   const { isPaid, markPaid } = usePaywallStatus();
+  const { toast } = useToast();
+
+  const handleShare = async () => {
+    if (!course) return;
+    const shareData = {
+      title: course.title,
+      text: course.description || course.title,
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({ title: "链接已复制到剪贴板" });
+      }
+    } catch (e) {
+      // User cancelled share
+    }
+  };
 
   const handleStartWorkout = () => {
     if (isPaid) {
