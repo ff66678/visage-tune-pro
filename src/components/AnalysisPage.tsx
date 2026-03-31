@@ -6,6 +6,7 @@ import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useF
 import { useProgressPhotos, useUploadProgressPhoto } from "@/hooks/useProgressPhotos";
 import { useCourses } from "@/hooks/useCourses";
 import { useProducts } from "@/hooks/useProducts";
+import { useAuth } from "@/contexts/AuthContext";
 
 const gradeColor = (grade: string) => {
   if (grade.startsWith("A")) return "text-emerald-600";
