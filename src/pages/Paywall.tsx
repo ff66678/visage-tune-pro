@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { X, Check, ChevronDown, ArrowRight } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PaywallProps {
   mode?: "onboarding" | "content-gate";
@@ -10,8 +12,17 @@ interface PaywallProps {
 const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
   const [selectedPlan, setSelectedPlan] = useState("annual");
   const [showSuccess, setShowSuccess] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleStartTrial = () => {
+    if (!user) {
+      // 未登录，跳转登录页并带上返回路径
+      const currentPath = location.pathname;
+      navigate(`/auth?returnTo=${encodeURIComponent(currentPath)}`);
+      return;
+    }
     setShowSuccess(true);
     setTimeout(() => {
       setShowSuccess(false);

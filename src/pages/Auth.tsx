@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Mail, Lock, User, Eye, EyeOff, X } from "lucide-react";
@@ -7,6 +7,8 @@ import { toast } from "sonner";
 
 const Auth = ({ showClose = true }: { showClose?: boolean }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = new URLSearchParams(location.search).get("returnTo") || "/";
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +25,9 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("登录成功！");
+        navigate(returnTo, { replace: true });
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -32,7 +35,7 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
             data: { full_name: name },
           },
         });
-        if (error) throw error;
+        if (signUpError) throw signUpError;
         toast.success("注册成功！请查看邮箱确认。");
       }
     } catch (error: any) {
