@@ -353,6 +353,16 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const { user, setOnboardingCompleted, onboardingCompleted, loading } = useAuth();
 
+  const [step, setStep] = useState(0);
+  const [goal, setGoal] = useState<string | null>(null);
+  const [skinType, setSkinType] = useState<string | null>(null);
+  const [concerns, setConcerns] = useState<string[]>([]);
+  const [time, setTime] = useState<string | null>(null);
+  const [showLoading, setShowLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+
   // 已完成引导的用户直接跳转首页
   if (!loading && user && onboardingCompleted === true) {
     return <Navigate to="/" replace />;
@@ -365,16 +375,6 @@ const Onboarding = () => {
       navigate("/");
     }
   };
-
-  const [step, setStep] = useState(0);
-  const [goal, setGoal] = useState<string | null>(null);
-  const [skinType, setSkinType] = useState<string | null>(null);
-  const [concerns, setConcerns] = useState<string[]>([]);
-  const [time, setTime] = useState<string | null>(null);
-  const [showLoading, setShowLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
-  const [showPaywall, setShowPaywall] = useState(false);
 
   const toggleConcern = (c: string) => {
     setConcerns((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]);
