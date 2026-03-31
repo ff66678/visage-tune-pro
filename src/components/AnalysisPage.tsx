@@ -1,8 +1,9 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useFaceAnalysis";
-import { useProgressPhotos } from "@/hooks/useProgressPhotos";
+import { useProgressPhotos, useUploadProgressPhoto } from "@/hooks/useProgressPhotos";
 import { useCourses } from "@/hooks/useCourses";
 import { useProducts } from "@/hooks/useProducts";
 
