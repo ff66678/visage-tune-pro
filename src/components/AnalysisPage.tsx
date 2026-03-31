@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useFaceAnalysis";
 import { useProgressPhotos } from "@/hooks/useProgressPhotos";
 import { useCourses } from "@/hooks/useCourses";
+import { useProducts } from "@/hooks/useProducts";
 
 const gradeColor = (grade: string) => {
   if (grade.startsWith("A")) return "text-emerald-600";
