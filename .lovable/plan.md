@@ -1,50 +1,34 @@
 
 
-## Plan: 添加"我的喜欢"和"最近播放"入口
+## Plan: 接入真实分享功能
 
-### 需要做的事
+### 改动文件
+**`src/pages/CourseDetail.tsx`**
 
-在打卡卡片上方添加两个并排的快捷入口卡片："我的喜欢"和"最近播放"，点击后跳转到对应页面。同时需要创建收藏功能的数据库支持。
+### 方案
+使用 Web Share API（`navigator.share`），这是移动端原生支持的分享接口，可以调起系统分享面板（微信、短信、复制链接等）。
 
-### 1. 创建 `favorites` 表（数据库迁移）
-```sql
-CREATE TABLE public.favorites (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id uuid NOT NULL,
-  course_id uuid NOT NULL REFERENCES public.courses(id) ON DELETE CASCADE,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE(user_id, course_id)
-);
-ALTER TABLE public.favorites ENABLE ROW LEVEL SECURITY;
--- 用户只能读写自己的收藏
-CREATE POLICY "Users can read own favorites" ON public.favorites FOR SELECT TO authenticated USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own favorites" ON public.favorites FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can delete own favorites" ON public.favorites FOR DELETE TO authenticated USING (auth.uid() = user_id);
+点击分享按钮时：
+1. 优先使用 `navigator.share()`，传入课程标题、描述和当前页面 URL
+2. 如果浏览器不支持 Web Share API（桌面端），fallback 为复制链接到剪贴板，并用 toast 提示"链接已复制"
+
+### 具体改动
+- 给分享按钮添加 `onClick` 处理函数 `handleShare`
+- 函数内容：
+```typescript
+const handleShare = async () => {
+  const shareData = {
+    title: course?.title,
+    text: course?.description || course?.title,
+    url: window.location.href,
+  };
+  if (navigator.share) {
+    await navigator.share(shareData);
+  } else {
+    await navigator.clipboard.writeText(window.location.href);
+    toast({ title: "链接已复制" });
+  }
+};
 ```
-
-### 2. 新建 `src/hooks/useFavorites.ts`
-- `useFavorites()`：查询当前用户的收藏课程列表（join courses 表）
-- `useToggleFavorite()`：添加/取消收藏的 mutation
-
-### 3. 新建两个页面
-- **`src/pages/Favorites.tsx`**：我的喜欢页面，展示收藏的课程列表
-- **`src/pages/RecentlyPlayed.tsx`**：最近播放页面，复用 `useRecentCourses` 展示完整历史
-
-### 4. 修改 `src/App.tsx`
-添加 `/favorites` 和 `/recently-played` 路由
-
-### 5. 修改 `src/components/HomePage.tsx`
-在打卡卡片上方添加两个并排卡片：
-
-```text
-┌──────────────┐ ┌──────────────┐
-│ ♡ 我的喜欢    │ │ ▶ 最近播放    │
-│ 3 个课程      │ │ 5 个记录      │
-└──────────────┘ └──────────────┘
-```
-
-使用 `grid grid-cols-2 gap-3`，每个卡片带图标、标题和计数，点击跳转对应页面。
-
-### 6. 在课程详情页添加收藏按钮
-修改 `src/pages/CourseDetail.tsx`，在合适位置加一个心形收藏按钮，调用 `useToggleFavorite`。
+- 引入 `useToast` 用于 fallback 提示
 
