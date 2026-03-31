@@ -1,42 +1,34 @@
 
 
-## Plan: 修复排序逻辑 — 全局排序 + 补全分类
+## Plan: 登录后自动重新显示付费墙
 
-### 问题
-
-1. **排序只在分类内部生效**：选"按时长"后，只在每个分类内部排，不是全局排序，视觉上看起来顺序不对
-2. **分类首个课程强制变大卡片**：排序后第一个课程变成大卡片，打乱了排序的视觉连续性
-3. **缺少分类标签**："全脸"、"太阳穴"、"法令纹"在数据库有数据但筛选栏里没有
-4. **分类筛选匹配逻辑有误**：用显示名（"眼部 & 上脸"）去 includes 匹配原始分类名（"眼部"），不够精确
+### 问题根因
+游客点击"开始训练" → 显示付费墙 → 点击订阅 → 跳转 `/auth?returnTo=/course/xxx` → 登录后返回 `/course/xxx`，但 `showContentGate` 状态被重置为 `false`（组件重新挂载），所以用户看到的是课程详情页而不是付费墙，再次点击"开始训练"就能直接进入训练。
 
 ### 改动
 
-**`src/components/LibraryPage.tsx`**
+**1. `src/pages/Paywall.tsx`**
 
-1. **全局排序模式**：当 `sortBy` 不是 `default` 时，不按分类分组，把所有课程拉平成一个列表，统一用 2 列网格展示（不使用大卡片），按评分降序或时长升序排列
+`handleStartTrial` 中，`returnTo` 加上 `?showPaywall=true` 参数：
 
-2. **补全筛选标签**：
+```tsx
+navigate(`/auth?returnTo=${encodeURIComponent(currentPath + "?showPaywall=true")}`);
 ```
-全部🔥 眼部👁 下颌🦴 脸颊✨ 全脸💎 额头🧠 颈部💆 太阳穴🌟 法令纹✋
+
+**2. `src/pages/CourseDetail.tsx`**
+
+读取 URL 中的 `showPaywall` 参数，初始化 `showContentGate` 状态：
+
+```tsx
+const [searchParams] = useSearchParams();
+const [showContentGate, setShowContentGate] = useState(
+  searchParams.get("showPaywall") === "true"
+);
 ```
 
-3. **补全 categoryLabels**：加上 `全脸 → 全脸训练`、`太阳穴 → 太阳穴护理`、`法令纹 → 法令纹改善`、`额头 → 额头紧致`
-
-4. **修复筛选匹配**：在 `categoryMap` 中保留原始 `key`，筛选时用 `key === activeFilter` 而非 `title.includes()`
-
-### 渲染逻辑
-
-```text
-sortBy === "default"
-  → 按分类分组，首个大卡片 + 其余网格（当前逻辑）
-
-sortBy === "rating" | "duration"
-  → 隐藏分类标题和大卡片
-  → 所有课程统一 2 列网格，全局排序
-```
+这样登录后返回课程页时，付费墙会自动显示，用户必须完成付费才能访问内容。
 
 ### 不变的部分
-- 精选 Banner、热门排行不变
-- 收藏、难度标签等交互不变
-- 搜索逻辑不变
+- 付费流程、定价卡片不变
+- 已付费用户体验不变
 
