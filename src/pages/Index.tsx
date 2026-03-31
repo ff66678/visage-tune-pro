@@ -3,9 +3,10 @@ import { useSearchParams } from "react-router-dom";
 import BottomTabBar from "@/components/BottomTabBar";
 import HomePage from "@/components/HomePage";
 import LibraryPage from "@/components/LibraryPage";
+import AnalysisPage from "@/components/AnalysisPage";
 import ProgressPage from "@/components/ProgressPage";
 
-const pages = [HomePage, LibraryPage, ProgressPage];
+const pages = [HomePage, LibraryPage, AnalysisPage, ProgressPage];
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
