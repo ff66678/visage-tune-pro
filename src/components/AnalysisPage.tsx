@@ -79,45 +79,7 @@ const AnalysisPage = () => {
     return recommended.length > 0 ? recommended.slice(0, 3) : courses.slice(0, 3);
   };
 
-  // No photos state
-  if (!latestPhoto && !loadingLatest) {
-    return (
-      <div className="px-5 pt-14 pb-8 flex flex-col items-center justify-center min-h-[70vh] gap-6">
-        <input
-          type="file"
-          accept="image/*"
-          capture="user"
-          ref={fileInputRef}
-          onChange={handleCapture}
-          className="hidden"
-        />
-        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
-          <Camera className="w-10 h-10 text-muted-foreground" />
-        </div>
-        <div className="text-center space-y-2">
-          <h2 className="text-lg font-semibold text-foreground">还没有照片</h2>
-          <p className="text-sm text-muted-foreground">拍一张照片，开始面部分析</p>
-        </div>
-        <Button
-          onClick={handleCameraClick}
-          disabled={isUploading}
-          className="rounded-full px-6"
-        >
-          {isUploading ? (
-            <>
-              <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
-              上传中…
-            </>
-          ) : (
-            <>
-              <Camera className="w-4 h-4 mr-2" />
-              拍照分析
-            </>
-          )}
-        </Button>
-      </div>
-    );
-  }
+  // No early return — always show full layout
 
   const recommendedCourses = getRecommendedCourses();
 
