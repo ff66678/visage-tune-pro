@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { X, Check, ChevronDown, ArrowRight } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PaywallProps {
   mode?: "onboarding" | "content-gate";
