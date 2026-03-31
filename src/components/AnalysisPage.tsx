@@ -38,13 +38,11 @@ const AnalysisPage = () => {
   const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    await uploadPhoto(file);
+    const photoUrl = await uploadPhoto(file);
     e.target.value = "";
-  };
-
-  const handleAnalyze = async () => {
-    if (!latestPhoto || runAnalysis.isPending) return;
-    await runAnalysis.mutateAsync(latestPhoto.photo_url);
+    if (photoUrl) {
+      await runAnalysis.mutateAsync(photoUrl);
+    }
   };
 
   // Recommend courses based on weak areas
@@ -168,11 +166,16 @@ const AnalysisPage = () => {
         {/* Analyze button */}
         <div className="p-4">
           <Button
-            onClick={handleAnalyze}
-            disabled={runAnalysis.isPending || !latestPhoto}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading || runAnalysis.isPending}
             className="w-full rounded-xl h-11"
           >
-            {runAnalysis.isPending ? (
+            {isUploading ? (
+              <>
+                <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
+                上传中…
+              </>
+            ) : runAnalysis.isPending ? (
               <>
                 <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
                 AI 分析中…
@@ -180,7 +183,7 @@ const AnalysisPage = () => {
             ) : (
               <>
                 <Sparkles className="w-4 h-4 mr-2" />
-                {latest ? "面部分析" : "开始 AI 分析"}
+                面部分析
               </>
             )}
           </Button>
