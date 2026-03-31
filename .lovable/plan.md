@@ -1,38 +1,33 @@
 
 
-## Plan: 未登录用户在付费墙点击订阅时跳转登录页
-
-### 逻辑流程
-未登录点击"开始训练" → 显示付费墙 → 点击订阅按钮 → 跳转登录页（带 returnTo）→ 登录后返回课程页
+## Plan: 分析和记录页面允许未登录用户浏览
 
 ### 改动
 
-**1. `src/pages/CourseDetail.tsx`**
+**1. `src/components/BottomTabBar.tsx`**
 
-`handleStartWorkout` 中移除登录检查，未付费用户统一显示付费墙（无论是否登录）：
+将分析和记录 tab 的 `requiresAuth` 改为 `false`，让未登录用户也能切换到这两个页面：
 
 ```tsx
-const handleStartWorkout = () => {
-  if (isPaid) {
-    navigate(`/workout/${course!.id}`);
-  } else {
-    setShowContentGate(true); // 不管登录与否都显示付费墙
-  }
-};
+{ icon: ScanFace, label: "分析", requiresAuth: false },
+{ icon: Camera, label: "记录", requiresAuth: false },
 ```
 
-将 `user` 传给 Paywall 组件，让付费墙知道用户是否已登录。
+**2. `src/components/AnalysisPage.tsx`**
 
-**2. `src/pages/Paywall.tsx`**
+- 拍照按钮（`fileInputRef.current?.click()`）：点击前检查 `user`，未登录跳 `/auth`
+- 推荐课程点击（`navigate(/course/...)`）：未登录跳 `/auth`
+- 推荐商品链接：未登录跳 `/auth`（阻止默认跳转）
+- 页面内容本身正常展示（无照片的空状态、历史分析结果等照常显示）
 
-- 接收新 prop `user`（或从 `useAuth` 获取）
-- 在 `handleStartTrial` 中：未登录时 `navigate("/auth?returnTo=当前路径")`，已登录时走原有付费流程
+**3. `src/components/ProgressPage.tsx`**
 
-**3. `src/pages/Auth.tsx`**
+- 拍照上传按钮：点击前检查 `user`，未登录跳 `/auth`
+- 页面布局和日历等 UI 正常展示
 
-登录成功后读取 `returnTo` 参数并跳转回去（而非默认首页）。
+两个页面都需要从 `useAuth()` 获取 `user`。
 
 ### 不变的部分
-- 付费墙 UI、定价卡片不变
-- 已登录已付费用户流程不变
+- 已登录用户体验完全不变
+- 数据查询 hooks 在无用户时返回空数据，页面自然显示空状态
 
