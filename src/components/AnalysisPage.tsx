@@ -267,8 +267,6 @@ const AnalysisPage = () => {
       )}
     </div>
   );
-});
-
-AnalysisPage.displayName = "AnalysisPage";
+};
 
 export default AnalysisPage;
