@@ -6,6 +6,7 @@ import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useF
 import { useProgressPhotos, useUploadProgressPhoto } from "@/hooks/useProgressPhotos";
 import { useCourses } from "@/hooks/useCourses";
 import { useProducts } from "@/hooks/useProducts";
+import { useAuth } from "@/contexts/AuthContext";
 
 const gradeColor = (grade: string) => {
   if (grade.startsWith("A")) return "text-emerald-600";
@@ -24,6 +25,7 @@ const levelLabel = (level: string) => {
 
 const AnalysisPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
   const { data: history = [] } = useFaceAnalyses();
@@ -34,6 +36,19 @@ const AnalysisPage = () => {
   const { mutateAsync: uploadPhoto, isPending: isUploading } = useUploadProgressPhoto();
 
   const latestPhoto = photos[0];
+
+  const requireAuth = () => {
+    if (!user) {
+      navigate("/auth");
+      return true;
+    }
+    return false;
+  };
+
+  const handleCameraClick = () => {
+    if (requireAuth()) return;
+    fileInputRef.current?.click();
+  };
 
   const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -84,7 +99,7 @@ const AnalysisPage = () => {
           <p className="text-sm text-muted-foreground">拍一张照片，开始面部分析</p>
         </div>
         <Button
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleCameraClick}
           disabled={isUploading}
           className="rounded-full px-6"
         >
@@ -161,7 +176,7 @@ const AnalysisPage = () => {
         </p>
 
         <button
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleCameraClick}
           disabled={isUploading || runAnalysis.isPending}
           className="w-full max-w-[280px] py-3.5 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center gap-2.5 text-base font-semibold border-none cursor-pointer shadow-md hover:opacity-90 transition-opacity disabled:opacity-50"
         >
@@ -251,7 +266,10 @@ const AnalysisPage = () => {
             {recommendedCourses.map((course) => (
               <button
                 key={course.id}
-                onClick={() => navigate(`/course/${course.id}`)}
+                onClick={() => {
+                  if (requireAuth()) return;
+                  navigate(`/course/${course.id}`);
+                }}
                 className="w-full flex items-center gap-3 rounded-2xl bg-card border border-border p-3 text-left transition-colors active:bg-muted"
               >
                 <img
@@ -277,9 +295,15 @@ const AnalysisPage = () => {
             {products.map((product) => (
               <a
                 key={product.id}
-                href={product.purchase_url || "#"}
-                target="_blank"
+                href={user ? (product.purchase_url || "#") : "#"}
+                target={user ? "_blank" : undefined}
                 rel="noopener noreferrer"
+                onClick={(e) => {
+                  if (!user) {
+                    e.preventDefault();
+                    navigate("/auth");
+                  }
+                }}
                 className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden transition-colors active:bg-muted"
               >
                 <div className="relative aspect-square">
