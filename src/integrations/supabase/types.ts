@@ -74,6 +74,45 @@ export type Database = {
         }
         Relationships: []
       }
+      face_analyses: {
+        Row: {
+          analysis_date: string
+          created_at: string
+          elasticity_score: number
+          eye_contour_score: number
+          health_grade: string
+          id: string
+          jawline_level: string
+          nasolabial_level: string
+          photo_url: string
+          user_id: string
+        }
+        Insert: {
+          analysis_date?: string
+          created_at?: string
+          elasticity_score?: number
+          eye_contour_score?: number
+          health_grade?: string
+          id?: string
+          jawline_level?: string
+          nasolabial_level?: string
+          photo_url: string
+          user_id: string
+        }
+        Update: {
+          analysis_date?: string
+          created_at?: string
+          elasticity_score?: number
+          eye_contour_score?: number
+          health_grade?: string
+          id?: string
+          jawline_level?: string
+          nasolabial_level?: string
+          photo_url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           course_id: string

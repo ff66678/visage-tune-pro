@@ -1,4 +1,4 @@
-import { Home, Archive, TrendingUp } from "lucide-react";
+import { Home, BookOpen, ScanFace, Camera } from "lucide-react";
 
 interface BottomTabBarProps {
   activeTab: number;
@@ -7,8 +7,9 @@ interface BottomTabBarProps {
 
 const tabs = [
   { icon: Home, label: "首页" },
-  { icon: Archive, label: "库" },
-  { icon: TrendingUp, label: "进度" },
+  { icon: BookOpen, label: "课程" },
+  { icon: ScanFace, label: "分析" },
+  { icon: Camera, label: "记录" },
 ];
 
 const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
