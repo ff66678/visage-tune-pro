@@ -14,6 +14,8 @@ import CategoryAll from "./pages/CategoryAll.tsx";
 import Membership from "./pages/Membership.tsx";
 import GiftPage from "./pages/GiftPage.tsx";
 import ProfileDetail from "./pages/ProfileDetail.tsx";
+import Favorites from "./pages/Favorites.tsx";
+import RecentlyPlayed from "./pages/RecentlyPlayed.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
