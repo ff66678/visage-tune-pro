@@ -34,7 +34,7 @@ const MembershipPage = () => {
     { icon: Sparkles, label: "全部课程无限畅享", desc: "解锁 50+ 精品面部瑜伽课程" },
     { icon: Calendar, label: "每周专属新课", desc: "优先体验最新课程内容" },
     { icon: Clock, label: "个性化定制方案", desc: "AI 智能推荐专属训练计划" },
-    { icon: Star, label: "专家级指导", desc: "资深导师 1v1 点评与建议" },
+    
   ];
 
   return (
