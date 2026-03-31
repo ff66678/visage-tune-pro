@@ -176,7 +176,7 @@ const AnalysisPage = () => {
         </p>
 
         <button
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleCameraClick}
           disabled={isUploading || runAnalysis.isPending}
           className="w-full max-w-[280px] py-3.5 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center gap-2.5 text-base font-semibold border-none cursor-pointer shadow-md hover:opacity-90 transition-opacity disabled:opacity-50"
         >
