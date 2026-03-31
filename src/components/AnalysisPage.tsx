@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Loader2, Camera, Sparkles } from "lucide-react";
+import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useFaceAnalysis";
 import { useProgressPhotos } from "@/hooks/useProgressPhotos";
