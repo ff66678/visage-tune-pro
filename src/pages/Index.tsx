@@ -16,7 +16,8 @@ const Index = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo(0, 0);
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [activeTab]);
 
   return (
