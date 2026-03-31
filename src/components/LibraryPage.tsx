@@ -28,12 +28,20 @@ const LibraryPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState<"default" | "rating" | "duration">("default");
   const [showSort, setShowSort] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
   const { data: favoriteIds } = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
   const { user } = useAuth();
 
+  useEffect(() => {
+    const container = document.querySelector('.no-scrollbar');
+    if (!container) return;
+    const onScroll = () => setScrolled(container.scrollTop > 20);
+    container.addEventListener('scroll', onScroll);
+    return () => container.removeEventListener('scroll', onScroll);
+  }, []);
   const featuredCourse = useMemo(() => {
     if (!courses) return null;
     return courses.find((c) => c.is_featured) || courses[0] || null;
