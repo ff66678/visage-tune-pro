@@ -165,7 +165,7 @@ const LibraryPage = () => {
             ].map((s) => (
               <button
                 key={s.key}
-                onClick={() => { setSortBy(s.key); setShowSort(false); }}
+                onClick={() => setSortBy(s.key)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   sortBy === s.key
                     ? "bg-primary text-primary-foreground"
