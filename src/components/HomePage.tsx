@@ -104,9 +104,8 @@ const HomePage = () => {
         </div>
       </nav>
 
-      {/* Weekly Progress - only for logged in users */}
-      {user && (
-        <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
+      {/* Weekly Progress */}
+      <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-[15px] font-semibold">每周进度</h2>
             <span className="text-[13px] text-primary font-semibold">完成 {percentage}%</span>
@@ -131,7 +130,6 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-      )}
 
       {/* Category Shortcuts */}
       {categories.length > 0 && (
@@ -234,8 +232,8 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* Recent Training - only for logged in users */}
-      {user && recentCourses.length > 0 && (
+      {/* Recent Training */}
+      {recentCourses.length > 0 && (
         <div className="px-6 mt-4">
           <h2 className="text-[15px] font-semibold mb-3">最近训练</h2>
           <div className="flex flex-col gap-2.5">
@@ -265,12 +263,11 @@ const HomePage = () => {
         </div>
       )}
 
-      {/* My Favorites & Recently Played - only for logged in users */}
-      {user && (
-        <div className="px-6 mt-4 grid grid-cols-2 gap-3">
+      {/* My Favorites & Recently Played */}
+      <div className="px-6 mt-4 grid grid-cols-2 gap-3">
           <div
             className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
-            onClick={() => navigate("/favorites")}
+            onClick={() => navigate(user ? "/favorites" : "/auth")}
           >
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
               <Heart className="w-5 h-5" />
@@ -282,7 +279,7 @@ const HomePage = () => {
           </div>
           <div
             className="bg-surface rounded-2xl p-4 cursor-pointer hover:bg-surface-elevated transition-colors flex items-center gap-3"
-            onClick={() => navigate("/recently-played")}
+            onClick={() => navigate(user ? "/recently-played" : "/auth")}
           >
             <div className="w-10 h-10 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
               <Play className="w-5 h-5" />
@@ -293,11 +290,9 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      )}
 
-      {/* Streak - only for logged in users */}
-      {user && (
-        <div className="px-5 mt-4 mb-6">
+      {/* Streak */}
+      <div className="px-5 mt-4 mb-6">
           <div className="bg-surface rounded-xl p-4 flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-accent-gold/15 flex items-center justify-center text-accent-gold flex-shrink-0">
               <Star className="w-6 h-6" fill="currentColor" />
@@ -308,7 +303,6 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      )}
     </div>
   );
 };
