@@ -72,9 +72,6 @@ const MembershipPage = () => {
               <Shield className="w-4 h-4 text-primary-foreground/80" />
               <span className="text-sm font-medium text-primary-foreground/90">会员状态：有效</span>
             </div>
-            <p className="text-xs text-primary-foreground/60">
-              到期时间：2027年4月4日 · 自动续订
-            </p>
           </div>
         </div>
 
