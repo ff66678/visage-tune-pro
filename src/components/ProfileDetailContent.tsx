@@ -1,52 +1,89 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Settings, Clock, Play, ChevronRight } from "lucide-react";
+import { Clock, Gift, Share2, ChevronLeft, ChevronRight, Flame, Trophy, Calendar as CalendarIcon, Dumbbell } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
-import { useWorkoutStats, useHeatmapData, useRecentCourses } from "@/hooks/useWorkoutLogs";
-import { useCourses } from "@/hooks/useCourses";
+import { useWorkoutStats, useWorkoutLogs, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import SettingsDrawer from "@/components/SettingsDrawer";
-import { usePaywallStatus } from "@/hooks/usePaywallStatus";
-
-const heatColors: Record<number, string> = {
-  0: "bg-surface-elevated",
-  1: "bg-[hsl(0_20%_87%)]",
-  2: "bg-[hsl(0_22%_79%)]",
-  3: "bg-primary",
-  4: "bg-[hsl(0_20%_56%)]",
-};
+import { toast } from "sonner";
 
 const ProfileDetailContent = () => {
   const navigate = useNavigate();
   const { data: profile } = useProfile();
-  const { totalWorkouts, activeWeeks, streak, categories } = useWorkoutStats();
-  const heatmapCells = useHeatmapData();
+  const { totalWorkouts, streak, longestStreak, totalDuration, practiceDays } = useWorkoutStats();
+  const { data: logs = [] } = useWorkoutLogs();
   const { data: recentCourses = [] } = useRecentCourses();
-  const { data: allCourses = [] } = useCourses();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const { isPaid } = usePaywallStatus();
-  const [heroHovered, setHeroHovered] = useState(false);
 
-  // Next recommended course: first featured course not in recent
-  const recentIds = new Set(recentCourses.map((c: any) => c?.id));
-  const nextCourse = allCourses.find((c) => c.is_featured && !recentIds.has(c.id)) || allCourses[0];
+  // Calendar state
+  const [calMonth, setCalMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
 
   const joinDate = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString("zh-CN", { month: "long", day: "numeric" })
     : "";
 
-  const stats = [
-    { label: "总练习次数", value: String(totalWorkouts) },
-    { label: "活跃周数", value: String(activeWeeks) },
-    { label: "连续打卡", value: String(streak) },
-    { label: "锻炼分类", value: String(categories) },
-  ];
+  // Format duration
+  const hours = Math.floor(totalDuration / 3600);
+  const mins = Math.floor((totalDuration % 3600) / 60);
+  const durationStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+
+  // Days with workouts for calendar
+  const workoutDaySet = new Set(
+    logs.map((l) => {
+      const d = new Date(l.completed_at);
+      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    })
+  );
+
+  // Calendar helpers
+  const today = new Date();
+  const calYear = calMonth.getFullYear();
+  const calMon = calMonth.getMonth();
+  const daysInMonth = new Date(calYear, calMon + 1, 0).getDate();
+  const firstDayOfWeek = new Date(calYear, calMon, 1).getDay(); // 0=Sun
+  const weekLabels = ["日", "一", "二", "三", "四", "五", "六"];
+  const monthLabel = calMonth.toLocaleDateString("zh-CN", { year: "numeric", month: "long" });
+
+  const canGoNext = calYear < today.getFullYear() || (calYear === today.getFullYear() && calMon < today.getMonth());
+
+  // Share handler
+  const handleShareStats = async () => {
+    const text = `我已在 GLOW 练习了 ${practiceDays} 天，完成 ${totalWorkouts} 次训练，累计 ${durationStr}！`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "GLOW 练习统计", text, url: window.location.origin });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(text);
+      toast.success("已复制到剪贴板");
+    }
+  };
+
+  const handleShareStreak = async () => {
+    const text = `我在 GLOW 已连续打卡 ${streak} 天，最长连续 ${longestStreak} 天！`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "GLOW 连续记录", text, url: window.location.origin });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(text);
+      toast.success("已复制到剪贴板");
+    }
+  };
+
+  // Count workouts in displayed month
+  const monthWorkoutDays = Array.from({ length: daysInMonth }, (_, i) => {
+    const key = `${calYear}-${calMon}-${i + 1}`;
+    return workoutDaySet.has(key) ? 1 : 0;
+  }).reduce((a, b) => a + b, 0);
 
   return (
     <div className="animate-fade-in pb-4">
-      {/* Header spacer */}
       <div className="pt-6" />
 
-      {/* Profile */}
+      {/* Profile Header */}
       <section className="flex flex-col items-center -mt-2 px-6">
         <div className="relative mb-4">
           <img
@@ -61,91 +98,181 @@ const ProfileDetailContent = () => {
         {joinDate && (
           <div className="flex gap-4 text-[13px] text-muted-foreground font-medium">
             <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-accent-gold" />
+              <Clock className="w-3.5 h-3.5 text-accent" />
               {joinDate}加入
             </span>
           </div>
         )}
       </section>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-2.5 px-6 mt-8">
-        {stats.map((s) => (
-          <div key={s.label} className="bg-surface rounded-xl p-4 flex flex-col gap-1">
-            <span className="text-xs text-muted-foreground font-medium">{s.label}</span>
-            <span className="text-2xl font-semibold tracking-tight tabular-nums">{s.value}</span>
+      {/* 1. Stats Card */}
+      <div className="px-5 mt-8">
+        <div className="bg-surface-elevated rounded-3xl p-6 flex flex-col items-center">
+          {/* Badge */}
+          <div className="w-20 h-20 rounded-full bg-primary/15 flex items-center justify-center mb-3">
+            <span className="text-3xl font-bold text-primary tabular-nums">{practiceDays}</span>
           </div>
-        ))}
-      </div>
+          <p className="text-sm text-muted-foreground font-medium mb-6">练习天数</p>
 
-      <div className="h-px bg-foreground/5 mx-6 my-8" />
+          {/* 3 stats row */}
+          <div className="grid grid-cols-3 gap-4 w-full mb-5">
+            <div className="flex flex-col items-center gap-1">
+              <Dumbbell className="w-4 h-4 text-muted-foreground" />
+              <span className="text-lg font-semibold tabular-nums">{totalWorkouts}</span>
+              <span className="text-[11px] text-muted-foreground">总课程数</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Clock className="w-4 h-4 text-muted-foreground" />
+              <span className="text-lg font-semibold tabular-nums">{durationStr}</span>
+              <span className="text-[11px] text-muted-foreground">练习时长</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Trophy className="w-4 h-4 text-muted-foreground" />
+              <span className="text-lg font-semibold tabular-nums">{longestStreak}</span>
+              <span className="text-[11px] text-muted-foreground">最长连续</span>
+            </div>
+          </div>
 
-      {/* Consistency Log */}
-      <div className="px-6 mb-4">
-        <h2 className="text-xl font-semibold tracking-tight mb-0.5">坚持记录</h2>
-        <p className="text-sm text-muted-foreground">过去二十周的练习回顾</p>
-      </div>
-      <div className="px-6 flex gap-2 items-end">
-        <div className="flex flex-col justify-between h-[100px] pb-0.5">
-          {["日", "一", "二", "三", "四", "五", "六"].map((l, i) => (
-            <span key={i} className="text-[10px] text-muted-foreground font-medium leading-none">
-              {l}
-            </span>
-          ))}
+          {/* Share button */}
+          <button
+            onClick={handleShareStats}
+            className="w-full bg-card text-foreground rounded-2xl py-3 text-sm font-semibold flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-transform"
+          >
+            <Share2 className="w-4 h-4" />
+            分享我的统计资料
+          </button>
         </div>
-        <div className="grid grid-cols-[repeat(20,1fr)] grid-rows-[repeat(7,1fr)] gap-1 flex-grow">
-          {heatmapCells.map((level, i) => (
-            <div key={i} className={`aspect-square rounded-[4px] ${heatColors[level]}`} />
-          ))}
+      </div>
+
+      {/* 2. Continuity Card */}
+      <div className="px-5 mt-4">
+        <div className="bg-surface-elevated rounded-3xl p-6 flex flex-col">
+          {/* 3 streak stats */}
+          <div className="grid grid-cols-3 gap-4 w-full mb-5">
+            <div className="flex flex-col items-center gap-1">
+              <Flame className="w-4 h-4 text-primary" />
+              <span className="text-lg font-semibold tabular-nums">{practiceDays}</span>
+              <span className="text-[11px] text-muted-foreground">总练习天</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Trophy className="w-4 h-4 text-primary" />
+              <span className="text-lg font-semibold tabular-nums">{longestStreak}</span>
+              <span className="text-[11px] text-muted-foreground">最长连续</span>
+            </div>
+            <div className="flex flex-col items-center gap-1">
+              <Flame className="w-4 h-4 text-primary" />
+              <span className="text-lg font-semibold tabular-nums">{streak}</span>
+              <span className="text-[11px] text-muted-foreground">当前连续</span>
+            </div>
+          </div>
+
+          <div className="h-px bg-foreground/5 w-full mb-5" />
+
+          {/* Calendar header */}
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => setCalMonth(new Date(calYear, calMon - 1, 1))}
+              className="p-1 rounded-full hover:bg-foreground/5 transition-colors"
+            >
+              <ChevronLeft className="w-4.5 h-4.5 text-muted-foreground" />
+            </button>
+            <span className="text-sm font-semibold">{monthLabel}</span>
+            <button
+              onClick={() => canGoNext && setCalMonth(new Date(calYear, calMon + 1, 1))}
+              className={`p-1 rounded-full transition-colors ${canGoNext ? "hover:bg-foreground/5" : "opacity-30"}`}
+              disabled={!canGoNext}
+            >
+              <ChevronRight className="w-4.5 h-4.5 text-muted-foreground" />
+            </button>
+          </div>
+
+          {/* Week labels */}
+          <div className="grid grid-cols-7 gap-1 mb-2">
+            {weekLabels.map((l) => (
+              <div key={l} className="text-center text-[10px] text-muted-foreground font-medium">{l}</div>
+            ))}
+          </div>
+
+          {/* Days grid */}
+          <div className="grid grid-cols-7 gap-1">
+            {/* Empty cells for offset */}
+            {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+              <div key={`empty-${i}`} className="aspect-square" />
+            ))}
+            {Array.from({ length: daysInMonth }, (_, i) => {
+              const day = i + 1;
+              const hasWorkout = workoutDaySet.has(`${calYear}-${calMon}-${day}`);
+              const isToday = calYear === today.getFullYear() && calMon === today.getMonth() && day === today.getDate();
+              return (
+                <div
+                  key={day}
+                  className={`aspect-square rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
+                    hasWorkout
+                      ? "bg-primary text-primary-foreground"
+                      : isToday
+                        ? "ring-1 ring-primary text-foreground"
+                        : "text-muted-foreground"
+                  }`}
+                >
+                  {day}
+                </div>
+              );
+            })}
+          </div>
+
+          <p className="text-[11px] text-muted-foreground text-center mt-3">
+            本月练习 {monthWorkoutDays} 天
+          </p>
+
+          {/* Share button */}
+          <button
+            onClick={handleShareStreak}
+            className="w-full bg-card text-foreground rounded-2xl py-3 text-sm font-semibold flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-transform mt-5"
+          >
+            <Share2 className="w-4 h-4" />
+            分享我的连续记录
+          </button>
         </div>
       </div>
-      {totalWorkouts === 0 && (
-        <p className="text-xs text-muted-foreground text-center mt-3">暂无练习记录</p>
-      )}
 
-      <div className="h-px bg-foreground/5 mx-6 my-8" />
-
-      {/* Hero Card */}
-      {nextCourse && (
+      {/* 3. Gift Card */}
+      <div className="px-5 mt-4">
         <div
-          className="mx-6 rounded-3xl overflow-hidden relative h-[220px] bg-surface cursor-pointer shadow-sm"
-          onMouseEnter={() => setHeroHovered(true)}
-          onMouseLeave={() => setHeroHovered(false)}
-          onClick={() => navigate(`/course/${nextCourse.id}`)}
+          className="rounded-3xl p-6 flex items-center gap-4 cursor-pointer active:scale-[0.98] transition-transform"
+          style={{
+            background: "linear-gradient(135deg, hsl(var(--accent-gold)), hsl(var(--accent-gold) / 0.75))",
+          }}
+          onClick={() => navigate("/gift")}
         >
-          <img
-            src={nextCourse.image_url}
-            alt={nextCourse.title}
-            className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-500"
-            style={{ transform: heroHovered ? "scale(1.03)" : "scale(1)" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent flex flex-col justify-between p-4 px-6">
-            <div className="flex justify-between items-center">
-              <span className="text-[13px] text-card/90 font-medium">{nextCourse.duration}</span>
-            </div>
-            <div className="flex justify-between items-end">
-              <div>
-                <div className="text-[13px] text-card/80 font-semibold uppercase tracking-wider mb-0.5">推荐</div>
-                <div className="text-2xl font-semibold tracking-tight text-card">{nextCourse.title}</div>
-              </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/course/${nextCourse.id}`);
-                }}
-                className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer"
-              >
-                <Play className="w-[18px] h-[18px]" fill="currentColor" />
-              </button>
-            </div>
+          <div className="w-12 h-12 rounded-2xl bg-card/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
+            <Gift className="w-6 h-6 text-card" />
+          </div>
+          <div className="flex-grow">
+            <h3 className="text-base font-semibold text-card">赠送 GLOW 礼物</h3>
+            <p className="text-[13px] text-card/80 mt-0.5">送给在乎的人 30 天免费体验</p>
+          </div>
+          <ChevronRight className="w-5 h-5 text-card/70 flex-shrink-0" />
+        </div>
+      </div>
+
+      {/* Encouragement card */}
+      {practiceDays > 0 && (
+        <div className="px-5 mt-4">
+          <div className="bg-surface-elevated rounded-3xl p-5 flex flex-col items-center text-center">
+            <p className="text-sm text-foreground font-medium leading-relaxed">
+              🌟 你的练习之旅已经达到 <span className="text-primary font-semibold">{practiceDays}</span> 天
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-1.5">
+              {today.toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" })}
+            </p>
           </div>
         </div>
       )}
 
       {/* Recent Courses */}
       {recentCourses.length > 0 && (
-        <div className="px-6 mt-6 flex flex-col gap-3">
-          <h3 className="text-lg font-semibold tracking-tight">最近练习</h3>
+        <div className="px-5 mt-6 flex flex-col gap-3">
+          <h3 className="text-lg font-semibold tracking-tight px-1">最近练习</h3>
           {recentCourses.map((item: any) =>
             item ? (
               <div
@@ -169,23 +296,7 @@ const ProfileDetailContent = () => {
         </div>
       )}
 
-      {/* Promo - only for non-subscribers */}
-      {!isPaid && (
-        <div className="flex flex-col items-center text-center px-6 mt-8 mb-12">
-          <button
-            onClick={() => navigate("/paywall")}
-            className="inline-flex items-center gap-2 bg-card border border-foreground/[0.04] px-4 py-2 pl-2 rounded-full text-sm font-semibold shadow-sm mb-4 cursor-pointer"
-          >
-            <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">
-              +
-            </div>
-            尊享会员
-          </button>
-          <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-            解锁进阶筋膜训练课程<br />升级 <span className="text-foreground font-semibold">尊享会员</span>
-          </p>
-        </div>
-      )}
+      <div className="h-8" />
 
       <SettingsDrawer open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
