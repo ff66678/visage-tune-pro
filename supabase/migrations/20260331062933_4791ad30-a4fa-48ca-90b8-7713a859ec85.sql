@@ -1,0 +1,1 @@
+UPDATE profiles SET onboarding_completed = false, paywall_completed = false WHERE user_id = '3f415210-ed85-4829-a7c4-04f61a467fa5';
