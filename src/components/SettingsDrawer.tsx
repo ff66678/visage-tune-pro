@@ -37,7 +37,7 @@ const SettingsDrawer = ({ open, onOpenChange }: SettingsDrawerProps) => {
             管理订阅
           </button>
           <button
-            onClick={() => {}}
+            onClick={() => { onOpenChange(false); navigate("/language"); }}
             className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-foreground hover:bg-muted transition-colors text-left font-medium"
           >
             <Globe className="w-5 h-5" />
