@@ -79,45 +79,7 @@ const AnalysisPage = () => {
     return recommended.length > 0 ? recommended.slice(0, 3) : courses.slice(0, 3);
   };
 
-  // No photos state
-  if (!latestPhoto && !loadingLatest) {
-    return (
-      <div className="px-5 pt-14 pb-8 flex flex-col items-center justify-center min-h-[70vh] gap-6">
-        <input
-          type="file"
-          accept="image/*"
-          capture="user"
-          ref={fileInputRef}
-          onChange={handleCapture}
-          className="hidden"
-        />
-        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
-          <Camera className="w-10 h-10 text-muted-foreground" />
-        </div>
-        <div className="text-center space-y-2">
-          <h2 className="text-lg font-semibold text-foreground">还没有照片</h2>
-          <p className="text-sm text-muted-foreground">拍一张照片，开始面部分析</p>
-        </div>
-        <Button
-          onClick={handleCameraClick}
-          disabled={isUploading}
-          className="rounded-full px-6"
-        >
-          {isUploading ? (
-            <>
-              <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
-              上传中…
-            </>
-          ) : (
-            <>
-              <Camera className="w-4 h-4 mr-2" />
-              拍照分析
-            </>
-          )}
-        </Button>
-      </div>
-    );
-  }
+  // No early return — always show full layout
 
   const recommendedCourses = getRecommendedCourses();
 
@@ -200,66 +162,62 @@ const AnalysisPage = () => {
       </div>
 
       {/* Score Cards */}
-      {latest && (
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <TrendingUp className="w-3.5 h-3.5" />
-              弹性评分
-            </div>
-            <div className="text-3xl font-bold text-foreground">{latest.elasticity_score}</div>
-            <div className="text-xs text-muted-foreground">/100</div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <TrendingUp className="w-3.5 h-3.5" />
+            弹性评分
           </div>
-          <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Shield className="w-3.5 h-3.5" />
-              健康等级
-            </div>
-            <div className={`text-3xl font-bold ${gradeColor(latest.health_grade)}`}>
-              {latest.health_grade}
-            </div>
-            <div className="text-xs text-muted-foreground">综合评估</div>
-          </div>
+          <div className="text-3xl font-bold text-foreground">{latest ? latest.elasticity_score : "--"}</div>
+          <div className="text-xs text-muted-foreground">/100</div>
         </div>
-      )}
+        <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <Shield className="w-3.5 h-3.5" />
+            健康等级
+          </div>
+          <div className={`text-3xl font-bold ${latest ? gradeColor(latest.health_grade) : "text-muted-foreground"}`}>
+            {latest ? latest.health_grade : "--"}
+          </div>
+          <div className="text-xs text-muted-foreground">综合评估</div>
+        </div>
+      </div>
 
       {/* Detail Scores */}
-      {latest && (
-        <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">详细指标</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Eye className="w-4 h-4" /> 眼部轮廓
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-24 h-2 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full bg-primary rounded-full" style={{ width: `${latest.eye_contour_score}%` }} />
-                </div>
-                <span className="text-sm font-medium text-foreground w-8 text-right">{latest.eye_contour_score}</span>
-              </div>
+      <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
+        <h3 className="text-sm font-semibold text-foreground">详细指标</h3>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Eye className="w-4 h-4" /> 眼部轮廓
             </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Smile className="w-4 h-4" /> 法令纹
+            <div className="flex items-center gap-2">
+              <div className="w-24 h-2 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-primary rounded-full" style={{ width: `${latest ? latest.eye_contour_score : 0}%` }} />
               </div>
-              <span className="text-sm font-medium text-foreground">{levelLabel(latest.nasolabial_level)}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Shield className="w-4 h-4" /> 下颌线条
-              </div>
-              <span className="text-sm font-medium text-foreground">{levelLabel(latest.jawline_level)}</span>
+              <span className="text-sm font-medium text-foreground w-8 text-right">{latest ? latest.eye_contour_score : "--"}</span>
             </div>
           </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Smile className="w-4 h-4" /> 法令纹
+            </div>
+            <span className="text-sm font-medium text-foreground">{latest ? levelLabel(latest.nasolabial_level) : "--"}</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Shield className="w-4 h-4" /> 下颌线条
+            </div>
+            <span className="text-sm font-medium text-foreground">{latest ? levelLabel(latest.jawline_level) : "--"}</span>
+          </div>
         </div>
-      )}
+      </div>
 
 
 
 
       {/* Recommended Courses */}
-      {latest && recommendedCourses.length > 0 && (
+      {recommendedCourses.length > 0 && (
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-foreground">推荐课程</h3>
           <div className="space-y-2">
