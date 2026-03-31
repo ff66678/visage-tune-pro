@@ -95,6 +95,7 @@ export const useWorkoutStats = () => {
   const practiceDays = daySet.size;
 
   return { totalWorkouts, activeWeeks, streak, longestStreak, categories, totalDuration, practiceDays };
+};
 
 export const useWeeklyProgress = () => {
   const { data: logs = [] } = useWorkoutLogs();
