@@ -137,7 +137,7 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
       <section className="px-6 mt-12 flex flex-col gap-4">
         {/* Annual */}
         <div
-          className={`relative rounded-2xl border-2 bg-card p-5 cursor-pointer shadow-sm transition-transform active:scale-[0.98] ${
+          className={`relative rounded-2xl border-2 bg-card p-5 px-[20px] cursor-pointer shadow-sm transition-transform active:scale-[0.98] ${
             selectedPlan === "annual" ? "border-primary" : "border-border"
           }`}
           onClick={() => setSelectedPlan("annual")}
