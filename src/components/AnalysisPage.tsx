@@ -131,18 +131,6 @@ const AnalysisPage = () => {
               alt="最近照片"
               className="w-full h-full object-cover"
             />
-            {/* Retake photo button */}
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm z-10"
-            >
-              {isUploading ? (
-                <span className="inline-block h-4 w-4 rounded-full border-2 border-muted-foreground/40 border-t-muted-foreground animate-spin" />
-              ) : (
-                <Camera className="w-4 h-4 text-foreground" />
-              )}
-            </button>
             {/* Overlay labels when analysis exists */}
             {latest && (
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent">
