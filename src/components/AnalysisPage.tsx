@@ -28,6 +28,7 @@ const AnalysisPage = () => {
   const { data: history = [] } = useFaceAnalyses();
   const { data: photos = [] } = useProgressPhotos();
   const { data: courses = [] } = useCourses();
+  const { data: products = [] } = useProducts();
   const runAnalysis = useRunAnalysis();
   const [analyzing, setAnalyzing] = useState(false);
 
