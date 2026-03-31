@@ -2,13 +2,16 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
+import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import Paywall from "@/pages/Paywall";
 
 const CourseDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { data: favoriteIds = new Set() } = useFavoriteIds();
+  const toggleFavorite = useToggleFavorite();
+  const isFavorited = id ? favoriteIds.has(id) : false;
   const [showContentGate, setShowContentGate] = useState(false);
   const navigate = useNavigate();
   const { data: course, isLoading } = useCourse(id);
