@@ -25,7 +25,7 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("登录成功！");
-      } else {
+        navigate(returnTo, { replace: true });
         const { error } = await supabase.auth.signUp({
           email,
           password,
