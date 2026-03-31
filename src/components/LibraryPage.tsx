@@ -61,23 +61,26 @@ const LibraryPage = () => {
 
   const groupedCategories = useMemo(() => {
     if (!courses) return [];
-    const categoryMap: Record<string, { title: string; routines: typeof courses }> = {};
+    const categoryMap: Record<string, { key: string; title: string; routines: typeof courses }> = {};
     const categoryLabels: Record<string, string> = {
       "眼部": "眼部 & 上脸",
       "下颌": "下颌 & 轮廓",
       "脸颊": "脸颊 & 光泽",
       "颈部": "颈部护理",
       "全脸": "全脸训练",
+      "额头": "额头紧致",
+      "太阳穴": "太阳穴护理",
+      "法令纹": "法令纹改善",
     };
     courses.forEach((c) => {
       const key = c.category;
       if (!categoryMap[key]) {
-        categoryMap[key] = { title: categoryLabels[key] || key, routines: [] };
+        categoryMap[key] = { key, title: categoryLabels[key] || key, routines: [] };
       }
       categoryMap[key].routines.push(c);
     });
 
-    let result = Object.values(categoryMap)
+    return Object.values(categoryMap)
       .map((cat) => ({
         ...cat,
         routines: cat.routines.filter(
@@ -86,27 +89,29 @@ const LibraryPage = () => {
       }))
       .filter((cat) => {
         if (activeFilter === "全部") return cat.routines.length > 0;
-        return cat.title.toLowerCase().includes(activeFilter.toLowerCase()) && cat.routines.length > 0;
+        return cat.key === activeFilter && cat.routines.length > 0;
       });
+  }, [courses, searchValue, activeFilter]);
 
-    // Sort routines within each category
-    if (sortBy === "rating") {
-      result = result.map((cat) => ({
-        ...cat,
-        routines: [...cat.routines].sort((a, b) => (b.rating || 0) - (a.rating || 0)),
-      }));
-    } else if (sortBy === "duration") {
-      result = result.map((cat) => ({
-        ...cat,
-        routines: [...cat.routines].sort((a, b) => {
-          const da = parseInt(a.duration) || 0;
-          const db = parseInt(b.duration) || 0;
-          return da - db;
-        }),
-      }));
+  // Global sorted flat list for rating/duration sort modes
+  const globalSortedCourses = useMemo(() => {
+    if (!courses || sortBy === "default") return [];
+    let filtered = courses.filter(
+      (r) => !searchValue || r.title.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    if (activeFilter !== "全部") {
+      filtered = filtered.filter((r) => r.category === activeFilter);
     }
-
-    return result;
+    if (sortBy === "rating") {
+      filtered = [...filtered].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    } else if (sortBy === "duration") {
+      filtered = [...filtered].sort((a, b) => {
+        const da = parseInt(a.duration) || 0;
+        const db = parseInt(b.duration) || 0;
+        return da - db;
+      });
+    }
+    return filtered;
   }, [courses, searchValue, activeFilter, sortBy]);
 
   const handleToggleFav = (e: React.MouseEvent, courseId: string) => {
