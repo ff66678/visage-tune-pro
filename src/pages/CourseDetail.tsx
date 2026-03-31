@@ -94,7 +94,7 @@ const CourseDetail = () => {
           <ChevronLeft className="w-5 h-5" />
         </button>
         <div className="flex gap-3">
-          <button className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
+          <button onClick={handleShare} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
             <Share2 className="w-5 h-5" />
           </button>
           <button
