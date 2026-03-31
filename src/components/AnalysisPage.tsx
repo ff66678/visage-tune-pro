@@ -196,23 +196,8 @@ const AnalysisPage = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
       )}
 
-      {/* History */}
-      {history.length > 1 && (
-        <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">历史记录</h3>
-          <div className="space-y-2">
-            {history.slice(0, 5).map((a) => (
-              <div key={a.id} className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">{a.analysis_date}</span>
-                <div className="flex items-center gap-3">
-                  <span className="text-foreground">弹性 {a.elasticity_score}</span>
-                  <span className={`font-medium ${gradeColor(a.health_grade)}`}>{a.health_grade}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+
+
 
       {/* Recommended Courses */}
       {latest && recommendedCourses.length > 0 && (
