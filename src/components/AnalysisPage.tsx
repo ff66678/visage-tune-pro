@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useFaceAnalysis";
@@ -25,6 +25,7 @@ const levelLabel = (level: string) => {
 
 const AnalysisPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
@@ -37,9 +38,14 @@ const AnalysisPage = () => {
 
   const latestPhoto = photos[0];
 
+  const navigateToAuth = () => {
+    const returnTo = `${location.pathname}${location.search}`;
+    navigate(`/auth?returnTo=${encodeURIComponent(returnTo)}`);
+  };
+
   const requireAuth = () => {
     if (!user) {
-      navigate("/auth");
+      navigateToAuth();
       return true;
     }
     return false;

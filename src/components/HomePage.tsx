@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Gift, Star, Crown, Clock, Dumbbell, Flame, Heart, Zap, BookOpen, Play, ChevronRight } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
 import { useProfile } from "@/hooks/useProfile";
@@ -29,6 +29,7 @@ const getGreeting = () => {
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { data: courses, isLoading } = useCourses();
   const { data: profile } = useProfile();
   const { user } = useAuth();
@@ -40,11 +41,16 @@ const HomePage = () => {
   const avatarUrl = user ? profile?.avatar_url : undefined;
   const initials = displayName.slice(0, 1).toUpperCase();
 
+  const navigateToAuth = () => {
+    const returnTo = `${location.pathname}${location.search}`;
+    navigate(`/auth?returnTo=${encodeURIComponent(returnTo)}`);
+  };
+
   const handleAvatarClick = () => {
     if (user) {
       navigate("/profile");
     } else {
-      navigate("/auth");
+      navigateToAuth();
     }
   };
 
