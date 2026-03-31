@@ -1,8 +1,9 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLatestAnalysis, useRunAnalysis, useFaceAnalyses } from "@/hooks/useFaceAnalysis";
-import { useProgressPhotos } from "@/hooks/useProgressPhotos";
+import { useProgressPhotos, useUploadProgressPhoto } from "@/hooks/useProgressPhotos";
 import { useCourses } from "@/hooks/useCourses";
 import { useProducts } from "@/hooks/useProducts";
 
@@ -23,14 +24,23 @@ const levelLabel = (level: string) => {
 
 const AnalysisPage = () => {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
   const { data: history = [] } = useFaceAnalyses();
   const { data: photos = [] } = useProgressPhotos();
   const { data: courses = [] } = useCourses();
   const { data: products = [] } = useProducts();
   const runAnalysis = useRunAnalysis();
+  const { mutateAsync: uploadPhoto, isPending: isUploading } = useUploadProgressPhoto();
 
   const latestPhoto = photos[0];
+
+  const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await uploadPhoto(file);
+    e.target.value = "";
+  };
 
   const handleAnalyze = async () => {
     if (!latestPhoto || runAnalysis.isPending) return;
@@ -60,19 +70,37 @@ const AnalysisPage = () => {
   if (!latestPhoto && !loadingLatest) {
     return (
       <div className="px-5 pt-14 pb-8 flex flex-col items-center justify-center min-h-[70vh] gap-6">
+        <input
+          type="file"
+          accept="image/*"
+          capture="user"
+          ref={fileInputRef}
+          onChange={handleCapture}
+          className="hidden"
+        />
         <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
           <Camera className="w-10 h-10 text-muted-foreground" />
         </div>
         <div className="text-center space-y-2">
           <h2 className="text-lg font-semibold text-foreground">还没有照片</h2>
-          <p className="text-sm text-muted-foreground">先去「记录」页拍一张照片，然后回来进行面部分析</p>
+          <p className="text-sm text-muted-foreground">拍一张照片，开始面部分析</p>
         </div>
         <Button
-          onClick={() => navigate("/?tab=3")}
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isUploading}
           className="rounded-full px-6"
         >
-          <Camera className="w-4 h-4 mr-2" />
-          去拍照
+          {isUploading ? (
+            <>
+              <span className="mr-2 inline-block h-4 w-4 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
+              上传中…
+            </>
+          ) : (
+            <>
+              <Camera className="w-4 h-4 mr-2" />
+              拍照分析
+            </>
+          )}
         </Button>
       </div>
     );
@@ -82,6 +110,14 @@ const AnalysisPage = () => {
 
   return (
     <div className="px-5 pt-14 pb-8 space-y-5">
+      <input
+        type="file"
+        accept="image/*"
+        capture="user"
+        ref={fileInputRef}
+        onChange={handleCapture}
+        className="hidden"
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-foreground">面部分析</h1>
@@ -97,6 +133,18 @@ const AnalysisPage = () => {
               alt="最近照片"
               className="w-full h-full object-cover"
             />
+            {/* Retake photo button */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center shadow-sm z-10"
+            >
+              {isUploading ? (
+                <span className="inline-block h-4 w-4 rounded-full border-2 border-muted-foreground/40 border-t-muted-foreground animate-spin" />
+              ) : (
+                <Camera className="w-4 h-4 text-foreground" />
+              )}
+            </button>
             {/* Overlay labels when analysis exists */}
             {latest && (
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent">
