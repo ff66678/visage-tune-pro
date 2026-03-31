@@ -38,13 +38,11 @@ const AnalysisPage = () => {
   const handleCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    await uploadPhoto(file);
+    const photoUrl = await uploadPhoto(file);
     e.target.value = "";
-  };
-
-  const handleAnalyze = async () => {
-    if (!latestPhoto || runAnalysis.isPending) return;
-    await runAnalysis.mutateAsync(latestPhoto.photo_url);
+    if (photoUrl) {
+      await runAnalysis.mutateAsync(photoUrl);
+    }
   };
 
   // Recommend courses based on weak areas
