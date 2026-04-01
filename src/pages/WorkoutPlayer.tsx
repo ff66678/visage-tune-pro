@@ -2,6 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Heart } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
+import { useAuth } from "@/contexts/AuthContext";
+import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
@@ -39,10 +44,25 @@ const WorkoutPlayer = () => {
   const { id } = useParams<{ id: string }>();
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
-  const [isFavorited, setIsFavorited] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const navigate = useNavigate();
   const { data: course } = useCourse(id);
+  const { user } = useAuth();
+  const { data: favoriteIds } = useFavoriteIds();
+  const toggleFavorite = useToggleFavorite();
+  const queryClient = useQueryClient();
+
+  const isFavorited = id ? (favoriteIds?.has(id) ?? false) : false;
+
+  const handleToggleFavorite = () => {
+    if (!user) {
+      toast("请先登录", { description: "登录后即可收藏课程" });
+      return;
+    }
+    if (!id) return;
+    toggleFavorite.mutate({ courseId: id, isFavorited });
+  };
 
   const parseDuration = (dur: string | undefined): number => {
     if (!dur) return 60;
@@ -67,6 +87,22 @@ const WorkoutPlayer = () => {
   const dashOffset = (1 - seconds / totalSeconds) * circumference;
   const elapsed = totalSeconds - seconds;
 
+  // Record workout log when finished
+  useEffect(() => {
+    if (seconds === 0 && !isFinished && user && id) {
+      setIsFinished(true);
+      supabase
+        .from("workout_logs")
+        .insert({ user_id: user.id, course_id: id, duration_seconds: totalSeconds })
+        .then(({ error }) => {
+          if (!error) {
+            queryClient.invalidateQueries({ queryKey: ["workout-logs"] });
+            toast.success("训练完成！已记录");
+          }
+        });
+    }
+  }, [seconds, isFinished, user, id, totalSeconds, queryClient]);
+
   useEffect(() => {
     if (isPlaying && seconds > 0) {
       intervalRef.current = setInterval(() => {
@@ -90,7 +126,7 @@ const WorkoutPlayer = () => {
   const handleRewind = () => setSeconds((prev) => Math.min(prev + 10, totalSeconds));
   const handleFastForward = () => setSeconds((prev) => Math.max(prev - 10, 0));
   const handlePlayPause = () => {
-    if (seconds === 0) { setSeconds(totalSeconds); setIsPlaying(true); }
+    if (seconds === 0) { setSeconds(totalSeconds); setIsPlaying(true); setIsFinished(false); }
     else { setIsPlaying((prev) => !prev); }
   };
 
@@ -116,7 +152,7 @@ const WorkoutPlayer = () => {
         <div className="text-center">
           <h2 className="text-sm font-bold tracking-wide">{courseTitle}</h2>
         </div>
-        <button onClick={() => setIsFavorited((prev) => !prev)} className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform">
+        <button onClick={handleToggleFavorite} className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform">
           <Heart
             className={`w-5 h-5 transition-all duration-300 ${isFavorited ? 'scale-110' : 'text-white scale-100'}`}
             style={isFavorited ? { color: 'hsl(var(--primary))', fill: 'hsl(var(--primary))' } : undefined}
@@ -130,8 +166,8 @@ const WorkoutPlayer = () => {
           <TimerRing dashOffset={dashOffset} />
         </div>
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-2">V字手势提升</h1>
-          <p className="text-white/70 text-sm px-12">用食指和中指呈V字型，从下巴向耳根方向轻柔推拉。</p>
+          <h1 className="text-3xl font-bold mb-2">{course?.title || "训练中"}</h1>
+          <p className="text-white/70 text-sm px-12">{course?.description || ""}</p>
         </div>
       </div>
 

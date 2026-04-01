@@ -187,7 +187,7 @@ const HomePage = () => {
       ) : (
         <div
           className="mx-6 rounded-3xl p-5 bg-surface flex items-center justify-between cursor-pointer hover:bg-surface-elevated transition-colors"
-          onClick={() => navigate("/library")}
+          onClick={() => navigate("/?tab=1")}
         >
           <div>
             <h3 className="text-sm font-semibold text-foreground mb-0.5">今天还没有计划</h3>

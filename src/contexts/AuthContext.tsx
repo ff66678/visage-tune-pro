@@ -29,12 +29,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [onboardingCompleted, setOnboardingCompleted] = useState<boolean | null>(null);
 
   const fetchOnboardingStatus = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("profiles")
       .select("onboarding_completed")
       .eq("user_id", userId)
-      .single();
-    setOnboardingCompleted(data?.onboarding_completed ?? false);
+      .maybeSingle();
+    if (!data && !error) {
+      // Profile doesn't exist yet (trigger may not have fired), create one
+      await supabase.from("profiles").insert({ user_id: userId });
+      setOnboardingCompleted(false);
+    } else {
+      setOnboardingCompleted(data?.onboarding_completed ?? false);
+    }
   };
 
   useEffect(() => {
