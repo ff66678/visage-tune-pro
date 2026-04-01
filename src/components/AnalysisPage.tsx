@@ -185,7 +185,7 @@ const AnalysisPage = () => {
       </div>
 
       {recommendedCourses.length > 0 && (
-        <div className="space-y-3">
+        <div className="space-y-3 mx-5">
           <h3 className="text-sm font-semibold text-foreground">{t("analysis.recommendedCourses")}</h3>
           <div className="space-y-2">
             {recommendedCourses.map((course) => (
