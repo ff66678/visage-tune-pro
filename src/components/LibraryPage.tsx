@@ -376,7 +376,7 @@ const LibraryPage = () => {
                     {category.routines.length > 0 && (
                       <div
                         className="relative w-full h-[160px] rounded-2xl overflow-hidden mb-4 cursor-pointer active:scale-[0.98] transition-transform"
-                        onClick={() => navigate(`/course/${category.routines[0].id}`)}
+                        onClick={() => navigate(`/course/${category.routines[0].id}`, { state: { fromTab: 1 } })}
                       >
                         <img
                           src={category.routines[0].image_url}
