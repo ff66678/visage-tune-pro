@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Gift, Star, Crown, Clock, Dumbbell, Flame, Heart, Zap, BookOpen, Play, ChevronRight } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
@@ -27,11 +27,17 @@ const HomePage = () => {
   // Reset startClicked when component re-renders (e.g. navigating back)
   useEffect(() => { setStartClicked(false); }, []);
 
+  // Sync scrolled state before paint to avoid header jump
+  useLayoutEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    setScrolled(el.scrollTop > 20);
+  }, [scrollContainerRef]);
+
   useEffect(() => {
     const el = scrollContainerRef?.current;
     if (!el) return;
     const onScroll = () => setScrolled(el.scrollTop > 20);
-    onScroll(); // init
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, [scrollContainerRef]);

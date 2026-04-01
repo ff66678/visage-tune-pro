@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useLayoutEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,11 +26,16 @@ const AnalysisPage = () => {
   const [scrolled, setScrolled] = useState(false);
   const scrollContainerRef = useScrollContainer();
 
+  useLayoutEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    setScrolled(el.scrollTop > 20);
+  }, [scrollContainerRef]);
+
   useEffect(() => {
     const el = scrollContainerRef?.current;
     if (!el) return;
     const onScroll = () => setScrolled(el.scrollTop > 20);
-    onScroll();
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, [scrollContainerRef]);

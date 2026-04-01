@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import BottomTabBar from "@/components/BottomTabBar";
 import HomePage from "@/components/HomePage";
@@ -31,8 +31,8 @@ const Index = () => {
     return () => el.removeEventListener("scroll", handleScroll);
   }, [activeTab]);
 
-  // Restore scroll on mount and tab change
-  useEffect(() => {
+  // Restore scroll on mount and tab change (useLayoutEffect to restore before paint)
+  useLayoutEffect(() => {
     const el = animRef.current;
     if (!el) return;
 

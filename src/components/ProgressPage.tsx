@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useLayoutEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Camera, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
@@ -30,11 +30,16 @@ const ProgressPage = () => {
   const [scrolled, setScrolled] = useState(false);
   const scrollContainerRef = useScrollContainer();
 
+  useLayoutEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    setScrolled(el.scrollTop > 20);
+  }, [scrollContainerRef]);
+
   useEffect(() => {
     const el = scrollContainerRef?.current;
     if (!el) return;
     const onScroll = () => setScrolled(el.scrollTop > 20);
-    onScroll();
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, [scrollContainerRef]);
