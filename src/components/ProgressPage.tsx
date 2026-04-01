@@ -197,6 +197,8 @@ const ProgressPage = () => {
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all ${
                     d.isSelected
                       ? "bg-primary text-primary-foreground shadow-md"
+                      : d.hasPhoto
+                      ? "bg-primary/15 text-primary font-bold"
                       : d.isToday
                       ? "border-2 border-primary text-primary"
                       : "text-foreground"
@@ -204,9 +206,6 @@ const ProgressPage = () => {
                 >
                   {d.date}
                 </div>
-                {d.hasPhoto && !d.isSelected && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary" />
-                )}
               </div>
             </div>
           ))}
