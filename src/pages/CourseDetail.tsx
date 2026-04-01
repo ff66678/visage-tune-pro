@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
@@ -19,6 +19,8 @@ const CourseDetail = () => {
   const [searchParams] = useSearchParams();
   const [showContentGate, setShowContentGate] = useState(searchParams.get("showPaywall") === "true");
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromTab = (location.state as any)?.fromTab ?? 0;
   const { data: course, isLoading } = useCourse(id);
   const { isPaid, markPaid } = usePaywallStatus();
   const { toast } = useToast();
@@ -33,14 +35,14 @@ const CourseDetail = () => {
   };
 
   const handleStartWorkout = () => {
-    if (isPaid) navigate(`/workout/${course!.id}`);
+    if (isPaid) navigate(`/workout/${course!.id}`, { state: { fromTab } });
     else setShowContentGate(true);
   };
 
   const handleContentGatePaid = async () => {
     await markPaid();
     setShowContentGate(false);
-    navigate(`/workout/${course!.id}`);
+    navigate(`/workout/${course!.id}`, { state: { fromTab } });
   };
 
   if (showContentGate) {

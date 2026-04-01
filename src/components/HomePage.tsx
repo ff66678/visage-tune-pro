@@ -183,7 +183,7 @@ const HomePage = () => {
             }}
             onClick={() => {
               setStartClicked(true);
-              setTimeout(() => navigate(`/course/${todayPlan.id}`), 300);
+              setTimeout(() => navigate(`/course/${todayPlan.id}`, { state: { fromTab: 0 } }), 300);
             }}
           >
             {startClicked ? t("home.starting") : t("home.startNow")}
@@ -215,7 +215,7 @@ const HomePage = () => {
             <div
               key={item.id}
               className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden cursor-pointer transition-colors active:bg-muted"
-              onClick={() => navigate(`/course/${item.id}`)}
+              onClick={() => navigate(`/course/${item.id}`, { state: { fromTab: 0 } })}
             >
               <div className="relative aspect-square overflow-hidden">
                 <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
@@ -248,7 +248,7 @@ const HomePage = () => {
               <div
                 key={course.id}
                 className="bg-surface rounded-2xl p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-surface-elevated transition-colors"
-                onClick={() => navigate(`/course/${course.id}`)}
+                onClick={() => navigate(`/course/${course.id}`, { state: { fromTab: 0 } })}
               >
                 <img src={course.image_url} alt={course.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1 min-w-0">

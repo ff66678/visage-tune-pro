@@ -240,7 +240,7 @@ const LibraryPage = () => {
             {featuredCourse && activeFilter === "全部" && !searchValue && (
               <div
                 className="relative w-full h-[180px] rounded-2xl overflow-hidden mb-6 mt-4 cursor-pointer active:scale-[0.98] transition-transform"
-                onClick={() => navigate(`/course/${featuredCourse.id}`)}
+                onClick={() => navigate(`/course/${featuredCourse.id}`, { state: { fromTab: 1 } })}
               >
                 <img
                   src={featuredCourse.image_url}
@@ -276,7 +276,7 @@ const LibraryPage = () => {
                     <div
                       key={course.id}
                       className="flex-shrink-0 w-[140px] rounded-2xl overflow-hidden bg-card shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
-                      onClick={() => navigate(`/course/${course.id}`)}
+                      onClick={() => navigate(`/course/${course.id}`, { state: { fromTab: 1 } })}
                     >
                       <div className="relative">
                         <img src={course.image_url} alt={course.title} className="w-full h-[90px] object-cover" />
@@ -309,7 +309,7 @@ const LibraryPage = () => {
                     <div
                       key={routine.id}
                       className="bg-card rounded-2xl overflow-hidden shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
-                      onClick={() => navigate(`/course/${routine.id}`)}
+                      onClick={() => navigate(`/course/${routine.id}`, { state: { fromTab: 1 } })}
                     >
                       <div className="relative">
                         <img
@@ -376,7 +376,7 @@ const LibraryPage = () => {
                     {category.routines.length > 0 && (
                       <div
                         className="relative w-full h-[160px] rounded-2xl overflow-hidden mb-4 cursor-pointer active:scale-[0.98] transition-transform"
-                        onClick={() => navigate(`/course/${category.routines[0].id}`)}
+                        onClick={() => navigate(`/course/${category.routines[0].id}`, { state: { fromTab: 1 } })}
                       >
                         <img
                           src={category.routines[0].image_url}
@@ -419,7 +419,7 @@ const LibraryPage = () => {
                           <div
                             key={routine.id}
                             className="bg-card rounded-2xl overflow-hidden shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
-                            onClick={() => navigate(`/course/${routine.id}`)}
+                            onClick={() => navigate(`/course/${routine.id}`, { state: { fromTab: 1 } })}
                           >
                             <div className="relative">
                               <img

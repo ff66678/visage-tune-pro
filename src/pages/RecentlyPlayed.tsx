@@ -32,7 +32,7 @@ const RecentlyPlayed = () => {
         ) : (
           <div className="flex flex-col gap-2.5">
             {recentCourses.map((course: any) => (
-              <div key={course.id} className="bg-surface rounded-2xl p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-surface-elevated transition-colors" onClick={() => navigate(`/course/${course.id}`)}>
+              <div key={course.id} className="bg-surface rounded-2xl p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-surface-elevated transition-colors" onClick={() => navigate(`/course/${course.id}`, { state: { fromTab: 1 } })}>
                 <img src={course.image_url} alt={course.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-foreground line-clamp-1">{course.title}</h3>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { X, Heart } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { useAuth } from "@/contexts/AuthContext";
@@ -45,6 +45,8 @@ const PlayIcon = () => (
 const WorkoutPlayer = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const fromTab = (location.state as any)?.fromTab ?? 0;
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
   const [isFinished, setIsFinished] = useState(false);
@@ -136,7 +138,7 @@ const WorkoutPlayer = () => {
       containerRef.current.style.transition = "transform 0.35s ease-in, opacity 0.35s ease-in";
       containerRef.current.style.transform = "translateY(100%)";
       containerRef.current.style.opacity = "0";
-      setTimeout(() => navigate("/?tab=1", { replace: true }), 320);
+      setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 320);
     }
   };
 

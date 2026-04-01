@@ -177,7 +177,7 @@ const AnalysisPage = () => {
           <h3 className="text-sm font-semibold text-foreground">{t("analysis.recommendedCourses")}</h3>
           <div className="space-y-2">
             {recommendedCourses.map((course) => (
-              <button key={course.id} onClick={() => { if (requireAuth()) return; navigate(`/course/${course.id}`); }}
+              <button key={course.id} onClick={() => { if (requireAuth()) return; navigate(`/course/${course.id}`, { state: { fromTab: 2 } }); }}
                 className="w-full flex items-center gap-3 rounded-2xl bg-card border border-border p-3 text-left transition-colors active:bg-muted">
                 <img src={course.image_url} alt={course.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1 min-w-0">

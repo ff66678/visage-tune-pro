@@ -99,7 +99,7 @@ const ProfilePage = () => {
 
       {nextCourse && (
         <div className="mx-6 rounded-3xl overflow-hidden relative h-[220px] bg-surface cursor-pointer shadow-sm"
-          onMouseEnter={() => setHeroHovered(true)} onMouseLeave={() => setHeroHovered(false)} onClick={() => navigate(`/course/${nextCourse.id}`)}>
+          onMouseEnter={() => setHeroHovered(true)} onMouseLeave={() => setHeroHovered(false)} onClick={() => navigate(`/course/${nextCourse.id}`, { state: { fromTab: 3 } })}>
           <img src={nextCourse.image_url} alt={nextCourse.title} className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-500" style={{ transform: heroHovered ? "scale(1.03)" : "scale(1)" }} />
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent flex flex-col justify-between p-4 px-6">
             <div className="flex justify-between items-center"><span className="text-[13px] text-card/90 font-medium">{nextCourse.duration}</span></div>
@@ -108,7 +108,7 @@ const ProfilePage = () => {
                 <div className="text-[13px] text-card/80 font-semibold uppercase tracking-wider mb-0.5">{t("profile.recommend")}</div>
                 <div className="text-2xl font-semibold tracking-tight text-card">{nextCourse.title}</div>
               </div>
-              <button onClick={(e) => { e.stopPropagation(); navigate(`/course/${nextCourse.id}`); }} className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer">
+              <button onClick={(e) => { e.stopPropagation(); navigate(`/course/${nextCourse.id}`, { state: { fromTab: 3 } }); }} className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer">
                 <Play className="w-[18px] h-[18px]" fill="currentColor" />
               </button>
             </div>
@@ -120,7 +120,7 @@ const ProfilePage = () => {
         <div className="px-6 mt-6 flex flex-col gap-3">
           <h3 className="text-lg font-semibold tracking-tight">{t("profile.recentWorkouts")}</h3>
           {recentCourses.map((item: any) => item ? (
-            <div key={item.id} onClick={() => navigate(`/course/${item.id}`)} className="bg-surface rounded-xl p-3 flex items-center gap-4 cursor-pointer hover:bg-surface-hover transition-colors">
+            <div key={item.id} onClick={() => navigate(`/course/${item.id}`, { state: { fromTab: 3 } })} className="bg-surface rounded-xl p-3 flex items-center gap-4 cursor-pointer hover:bg-surface-hover transition-colors">
               <div className="w-[68px] h-[68px] rounded-lg bg-surface-elevated relative overflow-hidden flex-shrink-0">
                 <img src={item.image_url} alt={item.title} className="w-full h-full object-cover opacity-90" />
               </div>
