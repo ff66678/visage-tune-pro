@@ -5,7 +5,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { Mail, Lock, User, Eye, EyeOff, X } from "lucide-react";
 import { toast } from "sonner";
 
-const Auth = ({ showClose = true }: { showClose?: boolean }) => {
+const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?: () => void }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const returnTo = new URLSearchParams(location.search).get("returnTo") || "/";
@@ -25,7 +25,11 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("登录成功！");
-        navigate(returnTo, { replace: true });
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          navigate(returnTo, { replace: true });
+        }
       } else {
         const { error: signUpError } = await supabase.auth.signUp({
           email,
@@ -46,8 +50,11 @@ const Auth = ({ showClose = true }: { showClose?: boolean }) => {
   };
 
   const handleGoogleLogin = async () => {
+    const redirectUri = onSuccess
+      ? `${window.location.origin}/onboarding`
+      : `${window.location.origin}/auth?returnTo=${encodeURIComponent(returnTo)}`;
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth?returnTo=${encodeURIComponent(returnTo)}`,
+      redirect_uri: redirectUri,
     });
     if (error) {
       toast.error("Google 登录失败");
