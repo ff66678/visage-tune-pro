@@ -337,6 +337,23 @@ const zhTW: Record<string, string> = {
   "tag.热门": "熱門",
   "tag.新课": "新課",
   "tag.推荐": "推薦",
+
+  "category.眼部": "眼部",
+  "category.下颌": "下顎",
+  "category.脸颊": "臉頰",
+  "category.全脸": "全臉",
+  "category.额头": "額頭",
+  "category.颈部": "頸部",
+  "category.太阳穴": "太陽穴",
+  "category.法令纹": "法令紋",
+
+  "weekday.mon": "一",
+  "weekday.tue": "二",
+  "weekday.wed": "三",
+  "weekday.thu": "四",
+  "weekday.fri": "五",
+  "weekday.sat": "六",
+  "weekday.sun": "日",
 };
 
 export default zhTW;

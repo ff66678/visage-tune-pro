@@ -151,7 +151,7 @@ const HomePage = () => {
                 <div className="w-12 h-12 rounded-2xl bg-surface flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
                   {categoryIcons[cat] || defaultCategoryIcon}
                 </div>
-                <span className="text-[11px] text-muted-foreground font-medium">{cat}</span>
+                <span className="text-[11px] text-muted-foreground font-medium">{t("category." + cat) || cat}</span>
               </button>
             ))}
           </div>

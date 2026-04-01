@@ -337,6 +337,23 @@ const ko: Record<string, string> = {
   "tag.热门": "인기",
   "tag.新课": "신규",
   "tag.推荐": "추천",
+
+  "category.眼部": "눈가",
+  "category.下颌": "턱선",
+  "category.脸颊": "볼",
+  "category.全脸": "풀페이스",
+  "category.额头": "이마",
+  "category.颈部": "목",
+  "category.太阳穴": "관자놀이",
+  "category.法令纹": "팔자주름",
+
+  "weekday.mon": "월",
+  "weekday.tue": "화",
+  "weekday.wed": "수",
+  "weekday.thu": "목",
+  "weekday.fri": "금",
+  "weekday.sat": "토",
+  "weekday.sun": "일",
 };
 
 export default ko;

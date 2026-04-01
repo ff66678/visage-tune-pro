@@ -107,7 +107,7 @@ export const useWeeklyProgress = () => {
   const monday = new Date(today);
   monday.setDate(today.getDate() + mondayOffset);
 
-  const labels = ["一", "二", "三", "四", "五", "六", "日"];
+  // Labels are now provided by the caller via the weekdayLabels parameter
   const counts = new Array(7).fill(0);
 
   logs.forEach((l) => {

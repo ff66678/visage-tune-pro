@@ -337,6 +337,23 @@ const en: Record<string, string> = {
   "tag.热门": "Popular",
   "tag.新课": "New",
   "tag.推荐": "Featured",
+
+  "category.眼部": "Eyes",
+  "category.下颌": "Jawline",
+  "category.脸颊": "Cheeks",
+  "category.全脸": "Full Face",
+  "category.额头": "Forehead",
+  "category.颈部": "Neck",
+  "category.太阳穴": "Temple",
+  "category.法令纹": "Nasolabial",
+
+  "weekday.mon": "Mon",
+  "weekday.tue": "Tue",
+  "weekday.wed": "Wed",
+  "weekday.thu": "Thu",
+  "weekday.fri": "Fri",
+  "weekday.sat": "Sat",
+  "weekday.sun": "Sun",
 };
 
 export default en;
