@@ -101,7 +101,7 @@ const ProgressPage = () => {
 
   return (
     <div>
-      <header className="flex justify-between items-center px-6 pt-6 pb-2">
+      <header className={`flex justify-between items-center px-6 pb-2 sticky top-0 bg-background/85 backdrop-blur-xl z-40 transition-all duration-300 ${scrolled ? 'pt-3' : 'pt-6'}`}>
         <Popover>
           <PopoverTrigger asChild>
             <button className="w-9 h-9 rounded-full bg-surface-elevated flex items-center justify-center cursor-pointer hover:bg-surface-hover transition-colors">
