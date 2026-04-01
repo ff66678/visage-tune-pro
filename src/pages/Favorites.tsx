@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Clock, Heart } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -9,8 +9,9 @@ import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPosition
 
 
 const Favorites = () => {
-  const shouldAnimate = !getSkipNextAnimation();
-  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
+  const skipAnim = useRef(getSkipNextAnimation());
+  if (skipAnim.current) setSkipNextAnimation(false);
+  const shouldAnimate = !skipAnim.current;
   const navigate = useNavigate();
   const { data: favorites = [], isLoading } = useFavorites();
   const { t } = useTranslation();

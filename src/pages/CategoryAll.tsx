@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
@@ -8,8 +8,9 @@ import SwipeBack from "@/components/SwipeBack";
 import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 
 const CategoryAll = () => {
-  const shouldAnimate = !getSkipNextAnimation();
-  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
+  const skipAnim = useRef(getSkipNextAnimation());
+  if (skipAnim.current) setSkipNextAnimation(false);
+  const shouldAnimate = !skipAnim.current;
   const { category } = useParams<{ category: string }>();
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();

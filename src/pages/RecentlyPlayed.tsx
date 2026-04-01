@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Clock, Play } from "lucide-react";
 import { useRecentCourses } from "@/hooks/useWorkoutLogs";
@@ -8,8 +8,9 @@ import SwipeBack from "@/components/SwipeBack";
 import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 
 const RecentlyPlayed = () => {
-  const shouldAnimate = !getSkipNextAnimation();
-  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
+  const skipAnim = useRef(getSkipNextAnimation());
+  if (skipAnim.current) setSkipNextAnimation(false);
+  const shouldAnimate = !skipAnim.current;
   const navigate = useNavigate();
   const { data: recentCourses = [], isLoading } = useRecentCourses();
   const { t } = useTranslation();

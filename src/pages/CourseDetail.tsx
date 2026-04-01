@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
@@ -13,8 +13,9 @@ import { useTranslation } from "@/i18n/LanguageContext";
 import SwipeBack from "@/components/SwipeBack";
 
 const CourseDetail = () => {
-  const shouldAnimate = !getSkipNextAnimation();
-  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
+  const skipAnim = useRef(getSkipNextAnimation());
+  if (skipAnim.current) setSkipNextAnimation(false);
+  const shouldAnimate = !skipAnim.current;
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { data: favoriteIds = new Set() } = useFavoriteIds();
