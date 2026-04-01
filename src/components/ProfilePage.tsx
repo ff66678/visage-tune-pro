@@ -4,6 +4,7 @@ import { Settings, Clock, Play, ChevronRight } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useWorkoutStats, useHeatmapData, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { useCourses } from "@/hooks/useCourses";
+import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import SettingsDrawer from "@/components/SettingsDrawer";
 import { useTranslation, useLanguage } from "@/i18n/LanguageContext";
 
