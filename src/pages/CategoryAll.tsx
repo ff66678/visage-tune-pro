@@ -3,6 +3,7 @@ import { ArrowLeft, Clock } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/i18n/LanguageContext";
+import SwipeBack from "@/components/SwipeBack";
 
 const CategoryAll = () => {
   const { category } = useParams<{ category: string }>();

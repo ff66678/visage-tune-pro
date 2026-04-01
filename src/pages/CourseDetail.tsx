@@ -8,6 +8,7 @@ import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import { useToast } from "@/hooks/use-toast";
 import Paywall from "@/pages/Paywall";
 import { useTranslation } from "@/i18n/LanguageContext";
+import SwipeBack from "@/components/SwipeBack";
 
 const CourseDetail = () => {
   const { t } = useTranslation();

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Check } from "lucide-react";
 import { useLanguage, type LanguageCode } from "@/i18n/LanguageContext";
 import { useTranslation } from "@/i18n/LanguageContext";
+import SwipeBack from "@/components/SwipeBack";
 
 const languages: { code: LanguageCode; native: string }[] = [
   { code: "zh-CN", native: "简体中文" },

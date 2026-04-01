@@ -3,6 +3,7 @@ import { ChevronLeft, Clock, Heart } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/i18n/LanguageContext";
+import SwipeBack from "@/components/SwipeBack";
 
 
 const Favorites = () => {

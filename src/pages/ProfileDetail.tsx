@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Settings } from "lucide-react";
 import ProfileDetailContent from "@/components/ProfileDetailContent";
 import SettingsDrawer from "@/components/SettingsDrawer";
+import SwipeBack from "@/components/SwipeBack";
 
 const ProfileDetail = () => {
   const navigate = useNavigate();

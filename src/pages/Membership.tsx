@@ -3,6 +3,7 @@ import { ChevronLeft, Crown, Check, Sparkles, Calendar, Clock, Star, Shield } fr
 import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import Paywall from "@/pages/Paywall";
 import { useTranslation } from "@/i18n/LanguageContext";
+import SwipeBack from "@/components/SwipeBack";
 
 const MembershipPage = () => {
   const { t } = useTranslation();

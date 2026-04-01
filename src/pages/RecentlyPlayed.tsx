@@ -3,6 +3,7 @@ import { ChevronLeft, Clock, Play } from "lucide-react";
 import { useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/i18n/LanguageContext";
+import SwipeBack from "@/components/SwipeBack";
 
 const RecentlyPlayed = () => {
   const navigate = useNavigate();
