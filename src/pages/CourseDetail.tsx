@@ -106,7 +106,7 @@ const CourseDetail = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-32 no-scrollbar">
+      <div className="flex-1 overflow-y-auto pb-36 no-scrollbar">
         <div className="relative h-[380px] w-full">
           <img src={course.image_url} alt={course.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
@@ -179,7 +179,7 @@ const CourseDetail = () => {
         </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-8 z-30">
+      <div className="fixed bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))] z-30">
         <button onClick={handleStartWorkout}
           className="w-full h-14 bg-gradient-to-br from-primary to-primary/80 rounded-2xl text-primary-foreground font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
           <Play className="w-5 h-5 fill-current" />{t("course.startWorkout")}
