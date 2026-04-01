@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, Heart } from "lucide-react";
+import { X, Heart } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
-import SwipeBack from "@/components/SwipeBack";
+  
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
@@ -55,6 +55,7 @@ const WorkoutPlayer = () => {
   const { data: favoriteIds } = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
   const queryClient = useQueryClient();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const isFavorited = id ? (favoriteIds?.has(id) ?? false) : false;
 
@@ -130,18 +131,27 @@ const WorkoutPlayer = () => {
     else { setIsPlaying((prev) => !prev); }
   };
 
+  const handleClose = () => {
+    if (containerRef.current) {
+      containerRef.current.style.transition = "transform 0.35s ease-in, opacity 0.35s ease-in";
+      containerRef.current.style.transform = "translateY(100%)";
+      containerRef.current.style.opacity = "0";
+      setTimeout(() => navigate(-1), 320);
+    }
+  };
+
   const courseTitle = course?.title || t("workout.training");
 
   return (
-    <SwipeBack className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
+    <div ref={containerRef} className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden animate-slide-in-up">
       <div className="absolute inset-0 z-0">
         <img src={course?.image_url || "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} alt="" className="w-full h-full object-cover opacity-90" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)" }} />
       </div>
 
       <div className="absolute top-12 left-0 w-full px-6 flex justify-between items-center z-20">
-        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
-          <ChevronLeft className="w-5 h-5" />
+        <button onClick={handleClose} className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
+          <X className="w-5 h-5" />
         </button>
         <div className="text-center"><h2 className="text-sm font-bold tracking-wide">{courseTitle}</h2></div>
         <button onClick={handleToggleFavorite} className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform">
@@ -175,7 +185,7 @@ const WorkoutPlayer = () => {
           </div>
         </div>
       </div>
-    </SwipeBack>
+    </div>
   );
 };
 
