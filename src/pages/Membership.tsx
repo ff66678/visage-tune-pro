@@ -4,6 +4,7 @@ import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import Paywall from "@/pages/Paywall";
 import { useTranslation } from "@/i18n/LanguageContext";
 import SwipeBack from "@/components/SwipeBack";
+import { toast } from "sonner";
 
 const MembershipPage = () => {
   const { t } = useTranslation();
