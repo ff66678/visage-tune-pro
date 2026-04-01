@@ -58,11 +58,6 @@ const WorkoutPlayer = () => {
   const queryClient = useQueryClient();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Pull-down gesture refs
-  const startY = useRef(0);
-  const currentDeltaY = useRef(0);
-  const isSwipingDown = useRef(false);
-  const rafId = useRef(0);
 
   const isFavorited = id ? (favoriteIds?.has(id) ?? false) : false;
 
