@@ -347,6 +347,16 @@ const zhCN: Record<string, string> = {
   "workout.loginFirst": "请先登录",
   "workout.loginToFav": "登录后即可收藏课程",
   "workout.completed": "训练完成！已记录",
+
+  // Difficulty mapping
+  "difficulty.初级": "初级",
+  "difficulty.中级": "中级",
+  "difficulty.高级": "高级",
+
+  // Tag mapping
+  "tag.热门": "热门",
+  "tag.新课": "新课",
+  "tag.推荐": "推荐",
 };
 
 export default zhCN;

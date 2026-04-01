@@ -107,7 +107,7 @@ const CourseDetail = () => {
               </div>
               <div className="text-center border-x border-border">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("course.difficulty")}</p>
-                <p className="font-bold text-foreground">{course.difficulty}</p>
+                <p className="font-bold text-foreground">{t("difficulty." + course.difficulty)}</p>
               </div>
               <div className="text-center">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("course.intensity")}</p>

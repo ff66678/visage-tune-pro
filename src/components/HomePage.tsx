@@ -250,7 +250,7 @@ const HomePage = () => {
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-foreground line-clamp-1">{course.title}</h3>
                   <div className="flex items-center gap-2 text-muted-foreground mt-0.5">
-                    <span className="text-[11px]">{course.difficulty}</span>
+                    <span className="text-[11px]">{t("difficulty." + course.difficulty)}</span>
                     <span className="text-[11px]">·</span>
                     <Clock className="w-3 h-3" />
                     <span className="text-[11px]">{course.duration}</span>
