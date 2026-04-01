@@ -8,8 +8,9 @@ import SwipeBack from "@/components/SwipeBack";
 import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 
 const RecentlyPlayed = () => {
-  const shouldAnimate = !getSkipNextAnimation();
-  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
+  const skipAnim = useRef(getSkipNextAnimation());
+  if (skipAnim.current) setSkipNextAnimation(false);
+  const shouldAnimate = !skipAnim.current;
   const navigate = useNavigate();
   const { data: recentCourses = [], isLoading } = useRecentCourses();
   const { t } = useTranslation();
