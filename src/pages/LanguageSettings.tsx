@@ -19,7 +19,7 @@ const LanguageSettings = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-background">
+    <SwipeBack className="min-h-screen bg-background">
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="flex items-center justify-between px-4 h-14">
           <button

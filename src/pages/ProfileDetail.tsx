@@ -31,7 +31,7 @@ const ProfileDetail = () => {
         <div className="-mt-14">
           <ProfileDetailContent />
         </div>
-      </div>
+    </SwipeBack>
     </div>
   );
 };

@@ -96,7 +96,7 @@ const MembershipPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 

@@ -165,7 +165,7 @@ const CourseDetail = () => {
           <Play className="w-5 h-5 fill-current" />{t("course.startWorkout")}
         </button>
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 

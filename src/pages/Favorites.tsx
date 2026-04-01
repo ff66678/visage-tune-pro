@@ -12,7 +12,7 @@ const Favorites = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-background animate-slide-in-right">
+    <SwipeBack className="min-h-screen bg-background animate-slide-in-right">
       <nav className="flex items-center gap-3 px-4 pt-12 pb-4 sticky top-0 bg-background/85 backdrop-blur-xl z-40">
         <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-surface flex items-center justify-center">
           <ChevronLeft className="w-5 h-5 text-foreground" />
