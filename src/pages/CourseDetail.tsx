@@ -13,6 +13,8 @@ import { useTranslation } from "@/i18n/LanguageContext";
 import SwipeBack from "@/components/SwipeBack";
 
 const CourseDetail = () => {
+  const shouldAnimate = !getSkipNextAnimation();
+  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { data: favoriteIds = new Set() } = useFavoriteIds();
