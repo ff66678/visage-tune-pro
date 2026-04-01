@@ -334,6 +334,12 @@ const ja: Record<string, string> = {
   "difficulty.进阶": "上級",
   "difficulty.进阶级": "エキスパート",
 
+  // Intensity mapping
+  "intensity.高": "高",
+  "intensity.中": "中",
+  "intensity.中等": "中程度",
+  "intensity.低": "低",
+
   // Tag mapping
   "tag.热门": "人気",
   "tag.新课": "新着",

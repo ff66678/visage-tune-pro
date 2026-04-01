@@ -354,6 +354,12 @@ const zhCN: Record<string, string> = {
   "difficulty.进阶": "进阶",
   "difficulty.进阶级": "进阶级",
 
+  // Intensity mapping
+  "intensity.高": "高",
+  "intensity.中": "中",
+  "intensity.中等": "中等",
+  "intensity.低": "低",
+
   // Tag mapping
   "tag.热门": "热门",
   "tag.新课": "新课",

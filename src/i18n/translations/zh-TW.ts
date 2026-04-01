@@ -334,6 +334,12 @@ const zhTW: Record<string, string> = {
   "difficulty.进阶": "進階",
   "difficulty.进阶级": "進階級",
 
+  // Intensity mapping
+  "intensity.高": "高",
+  "intensity.中": "中",
+  "intensity.中等": "中等",
+  "intensity.低": "低",
+
   // Tag mapping
   "tag.热门": "熱門",
   "tag.新课": "新課",

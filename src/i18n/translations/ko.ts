@@ -334,6 +334,12 @@ const ko: Record<string, string> = {
   "difficulty.进阶": "고급",
   "difficulty.进阶级": "전문가",
 
+  // Intensity mapping
+  "intensity.高": "높음",
+  "intensity.中": "중간",
+  "intensity.中等": "중간",
+  "intensity.低": "낮음",
+
   // Tag mapping
   "tag.热门": "인기",
   "tag.新课": "신규",
