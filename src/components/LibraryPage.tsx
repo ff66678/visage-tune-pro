@@ -240,7 +240,7 @@ const LibraryPage = () => {
             {featuredCourse && activeFilter === "全部" && !searchValue && (
               <div
                 className="relative w-full h-[180px] rounded-2xl overflow-hidden mb-6 mt-4 cursor-pointer active:scale-[0.98] transition-transform"
-                onClick={() => navigate(`/course/${featuredCourse.id}`)}
+                onClick={() => navigate(`/course/${featuredCourse.id}`, { state: { fromTab: 1 } })}
               >
                 <img
                   src={featuredCourse.image_url}
