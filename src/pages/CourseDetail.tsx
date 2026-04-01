@@ -126,8 +126,8 @@ const CourseDetail = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         </div>
 
-        <div className="px-6 -mt-12 relative z-10">
-          <div className="bg-card p-6 rounded-[32px] shadow-sm">
+      <div className="px-6 -mt-12 relative z-10">
+          <div className="bg-card p-6 rounded-[32px] shadow-md">
             <div className="flex gap-2 mb-3">
               {course.tag && <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">{t("tag." + course.tag)}</span>}
               <span className="px-3 py-1 bg-secondary text-muted-foreground text-[10px] font-bold rounded-full uppercase tracking-wider">{t("difficulty." + course.difficulty)}</span>
