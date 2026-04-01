@@ -1,26 +1,53 @@
 
 
-## 修复课程详情页顶部栏滚动交互 + 底部按钮栏背景色统一
+## 修复首页返回时顶部栏"跳下"问题
 
-### 问题 1：顶部栏滚动交互不生效
+### 根因
 
-**根因分析**：`SwipeBack` 容器使用了 `min-h-screen`，这不是一个确定的高度值。内部 `flex-1 overflow-y-auto` 的子元素需要父容器有确定高度才能形成滚动区域。由于父容器只有最小高度限制，子元素会撑开到内容实际高度，导致 `scrollTop` 始终为 0，`scrolled` 状态永远不会变为 `true`。
+`HomePage` 中 `scrolled` 初始值为 `false`，导致顶部栏以 `pt-8`（大间距）渲染。之后 Index 恢复滚动位置 → 触发 scroll 事件 → `scrolled` 变为 `true` → 顶部栏缩为 `pt-3`。这个先大后小的过程就是用户看到的"跳下"。
 
-**修复**：将 `min-h-screen` 改为 `h-screen`，给 flex 容器一个确定高度，使内部 `contentRef` 形成真正的可滚动区域。
+### 修复方案
 
-### 问题 2：底部按钮栏背景色
+在 `HomePage` 初始化 `scrolled` 时，直接读取当前 `scrollRef` 的 `scrollTop`，而不是固定写 `false`。
 
-当前底部"开始训练"按钮容器使用 `bg-card/85`，需改为 `bg-background/85` 以统一为米色。
+### 改动
 
-### 技术细节
+| 文件 | 改动 |
+|---|---|
+| `src/components/HomePage.tsx` 第 25 行 | `useState(false)` → `useState(() => { ... })` 用惰性初始化，读取 `scrollContainerRef` 当前 scrollTop |
 
-| 文件 | 行号 | 改动 |
-|---|---|---|
-| `src/pages/CourseDetail.tsx` | 102 | `min-h-screen` → `h-screen` |
-| `src/pages/CourseDetail.tsx` | 197 | `bg-card/85` → `bg-background/85` |
+由于 `scrollContainerRef` 在 `useState` 初始化时还不可用（hooks 顺序问题），改为在第 30-37 行的 `useEffect` 中确保 **同步** 读取初始滚动位置：
 
-**改动后效果**：
-- 进入课程详情页时，顶部栏无背景（透明），三个按钮有圆形背景悬浮在封面图上
-- 向下滚动超过 20px 后，顶部栏渐显米色半透明背景，同时 padding 收缩
-- 底部按钮栏背景与页面整体米色统一
+```tsx
+const [scrolled, setScrolled] = useState(false);
+const scrollContainerRef = useScrollContainer();
+
+// 关键：用 useLayoutEffect 替代 useEffect，在渲染前同步读取滚动位置
+useLayoutEffect(() => {
+  const el = scrollContainerRef?.current;
+  if (!el) return;
+  setScrolled(el.scrollTop > 20);
+}, [scrollContainerRef]);
+
+useEffect(() => {
+  const el = scrollContainerRef?.current;
+  if (!el) return;
+  const onScroll = () => setScrolled(el.scrollTop > 20);
+  el.addEventListener("scroll", onScroll, { passive: true });
+  return () => el.removeEventListener("scroll", onScroll);
+}, [scrollContainerRef]);
+```
+
+但更根本的问题是：Index 的滚动恢复（第 59-60 行）在 `useEffect` 中执行，晚于 HomePage 的渲染。所以即使用 `useLayoutEffect`，首次渲染时 scrollTop 仍为 0。
+
+**真正的修复**：在 Index.tsx 中，将滚动恢复逻辑从 `useEffect` 提前到 `useLayoutEffect`，确保在浏览器绘制前就恢复滚动位置，这样 HomePage 的 `useLayoutEffect` 读到的就是正确的 scrollTop。
+
+| 文件 | 改动 |
+|---|---|
+| `src/pages/Index.tsx` 第 1 行 | import 加入 `useLayoutEffect` |
+| `src/pages/Index.tsx` 第 35 行 | 滚动恢复的 `useEffect` → `useLayoutEffect`，确保绘制前恢复位置 |
+| `src/components/HomePage.tsx` 第 1 行 | import 加入 `useLayoutEffect` |
+| `src/components/HomePage.tsx` 第 25-37 行 | 拆分为：`useLayoutEffect` 同步初始化 `scrolled` + `useEffect` 注册持续监听 |
+
+同样的修复也应用于 `AnalysisPage.tsx` 和 `ProgressPage.tsx`（如果它们有类似的 scrolled 状态）。
 
