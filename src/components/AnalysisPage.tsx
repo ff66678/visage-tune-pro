@@ -182,7 +182,7 @@ const AnalysisPage = () => {
                 <img src={course.image_url} alt={course.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium text-foreground truncate">{course.title}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{course.duration} · {course.difficulty}</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">{course.duration} · {t("difficulty." + course.difficulty)}</div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
               </button>
