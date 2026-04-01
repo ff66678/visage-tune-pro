@@ -4,3 +4,7 @@ export const scrollPositions = new Map<number, number>();
 let _isTabSwitch = false;
 export const getIsTabSwitch = () => _isTabSwitch;
 export const setIsTabSwitch = (v: boolean) => { _isTabSwitch = v; };
+
+let _skipNextAnimation = false;
+export const getSkipNextAnimation = () => _skipNextAnimation;
+export const setSkipNextAnimation = (v: boolean) => { _skipNextAnimation = v; };

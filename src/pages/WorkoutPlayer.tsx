@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
+import { setSkipNextAnimation } from "@/lib/scrollPositions";
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
@@ -141,6 +142,7 @@ const WorkoutPlayer = () => {
     requestAnimationFrame(() => {
       el.style.transition = "transform 0.35s cubic-bezier(0.4, 0, 1, 1)";
       el.style.transform = "translate3d(0, 100%, 0)";
+      setSkipNextAnimation(true);
       setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 340);
     });
   }, [navigate, fromTab]);
