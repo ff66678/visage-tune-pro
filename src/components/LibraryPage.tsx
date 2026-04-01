@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
+import { scrollPositions } from "@/pages/Index";
 
 const difficultyColor = (d: string) => {
   if (d === "入门") return "bg-emerald-500/90 text-white";
@@ -45,7 +46,7 @@ const LibraryPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState<"default" | "rating" | "duration">("default");
   const [showSort, setShowSort] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(() => (scrollPositions.get(1) || 0) > 20);
   const collapseRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
