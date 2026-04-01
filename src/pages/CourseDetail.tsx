@@ -37,8 +37,20 @@ const CourseDetail = () => {
   };
 
   const handleStartWorkout = () => {
+    if (!user) {
+      navigate(`/auth?returnTo=${encodeURIComponent(`/course/${id}?showPaywall=true`)}`);
+      return;
+    }
     if (isPaid) navigate(`/workout/${course!.id}`, { state: { fromTab } });
     else setShowContentGate(true);
+  };
+
+  const handleFavoriteClick = () => {
+    if (!user) {
+      toast({ title: t("course.loginFirst") });
+      return;
+    }
+    if (id) toggleFavorite.mutate({ courseId: id, isFavorited });
   };
 
   const handleContentGatePaid = async () => {
