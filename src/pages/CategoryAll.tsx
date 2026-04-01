@@ -18,6 +18,9 @@ const CategoryAll = () => {
     "脸颊": t("library.catCheek"),
     "颈部": t("library.catNeck"),
     "全脸": t("library.catFullFace"),
+    "额头": t("library.catForehead"),
+    "太阳穴": t("library.catTemple"),
+    "法令纹": t("library.catNasolabial"),
   };
   const title = categoryLabels[decodedCategory] || decodedCategory;
   const filtered = courses?.filter((c) => c.category === decodedCategory) || [];
