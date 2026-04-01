@@ -48,8 +48,8 @@ const Index = () => {
       setIsTabSwitch(false);
       scrollPositions.delete(activeTab);
       scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
-      el.classList.remove("animate-fade-in-opacity");
-      el.classList.add("animate-fade-in");
+      el.classList.remove("animate-fade-in");
+      el.classList.add("animate-fade-in-opacity");
       const timer = setTimeout(() => el.classList.remove("animate-fade-in"), 450);
       return () => clearTimeout(timer);
     } else {
