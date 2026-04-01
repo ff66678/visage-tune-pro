@@ -55,6 +55,7 @@ const WorkoutPlayer = () => {
   const { data: favoriteIds } = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
   const queryClient = useQueryClient();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const isFavorited = id ? (favoriteIds?.has(id) ?? false) : false;
 
