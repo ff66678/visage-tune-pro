@@ -171,7 +171,7 @@ const HomePage = () => {
                 onClick={() => navigate(`/category/${encodeURIComponent(cat)}`)}
                 className="flex flex-col items-center gap-1.5 min-w-[56px] bg-transparent border-none cursor-pointer group"
               >
-                <div className="w-12 h-12 rounded-2xl bg-surface flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-card flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
                   {categoryIcons[cat] || defaultCategoryIcon}
                 </div>
                 <span className="text-[11px] text-muted-foreground font-medium">{t("category." + cat) || cat}</span>
