@@ -137,7 +137,7 @@ const LibraryPage = () => {
   };
 
   return (
-    <div className="animate-fade-in">
+    <div>
       {/* Header */}
       <header className={`px-6 sticky top-0 bg-background/90 backdrop-blur-xl z-40 ${mounted ? 'transition-all duration-500 ease-in-out' : ''} ${scrolled ? 'pt-2 pb-1' : 'pt-8 pb-2'}`}>
         <div

@@ -88,7 +88,7 @@ const ProgressPage = () => {
   const pastPhotos = recentPhotos.filter((p) => p.photo_date !== todayStr);
 
   return (
-    <div className="animate-fade-in">
+    <div>
       <header className="flex justify-between items-center px-6 pt-6 pb-2">
         <Popover>
           <PopoverTrigger asChild>
