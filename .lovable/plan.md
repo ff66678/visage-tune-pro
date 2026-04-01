@@ -1,67 +1,43 @@
 
 
-## 修复切换导航栏和返回页面时的闪烁
+## 子页面返回时添加从右往左滑出效果
 
-### 根因
+### 方案
 
-`animationClass` 初始值为 `""`（无动画），组件先渲染一帧无动画的内容，然后 `useEffect` 触发设置动画类，导致**第二帧**才开始动画。这个"先显示再动画"的过程就是闪烁的来源。
-
-两种场景都受影响：
-- **Tab 切换**：先渲染完整内容 → 再加 `animate-fade-in`（从 opacity:0 + translateY 开始）= 闪一下
-- **子页面返回**：先渲染完整内容 → 再加 `animate-fade-in-opacity`（从 opacity:0 开始）= 闪一下
-
-### 修复方案
-
-改用 DOM 直接操作动画类，避免 React 状态更新导致的多帧渲染问题：
-
-1. 移除 `animationClass` state
-2. 用 `useRef` 引用动画包裹 div
-3. 在 `useEffect` 中直接通过 `ref.current.classList` 添加/移除动画类
-4. 初始渲染时 div 不带任何动画类（内容直接可见，无闪烁）
-5. Tab 切换时：先设 `opacity:0`，再添加动画类让其淡入
-6. 子页面返回时：不加任何动画，内容直接显示（配合滚动恢复即可，无需 opacity 过渡）
+在子页面（CourseDetail、CategoryAll、Favorites、RecentlyPlayed 等）进入时从右滑入，返回时从右滑出。通过在 `App.tsx` 中添加一个路由过渡包装组件来实现，检测导航方向（push = 进入，pop = 返回）并应用对应动画。
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/pages/Index.tsx` | 移除 `animationClass` state；用 ref + classList 控制动画；子页面返回不加动画避免闪烁 |
+| `tailwind.config.ts` | 添加 `slide-in-right` 和 `slide-out-right` keyframes 及 animation（如果尚未存在） |
+| `src/components/PageTransition.tsx` | 新建过渡包装组件，监听 `window.navigation` 或 `useNavigationType()` 判断方向，进入时加 `animate-slide-in-right`，使用 `popstate` 时播放滑出动画再导航 |
+| `src/App.tsx` | 用 `PageTransition` 包裹子页面路由（CourseDetail、CategoryAll 等），主页 Index 不包裹 |
 
 ### 具体实现
 
-```tsx
-const animRef = useRef<HTMLDivElement>(null);
+**`PageTransition.tsx`**：
+- 接收 `children`，用 `useNavigationType()` 从 react-router 获取导航类型
+- `POP`（浏览器返回）= 播放 `slide-out-right` 动画（从左往右退出），动画结束后 `navigate(-1)`
+- `PUSH`（正常跳转）= 播放 `slide-in-right`（从右往左进入）
+- 用 ref 直接操作 classList 避免闪烁
 
-useEffect(() => {
-  const el = animRef.current;
-  if (!el) return;
-  
-  if (getIsTabSwitch()) {
-    setIsTabSwitch(false);
-    scrollPositions.delete(activeTab);
-    scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
-    // 直接操作 DOM，同一帧内完成
-    el.classList.remove("animate-fade-in-opacity");
-    el.classList.add("animate-fade-in");
-    const timer = setTimeout(() => el.classList.remove("animate-fade-in"), 450);
-    return () => clearTimeout(timer);
-  } else {
-    // 子页面返回：不加动画，直接恢复滚动
-    el.classList.remove("animate-fade-in", "animate-fade-in-opacity");
-    const saved = scrollPositions.get(activeTab) || 0;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
-      });
-    });
-  }
-}, [activeTab]);
+**简化方案**：不拦截导航，只在子页面组件挂载时根据 `useNavigationType()` 决定入场动画：
+- `PUSH` → `animate-slide-in-right`（从右滑入）
+- `POP` → 不加动画（因为页面即将卸载，无法展示退出动画）
 
-// 渲染
-<div ref={animRef}>
-  <ActivePage />
-</div>
-```
+考虑到浏览器返回时旧页面已卸载、新页面（Index）正在挂载，**退出动画无法在旧页面上播放**。实际可行的做法是：
 
-子页面返回时完全不加动画，内容直接出现 + 恢复滚动位置，体验最自然且不会闪烁。
+1. 子页面 `PUSH` 进入时：从右滑入
+2. 返回到 Index 时（`POP`）：Index 的内容从左滑入（模拟"返回"感）
+
+**最终方案**：
+
+| 文件 | 改动 |
+|---|---|
+| `tailwind.config.ts` | 添加 `slide-in-left` keyframe：`translateX(-30%) → translateX(0)` + opacity |
+| `src/pages/Index.tsx` | 子页面返回时（非 tab 切换），给 `animRef` 加 `animate-slide-in-left` 代替无动画 |
+| 子页面（CourseDetail、CategoryAll 等） | 根 div 添加 `animate-slide-in-right` 入场动画 |
+
+这样用户体验：进入子页面 → 内容从右滑入；按返回 → 主页内容从左滑入，形成完整的"推入/拉回"交互。
 
