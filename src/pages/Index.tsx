@@ -17,6 +17,7 @@ const Index = () => {
   const setActiveTab = (tab: number) => setSearchParams({ tab: String(tab) }, { replace: true });
   const ActivePage = pages[activeTab];
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [showAnimation, setShowAnimation] = useState(false);
 
   // Save scroll position on scroll
   useEffect(() => {
@@ -35,7 +36,12 @@ const Index = () => {
       setIsTabSwitch(false);
       scrollPositions.delete(activeTab);
       scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+      setShowAnimation(true);
+      // Clear animation class after it finishes
+      const timer = setTimeout(() => setShowAnimation(false), 350);
+      return () => clearTimeout(timer);
     } else {
+      setShowAnimation(false);
       const saved = scrollPositions.get(activeTab) || 0;
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -48,7 +54,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex justify-center">
       <div ref={scrollRef} className="w-full max-w-[480px] h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
-        <ActivePage />
+        <div className={showAnimation ? "animate-fade-in" : ""}>
+          <ActivePage />
+        </div>
         <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>
