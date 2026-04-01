@@ -229,15 +229,15 @@ const HomePage = () => {
           <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto pb-2 px-6 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-2 px-6 no-scrollbar snap-x snap-mandatory">
           {recommended.map((item) => (
             <div
               key={item.id}
-              className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden cursor-pointer transition-colors active:bg-muted"
+              className="flex-shrink-0 w-36 rounded-3xl bg-card border border-border overflow-hidden cursor-pointer active-press snap-start"
               onClick={() => navigate(`/course/${item.id}`, { state: { fromTab: 0 } })}
             >
               <div className="relative aspect-square overflow-hidden">
-                <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+                <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
                 {item.tag && (
                   <span className="absolute top-2 left-2 bg-primary/90 text-primary-foreground text-[10px] px-2 py-0.5 rounded-full">
                     {t("tag." + item.tag)}
