@@ -51,6 +51,7 @@ const LibraryPage = () => {
   const [scrolled, setScrolled] = useState(() => (scrollPositions.get(1) || 0) > 20);
   const collapseRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const scrollContainerRef = useScrollContainer();
 
   useEffect(() => {
     // Enable transitions only after first paint to avoid animation on mount
