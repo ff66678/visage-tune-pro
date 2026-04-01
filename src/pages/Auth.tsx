@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Mail, Lock, User, Eye, EyeOff, X } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?: () => void }) => {
   const navigate = useNavigate();
@@ -15,158 +16,103 @@ const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("登录成功！");
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          navigate(returnTo, { replace: true });
-        }
+        toast.success(t("auth.loginSuccess"));
+        if (onSuccess) { onSuccess(); } else { navigate(returnTo, { replace: true }); }
       } else {
         const { error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: window.location.origin,
-            data: { full_name: name },
-          },
+          email, password,
+          options: { emailRedirectTo: window.location.origin, data: { full_name: name } },
         });
         if (signUpError) throw signUpError;
-        toast.success("注册成功！请查看邮箱确认。");
+        toast.success(t("auth.signupSuccess"));
       }
     } catch (error: any) {
-      toast.error(error.message || "操作失败");
-    } finally {
-      setLoading(false);
-    }
+      toast.error(error.message || "Error");
+    } finally { setLoading(false); }
   };
 
   const handleGoogleLogin = async () => {
     const redirectUri = onSuccess
       ? `${window.location.origin}/onboarding`
       : `${window.location.origin}/auth?returnTo=${encodeURIComponent(returnTo)}`;
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: redirectUri,
-    });
-    if (error) {
-      toast.error("Google 登录失败");
-    }
+    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: redirectUri });
+    if (error) toast.error("Google login failed");
   };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6 relative">
-      {/* Close Button */}
       {showClose && (
-        <button
-          onClick={() => navigate("/")}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors z-10"
-        >
+        <button onClick={() => navigate("/")} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-surface flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors z-10">
           <X className="w-5 h-5" />
         </button>
       )}
       <div className="w-full max-w-[400px]">
-        {/* Logo / Header */}
         <div className="text-center mb-10">
           <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">🧘</span>
           </div>
           <h1 className="text-2xl font-bold text-foreground">Face Yoga</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {isLogin ? "欢迎回来，继续你的练习" : "开始你的面部瑜伽之旅"}
+            {isLogin ? t("auth.welcomeBack") : t("auth.startJourney")}
           </p>
         </div>
 
-        {/* Google Login */}
-        <button
-          onClick={handleGoogleLogin}
-          className="w-full flex items-center justify-center gap-3 bg-card border border-border rounded-2xl py-3.5 text-sm font-medium text-foreground hover:bg-surface transition-colors mb-4"
-        >
+        <button onClick={handleGoogleLogin} className="w-full flex items-center justify-center gap-3 bg-card border border-border rounded-2xl py-3.5 text-sm font-medium text-foreground hover:bg-surface transition-colors mb-4">
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          使用 Google 登录
+          {t("auth.googleLogin")}
         </button>
 
-        {/* Divider */}
         <div className="flex items-center gap-4 my-6">
           <div className="flex-1 h-px bg-border" />
-          <span className="text-xs text-muted-foreground">或使用邮箱</span>
+          <span className="text-xs text-muted-foreground">{t("auth.orEmail")}</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
-        {/* Email Form */}
         <form onSubmit={handleEmailAuth} className="space-y-3">
           {!isLogin && (
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="你的名字"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-card border border-border rounded-2xl py-3.5 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-              />
+              <input type="text" placeholder={t("auth.name")} value={name} onChange={(e) => setName(e.target.value)}
+                className="w-full bg-card border border-border rounded-2xl py-3.5 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
             </div>
           )}
           <div className="relative">
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type="email"
-              placeholder="邮箱地址"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full bg-card border border-border rounded-2xl py-3.5 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-            />
+            <input type="email" placeholder={t("auth.email")} value={email} onChange={(e) => setEmail(e.target.value)} required
+              className="w-full bg-card border border-border rounded-2xl py-3.5 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
           </div>
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="密码"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full bg-card border border-border rounded-2xl py-3.5 pl-11 pr-11 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground"
-            >
+            <input type={showPassword ? "text" : "password"} placeholder={t("auth.password")} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
+              className="w-full bg-card border border-border rounded-2xl py-3.5 pl-11 pr-11 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary text-primary-foreground rounded-2xl py-3.5 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-2"
-          >
-            {loading ? "处理中..." : isLogin ? "登录" : "注册"}
+          <button type="submit" disabled={loading}
+            className="w-full bg-primary text-primary-foreground rounded-2xl py-3.5 text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-2">
+            {loading ? t("auth.processing") : isLogin ? t("auth.login") : t("auth.signup")}
           </button>
         </form>
 
-        {/* Toggle */}
         <p className="text-center text-sm text-muted-foreground mt-6">
-          {isLogin ? "还没有账号？" : "已有账号？"}
-          <button
-            onClick={() => setIsLogin(!isLogin)}
-            className="text-primary font-medium ml-1 hover:underline"
-          >
-            {isLogin ? "注册" : "登录"}
+          {isLogin ? t("auth.noAccount") : t("auth.hasAccount")}
+          <button onClick={() => setIsLogin(!isLogin)} className="text-primary font-medium ml-1 hover:underline">
+            {isLogin ? t("auth.signup") : t("auth.login")}
           </button>
         </p>
       </div>
