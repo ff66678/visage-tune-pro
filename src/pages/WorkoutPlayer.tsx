@@ -47,6 +47,7 @@ const WorkoutPlayer = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const fromTab = (location.state as any)?.fromTab ?? 0;
+  const fromCourse = (location.state as any)?.fromCourse as string | undefined;
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
   const [isFinished, setIsFinished] = useState(false);
