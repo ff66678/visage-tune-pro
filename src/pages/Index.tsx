@@ -33,7 +33,9 @@ const Index = () => {
   useEffect(() => {
     const saved = scrollPositions.get(activeTab) || 0;
     requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+      });
     });
   }, [activeTab]);
 
