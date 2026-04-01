@@ -16,6 +16,7 @@ const CourseDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { data: favoriteIds = new Set() } = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
+  const { user } = useAuth();
   const isFavorited = id ? favoriteIds.has(id) : false;
   const [searchParams] = useSearchParams();
   const [showContentGate, setShowContentGate] = useState(searchParams.get("showPaywall") === "true");
