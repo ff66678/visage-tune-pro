@@ -40,6 +40,23 @@ const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?
     } finally { setLoading(false); }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error(t("auth.enterEmailFirst"));
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success(t("auth.resetEmailSent"));
+    } catch (error: any) {
+      toast.error(error.message || "Error");
+    } finally { setLoading(false); }
+  };
+
   const handleGoogleLogin = async () => {
     const redirectUri = onSuccess
       ? `${window.location.origin}/onboarding`

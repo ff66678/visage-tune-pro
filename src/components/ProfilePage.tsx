@@ -136,15 +136,17 @@ const ProfilePage = () => {
         </div>
       )}
 
-      <div className="flex flex-col items-center text-center px-6 mt-8 mb-12">
-        <button onClick={() => navigate("/paywall")} className="inline-flex items-center gap-2 bg-card border border-foreground/[0.04] px-4 py-2 pl-2 rounded-full text-sm font-semibold shadow-sm mb-4 cursor-pointer">
-          <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">+</div>
-          {t("profile.premium")}
-        </button>
-        <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-          {t("profile.unlockDesc")}<br />{t("profile.upgradePremium")}
-        </p>
-      </div>
+      {!isPaid && (
+        <div className="flex flex-col items-center text-center px-6 mt-8 mb-12">
+          <button onClick={() => navigate("/paywall")} className="inline-flex items-center gap-2 bg-card border border-foreground/[0.04] px-4 py-2 pl-2 rounded-full text-sm font-semibold shadow-sm mb-4 cursor-pointer">
+            <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">+</div>
+            {t("profile.premium")}
+          </button>
+          <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+            {t("profile.unlockDesc")}<br />{t("profile.upgradePremium")}
+          </p>
+        </div>
+      )}
 
       <SettingsDrawer open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
