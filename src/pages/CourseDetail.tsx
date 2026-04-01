@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
