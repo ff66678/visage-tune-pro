@@ -48,7 +48,7 @@ const RecentlyPlayed = () => {
           </div>
         )}
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 

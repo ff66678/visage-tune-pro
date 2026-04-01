@@ -69,7 +69,7 @@ const CategoryAll = () => {
           )}
         </div>
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 

@@ -175,7 +175,7 @@ const WorkoutPlayer = () => {
           </div>
         </div>
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 

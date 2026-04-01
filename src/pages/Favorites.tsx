@@ -49,7 +49,7 @@ const Favorites = () => {
           </div>
         )}
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 

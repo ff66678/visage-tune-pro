@@ -55,7 +55,7 @@ const LanguageSettings = () => {
           {t("lang.comingSoon")}
         </p>
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 
