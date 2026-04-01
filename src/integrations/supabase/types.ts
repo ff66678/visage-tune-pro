@@ -189,6 +189,44 @@ export type Database = {
           },
         ]
       }
+      product_translations: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          locale: string
+          name: string
+          product_id: string
+          tag: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          locale: string
+          name: string
+          product_id: string
+          tag?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          locale?: string
+          name?: string
+          product_id?: string
+          tag?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_translations_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           category: string | null
