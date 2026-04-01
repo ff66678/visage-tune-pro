@@ -1,30 +1,28 @@
 
 
-## Plan: 返回时恢复滚动位置
+## Plan: 修复返回时滚动位置丢失
 
-### 问题
+### 根因
 
-当前 `Index.tsx` 的 `useEffect` 在 `activeTab` 变化时**无条件置顶**。用户从首页点击课程进入详情页，返回后滚动位置丢失，总是回到顶部。
+当用户从首页点击课程进入 `/course/:id` 时，React Router 会**卸载** `Index` 组件。组件内的 `useRef` 全部被销毁，`scrollPositions` 数据丢失。返回时 `Index` 重新挂载，refs 全部是初始空值，无法恢复滚动位置。
 
-### 方案
+当前代码只能处理 tab 间切换的滚动保存，无法处理跨页面导航的场景。
 
-在离开 Index 页面前保存滚动位置，返回时恢复。
+### 修复方案
 
-**1. `src/pages/Index.tsx`**
+将滚动位置存储从 `useRef`（组件生命周期内）提升到**模块级变量**（组件外部），这样即使组件卸载重装，数据仍然保留。
 
-- 用 `useRef` 保存每个 tab 的滚动位置（`Map<number, number>`）
-- 监听 `scrollRef` 的 `scroll` 事件，实时记录当前 tab 的滚动位置
-- 将 `useEffect` 中的置顶逻辑改为：切换 tab 时恢复该 tab 之前保存的位置（如果有），否则置顶
-- 关键：**仅在 tab 切换时**恢复/置顶，从子页面返回时不触发置顶
+**`src/pages/Index.tsx`**
 
-具体做法：
-- 添加 `prevTabRef` 跟踪上一个 tab 值
-- 当 `activeTab` 变化且 `prevTabRef.current !== activeTab` 时，保存旧 tab 的滚动位置，恢复新 tab 的滚动位置
-- 当 `activeTab` 未变化（即从子页面返回）时，不做任何滚动操作，浏览器/React 会自然保留位置
+1. 在组件外部声明 `const scrollPositions = new Map<number, number>()`
+2. 组件挂载时，用 `requestAnimationFrame` 恢复当前 tab 的滚动位置（**无条件恢复**，不再判断 tab 是否变化）
+3. scroll 事件监听保持不变，实时保存位置到模块级 Map
+4. tab 切换时，先保存旧 tab 位置，再恢复新 tab 位置
+5. 移除组件内的 `scrollPositions useRef`，改用模块级变量
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/pages/Index.tsx` | 添加 scroll 位置保存/恢复逻辑，移除无条件置顶 |
+| `src/pages/Index.tsx` | 滚动位置存储从 useRef 提升到模块级变量；挂载时无条件恢复滚动位置 |
 
