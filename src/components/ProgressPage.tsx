@@ -30,11 +30,16 @@ const ProgressPage = () => {
   const [scrolled, setScrolled] = useState(false);
   const scrollContainerRef = useScrollContainer();
 
+  useLayoutEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    setScrolled(el.scrollTop > 20);
+  }, [scrollContainerRef]);
+
   useEffect(() => {
     const el = scrollContainerRef?.current;
     if (!el) return;
     const onScroll = () => setScrolled(el.scrollTop > 20);
-    onScroll();
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, [scrollContainerRef]);

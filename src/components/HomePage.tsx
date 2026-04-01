@@ -27,11 +27,17 @@ const HomePage = () => {
   // Reset startClicked when component re-renders (e.g. navigating back)
   useEffect(() => { setStartClicked(false); }, []);
 
+  // Sync scrolled state before paint to avoid header jump
+  useLayoutEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    setScrolled(el.scrollTop > 20);
+  }, [scrollContainerRef]);
+
   useEffect(() => {
     const el = scrollContainerRef?.current;
     if (!el) return;
     const onScroll = () => setScrolled(el.scrollTop > 20);
-    onScroll(); // init
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, [scrollContainerRef]);

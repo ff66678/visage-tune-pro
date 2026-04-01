@@ -31,8 +31,8 @@ const Index = () => {
     return () => el.removeEventListener("scroll", handleScroll);
   }, [activeTab]);
 
-  // Restore scroll on mount and tab change
-  useEffect(() => {
+  // Restore scroll on mount and tab change (useLayoutEffect to restore before paint)
+  useLayoutEffect(() => {
     const el = animRef.current;
     if (!el) return;
 
