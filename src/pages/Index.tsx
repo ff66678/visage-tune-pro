@@ -35,17 +35,23 @@ const Index = () => {
     const el = animRef.current;
     if (!el) return;
 
+    if (getSkipNextAnimation()) {
+      setSkipNextAnimation(false);
+      // No animation — just restore scroll
+      const saved = scrollPositions.get(activeTab) || 0;
+      scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+      return;
+    }
+
     if (getIsTabSwitch()) {
       setIsTabSwitch(false);
       scrollPositions.delete(activeTab);
       scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
-      // Direct DOM manipulation — same frame, no flash
       el.classList.remove("animate-fade-in-opacity");
       el.classList.add("animate-fade-in");
       const timer = setTimeout(() => el.classList.remove("animate-fade-in"), 450);
       return () => clearTimeout(timer);
     } else {
-      // 子页面返回：从左滑入
       el.classList.remove("animate-fade-in", "animate-fade-in-opacity", "animate-slide-in-left");
       void el.offsetWidth;
       el.classList.add("animate-slide-in-left");
