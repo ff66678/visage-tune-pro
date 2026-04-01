@@ -150,7 +150,7 @@ const AnalysisPage = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 mx-5">
         <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
           <div className="flex items-center gap-2 text-xs text-muted-foreground"><TrendingUp className="w-3.5 h-3.5" />{t("analysis.elasticity")}</div>
           <div className="text-3xl font-bold text-foreground">{latest ? latest.elasticity_score : "--"}</div>
