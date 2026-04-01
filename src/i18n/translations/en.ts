@@ -334,6 +334,12 @@ const en: Record<string, string> = {
   "difficulty.进阶": "Advanced",
   "difficulty.进阶级": "Expert",
 
+  // Intensity mapping
+  "intensity.高": "High",
+  "intensity.中": "Medium",
+  "intensity.中等": "Medium",
+  "intensity.低": "Low",
+
   // Tag mapping
   "tag.热门": "Popular",
   "tag.新课": "New",
