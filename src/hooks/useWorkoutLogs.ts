@@ -170,12 +170,13 @@ export const useHeatmapData = () => {
 
 export const useRecentCourses = () => {
   const { user } = useAuth();
+  const { language } = useLanguage();
+  const needsTranslation = language !== "zh-CN";
 
   return useQuery({
-    queryKey: ["recent-courses", user?.id],
+    queryKey: ["recent-courses", user?.id, language],
     queryFn: async () => {
       if (!user) return [];
-      // Get recent distinct course IDs from logs
       const { data: logs, error: logErr } = await supabase
         .from("workout_logs")
         .select("course_id, completed_at")
@@ -202,8 +203,34 @@ export const useRecentCourses = () => {
         .in("id", uniqueIds);
       if (error) throw error;
 
-      // Sort by original order
-      return uniqueIds.map((id) => courses?.find((c) => c.id === id)).filter(Boolean);
+      let result = uniqueIds.map((id) => courses?.find((c) => c.id === id)).filter(Boolean);
+
+      if (!needsTranslation || result.length === 0) return result;
+
+      const locale = language === "zh-TW" ? "zh-TW" : language;
+      const { data: translations } = await supabase
+        .from("course_translations")
+        .select("*")
+        .eq("locale", locale)
+        .in("course_id", uniqueIds);
+
+      if (!translations || translations.length === 0) return result;
+
+      const transMap = new Map(translations.map((t: any) => [t.course_id, t]));
+
+      return result.map((course: any) => {
+        const t = transMap.get(course.id);
+        if (!t) return course;
+        return {
+          ...course,
+          title: t.title || course.title,
+          subtitle: t.subtitle ?? course.subtitle,
+          description: t.description ?? course.description,
+          duration: t.duration || course.duration,
+          expected_effect: t.expected_effect ?? course.expected_effect,
+          target_audience: t.target_audience ?? course.target_audience,
+        };
+      });
     },
     enabled: !!user,
   });
