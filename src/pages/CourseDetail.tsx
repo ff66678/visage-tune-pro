@@ -111,7 +111,7 @@ const CourseDetail = () => {
               </div>
               <div className="text-center">
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">{t("course.intensity")}</p>
-                <p className="font-bold text-foreground">{course.intensity || t("course.moderate")}</p>
+                <p className="font-bold text-foreground">{course.intensity ? t("intensity." + course.intensity) : t("course.moderate")}</p>
               </div>
             </div>
           </div>
