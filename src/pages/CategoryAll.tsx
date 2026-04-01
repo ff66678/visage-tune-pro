@@ -8,6 +8,8 @@ import SwipeBack from "@/components/SwipeBack";
 import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 
 const CategoryAll = () => {
+  const shouldAnimate = !getSkipNextAnimation();
+  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
   const { category } = useParams<{ category: string }>();
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
