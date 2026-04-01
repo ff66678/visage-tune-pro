@@ -92,7 +92,7 @@ const CourseDetail = () => {
   return (
     <SwipeBack className={`min-h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
       {createPortal(
-        <div className="fixed top-0 left-0 w-full px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-3 flex justify-between items-center z-20 bg-gradient-to-b from-black/40 to-transparent">
+        <div className="fixed top-0 left-0 w-full px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-3 flex justify-between items-center z-20 bg-gradient-to-b from-black/40 to-transparent backdrop-blur-sm">
           <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
             <ChevronLeft className="w-5 h-5" />
           </button>
