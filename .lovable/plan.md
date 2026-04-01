@@ -1,23 +1,28 @@
 
 
-## 修复课程库返回时的跳动
+## 修复：Tab 切换置顶 vs 子页面返回恢复滚动
 
-### 根因
+### 问题
 
-`scrolled` 的初始值已正确基于保存的滚动位置计算，但 header 的 CSS 设置了 `transition-all duration-500 ease-in-out`。当组件挂载时，虽然 `scrolled=true`，但 CSS 过渡动画仍会从初始布局状态（未折叠）**动画到**折叠状态，耗时 500ms，这就是可见的"跳动"。
+当前逻辑在 `activeTab` 变化时恢复保存的滚动位置，但这对两种场景不加区分：
+1. **Tab 切换**（点底部导航栏）— 应该置顶
+2. **子页面返回**（从 CourseDetail/CategoryAll 返回）— 应该恢复位置
 
-此外，`requestAnimationFrame` 恢复滚动位置也可能在第一帧渲染后才执行，造成短暂的位置不一致。
+### 方案
 
-### 修复方案
+区分"tab 切换"和"子页面返回"：
 
-在 `LibraryPage` 中添加一个 `mounted` ref，初始为 `false`，挂载后通过 `useEffect` 设为 `true`。在 header 和可折叠区域的 `className`/`style` 中，当 `mounted` 为 `false` 时不添加 `transition` 类，避免首次渲染时的过渡动画。
-
-同时在 `Index.tsx` 中，将 `requestAnimationFrame` 改为双层嵌套（确保 DOM 完全就绪后再恢复滚动）。
+- 在 `scrollPositions.ts` 中增加一个标志 `isTabSwitch`，默认 `false`
+- 在 `BottomTabBar` 的 `onTabChange` 回调中，先设置 `isTabSwitch = true`，再切换 tab
+- 在 `Index.tsx` 的 scroll restore `useEffect` 中：
+  - 如果 `isTabSwitch === true`：置顶（scrollTo 0），并清除该 tab 的保存位置，重置标志
+  - 如果 `isTabSwitch === false`：恢复保存的滚动位置（从子页面返回的场景）
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/components/LibraryPage.tsx` | 添加 `mounted` ref，首次渲染禁用 transition；挂载后启用 |
-| `src/pages/Index.tsx` | 双层 `requestAnimationFrame` 确保滚动恢复时机更准确 |
+| `src/lib/scrollPositions.ts` | 增加 `export let isTabSwitch = false` 及 setter 函数 |
+| `src/pages/Index.tsx` | restore 逻辑中判断 `isTabSwitch`，true 则置顶并重置标志 |
+| `src/components/BottomTabBar.tsx` | `onTabChange` 前先调用 `setIsTabSwitch(true)` |
 
