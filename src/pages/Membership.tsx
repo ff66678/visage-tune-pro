@@ -9,7 +9,7 @@ import { toast } from "sonner";
 const MembershipPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isPaid, isLoading } = usePaywallStatus();
+  const { isPaid, isLoading, restorePurchases, isNative } = usePaywallStatus();
 
   if (isLoading) {
     return (
