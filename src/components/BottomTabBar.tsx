@@ -30,6 +30,7 @@ const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
       return;
     }
     setIsTabSwitch(true);
+    scrollPositions.delete(index);
     onTabChange(index);
   };
 
