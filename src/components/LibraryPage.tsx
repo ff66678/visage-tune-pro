@@ -419,7 +419,7 @@ const LibraryPage = () => {
                           <div
                             key={routine.id}
                             className="bg-card rounded-2xl overflow-hidden shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
-                            onClick={() => navigate(`/course/${routine.id}`)}
+                            onClick={() => navigate(`/course/${routine.id}`, { state: { fromTab: 1 } })}
                           >
                             <div className="relative">
                               <img
