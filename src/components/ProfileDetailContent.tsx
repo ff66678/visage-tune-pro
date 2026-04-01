@@ -154,8 +154,8 @@ const ProfileDetailContent = () => {
           </div>
 
           <div className="grid grid-cols-7 gap-1 mb-2">
-            {weekLabels.map((l) => (
-              <div key={l} className="text-center text-[10px] text-muted-foreground font-medium">{l}</div>
+            {weekLabels.map((l, i) => (
+              <div key={i} className="text-center text-[10px] text-muted-foreground font-medium">{l}</div>
             ))}
           </div>
 

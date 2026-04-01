@@ -18,6 +18,9 @@ const CategoryAll = () => {
     "脸颊": t("library.catCheek"),
     "颈部": t("library.catNeck"),
     "全脸": t("library.catFullFace"),
+    "额头": t("library.catForehead"),
+    "太阳穴": t("library.catTemple"),
+    "法令纹": t("library.catNasolabial"),
   };
   const title = categoryLabels[decodedCategory] || decodedCategory;
   const filtered = courses?.filter((c) => c.category === decodedCategory) || [];
@@ -49,7 +52,7 @@ const CategoryAll = () => {
                 <div key={routine.id} className="bg-card rounded-lg overflow-hidden shadow-sm cursor-pointer group relative active:scale-[0.97] transition-transform duration-150" onClick={() => navigate(`/course/${routine.id}`)}>
                   <img src={routine.image_url} alt={routine.title} className="w-full h-[130px] object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute top-2 left-2">
-                    <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-card/90 text-foreground tracking-wide">{routine.difficulty}</span>
+                    <span className="text-[9px] uppercase font-bold px-1.5 py-0.5 rounded bg-card/90 text-foreground tracking-wide">{t("difficulty." + routine.difficulty)}</span>
                   </div>
                   <div className="p-3">
                     <h3 className="text-sm font-semibold mb-1 text-foreground">{routine.title}</h3>
