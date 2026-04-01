@@ -1,28 +1,33 @@
 
 
-## Plan: 修复返回时滚动位置丢失
+## 修复课程库返回时页面跳动
 
 ### 根因
 
-当用户从首页点击课程进入 `/course/:id` 时，React Router 会**卸载** `Index` 组件。组件内的 `useRef` 全部被销毁，`scrollPositions` 数据丢失。返回时 `Index` 重新挂载，refs 全部是初始空值，无法恢复滚动位置。
+当从 CategoryAll 返回到课程库 tab 时：
 
-当前代码只能处理 tab 间切换的滚动保存，无法处理跨页面导航的场景。
+1. `Index` 组件重新挂载，`LibraryPage` 也重新挂载
+2. `scrolled` 状态初始值为 `false` → 标题栏和搜索框**完整显示**
+3. 页面先以 scroll=0 渲染（标题完整展开）
+4. `requestAnimationFrame` 恢复滚动位置（比如 500px）
+5. scroll 事件触发，`scrolled` 变为 `true` → 标题栏**折叠隐藏**
+
+第3→5步的切换导致了可见的"跳动"：标题栏先展开再折叠。
 
 ### 修复方案
 
-将滚动位置存储从 `useRef`（组件生命周期内）提升到**模块级变量**（组件外部），这样即使组件卸载重装，数据仍然保留。
-
-**`src/pages/Index.tsx`**
-
-1. 在组件外部声明 `const scrollPositions = new Map<number, number>()`
-2. 组件挂载时，用 `requestAnimationFrame` 恢复当前 tab 的滚动位置（**无条件恢复**，不再判断 tab 是否变化）
-3. scroll 事件监听保持不变，实时保存位置到模块级 Map
-4. tab 切换时，先保存旧 tab 位置，再恢复新 tab 位置
-5. 移除组件内的 `scrollPositions useRef`，改用模块级变量
+让 `scrolled` 的初始值基于模块级保存的滚动位置，这样组件首次渲染就使用正确的折叠状态，避免闪跳。
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/pages/Index.tsx` | 滚动位置存储从 useRef 提升到模块级变量；挂载时无条件恢复滚动位置 |
+| `src/components/LibraryPage.tsx` | 将 `scrolled` 初始值从 `false` 改为根据 `scrollPositions.get(1) > 20` 计算；从 Index.tsx 导出 `scrollPositions` |
+| `src/pages/Index.tsx` | 导出 `scrollPositions` 供 LibraryPage 使用 |
+
+具体做法：
+- `Index.tsx`：`export const scrollPositions = new Map<number, number>();`（加 export）
+- `LibraryPage.tsx`：`import { scrollPositions } from "@/pages/Index";`，然后 `const [scrolled, setScrolled] = useState((scrollPositions.get(1) || 0) > 20);`
+
+这样返回时 LibraryPage 首次渲染就知道该折叠还是展开标题栏，不会闪跳。
 
