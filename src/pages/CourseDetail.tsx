@@ -31,6 +31,16 @@ const CourseDetail = () => {
   const { data: course, isLoading } = useCourse(id);
   const { isPaid, markPaid } = usePaywallStatus();
   const { toast } = useToast();
+  const [scrolled, setScrolled] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleShare = async () => {
     if (!course) return;
