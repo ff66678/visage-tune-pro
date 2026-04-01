@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
-  const containerRef = useRef<HTMLDivElement>(null);
+  
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
