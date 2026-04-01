@@ -9,7 +9,7 @@ import ProgressPage from "@/components/ProgressPage";
 const pages = [HomePage, LibraryPage, AnalysisPage, ProgressPage];
 
 // Module-level storage — survives component unmount/remount
-const scrollPositions = new Map<number, number>();
+export const scrollPositions = new Map<number, number>();
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();

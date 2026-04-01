@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
+import { scrollPositions } from "@/pages/Index";
 
 const difficultyColor = (d: string) => {
   if (d === "入门") return "bg-emerald-500/90 text-white";
