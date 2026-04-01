@@ -404,15 +404,10 @@ const Onboarding = () => {
     if (step > 0) setStep(step - 1);
   };
 
-  // After success → if not logged in, show auth; if logged in, show paywall
+  // After success → show paywall (user is already logged in)
   const handleSuccessNext = () => {
-    if (user) {
-      setShowSuccess(false);
-      setShowPaywall(true);
-    } else {
-      setShowSuccess(false);
-      setShowAuth(true);
-    }
+    setShowSuccess(false);
+    setShowPaywall(true);
   };
 
 
