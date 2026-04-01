@@ -9,7 +9,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   力量: <Dumbbell className="w-5 h-5" />,
@@ -19,13 +19,6 @@ const categoryIcons: Record<string, React.ReactNode> = {
 };
 const defaultCategoryIcon = <BookOpen className="w-5 h-5" />;
 
-const getGreeting = () => {
-  const h = new Date().getHours();
-  if (h < 12) return "早上好，";
-  if (h < 18) return "下午好，";
-  return "晚上好，";
-};
-
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
   const navigate = useNavigate();
@@ -34,10 +27,18 @@ const HomePage = () => {
   const { data: profile } = useProfile();
   const { user } = useAuth();
   const { data: recentCourses = [] } = useRecentCourses();
+  const { t } = useTranslation();
+
+  const getGreeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return t("home.greeting.morning");
+    if (h < 18) return t("home.greeting.afternoon");
+    return t("home.greeting.evening");
+  };
 
   const displayName = user
-    ? (profile?.display_name || user?.email?.split("@")[0] || "用户")
-    : "游客";
+    ? (profile?.display_name || user?.email?.split("@")[0] || t("home.user"))
+    : t("home.guest");
   const avatarUrl = user ? profile?.avatar_url : undefined;
   const initials = displayName.slice(0, 1).toUpperCase();
 
@@ -113,8 +114,8 @@ const HomePage = () => {
       {/* Weekly Progress */}
       <div className="mx-6 bg-surface rounded-3xl p-6 mb-2">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-[15px] font-semibold">每周进度</h2>
-            <span className="text-[13px] text-primary font-semibold">完成 {percentage}%</span>
+            <h2 className="text-[15px] font-semibold">{t("home.weeklyProgress")}</h2>
+            <span className="text-[13px] text-primary font-semibold">{t("home.completed", [percentage])}</span>
           </div>
           <div className="flex justify-between items-end">
             {weekData.map((day, i) => (
@@ -158,7 +159,7 @@ const HomePage = () => {
       )}
 
       {/* Today's Plan */}
-      <h2 className="px-6 mt-5 mb-3 text-lg font-semibold tracking-tight">今日计划</h2>
+      <h2 className="px-6 mt-5 mb-3 text-lg font-semibold tracking-tight">{t("home.todayPlan")}</h2>
       {isLoading ? (
         <div className="mx-6"><Skeleton className="h-24 rounded-3xl" /></div>
       ) : todayPlan ? (
@@ -168,7 +169,7 @@ const HomePage = () => {
         >
           <div>
             <h3 className="text-xl font-semibold mb-1">{todayPlan.title}</h3>
-            <p className="text-[13px] opacity-90">{todayPlan.duration} · {todayPlan.intensity ? `${todayPlan.intensity}强度` : todayPlan.difficulty}</p>
+            <p className="text-[13px] opacity-90">{todayPlan.duration} · {todayPlan.intensity ? t("home.intensity", [todayPlan.intensity]) : todayPlan.difficulty}</p>
           </div>
           <button
             className="bg-card text-primary border-none px-5 py-2.5 rounded-full font-semibold text-sm cursor-pointer transition-all"
@@ -181,7 +182,7 @@ const HomePage = () => {
               setTimeout(() => navigate(`/course/${todayPlan.id}`), 300);
             }}
           >
-            {startClicked ? "开始中..." : "立即开始"}
+            {startClicked ? t("home.starting") : t("home.startNow")}
           </button>
         </div>
       ) : (
@@ -190,15 +191,15 @@ const HomePage = () => {
           onClick={() => navigate("/?tab=1")}
         >
           <div>
-            <h3 className="text-sm font-semibold text-foreground mb-0.5">今天还没有计划</h3>
-            <p className="text-xs text-muted-foreground">去课程库挑选一个吧 →</p>
+            <h3 className="text-sm font-semibold text-foreground mb-0.5">{t("home.noPlan")}</h3>
+            <p className="text-xs text-muted-foreground">{t("home.noPlanDesc")}</p>
           </div>
           <BookOpen className="w-8 h-8 text-muted-foreground/40" />
         </div>
       )}
 
       {/* Recommended */}
-      <h2 className="px-6 mt-5 mb-3 text-lg font-semibold tracking-tight">为你推荐</h2>
+      <h2 className="px-6 mt-5 mb-3 text-lg font-semibold tracking-tight">{t("home.recommended")}</h2>
       {isLoading ? (
         <div className="flex gap-4 px-6">
           <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
@@ -213,11 +214,7 @@ const HomePage = () => {
               onClick={() => navigate(`/course/${item.id}`)}
             >
               <div className="relative aspect-square overflow-hidden">
-                <img
-                  src={item.image_url}
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
+                <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
                 {item.tag && (
                   <span className="absolute top-2 left-2 bg-primary/90 text-primary-foreground text-[10px] px-2 py-0.5 rounded-full">
                     {item.tag}
@@ -241,7 +238,7 @@ const HomePage = () => {
       {/* Recent Training */}
       {recentCourses.length > 0 && (
         <div className="px-6 mt-4">
-          <h2 className="text-[15px] font-semibold mb-3">最近训练</h2>
+          <h2 className="text-[15px] font-semibold mb-3">{t("home.recentTraining")}</h2>
           <div className="flex flex-col gap-2.5">
             {recentCourses.map((course: any) => (
               <div
@@ -249,11 +246,7 @@ const HomePage = () => {
                 className="bg-surface rounded-2xl p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-surface-elevated transition-colors"
                 onClick={() => navigate(`/course/${course.id}`)}
               >
-                <img
-                  src={course.image_url}
-                  alt={course.title}
-                  className="w-14 h-14 rounded-xl object-cover flex-shrink-0"
-                />
+                <img src={course.image_url} alt={course.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-foreground line-clamp-1">{course.title}</h3>
                   <div className="flex items-center gap-2 text-muted-foreground mt-0.5">
@@ -279,8 +272,8 @@ const HomePage = () => {
               <Heart className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-foreground">我的喜欢</h3>
-              <p className="text-[11px] text-muted-foreground">{favCount} 个课程</p>
+              <h3 className="text-sm font-semibold text-foreground">{t("home.myFavorites")}</h3>
+              <p className="text-[11px] text-muted-foreground">{t("home.courseCount", [favCount])}</p>
             </div>
           </div>
           <div
@@ -291,8 +284,8 @@ const HomePage = () => {
               <Play className="w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-foreground">最近播放</h3>
-              <p className="text-[11px] text-muted-foreground">{recentCourses.length} 个记录</p>
+              <h3 className="text-sm font-semibold text-foreground">{t("home.recentlyPlayed")}</h3>
+              <p className="text-[11px] text-muted-foreground">{t("home.recordCount", [recentCourses.length])}</p>
             </div>
           </div>
         </div>
@@ -304,8 +297,8 @@ const HomePage = () => {
               <Star className="w-6 h-6" fill="currentColor" />
             </div>
             <div>
-              <div className="text-sm font-semibold">连续打卡 {streak} 天</div>
-              <div className="text-xs text-muted-foreground">{streak > 0 ? "太棒了，继续保持！" : "今天开始打卡吧！"}</div>
+              <div className="text-sm font-semibold">{t("home.streak", [streak])}</div>
+              <div className="text-xs text-muted-foreground">{streak > 0 ? t("home.streakGreat") : t("home.streakStart")}</div>
             </div>
           </div>
         </div>
