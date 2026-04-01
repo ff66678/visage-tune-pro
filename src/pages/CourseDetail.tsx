@@ -3,6 +3,7 @@ import { useNavigate, useParams, useSearchParams, useLocation } from "react-rout
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
+import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import { useToast } from "@/hooks/use-toast";
