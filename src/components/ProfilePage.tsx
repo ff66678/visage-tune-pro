@@ -89,7 +89,7 @@ const ProfilePage = () => {
             <span key={i} className="text-[10px] text-muted-foreground font-medium leading-none">{l}</span>
           ))}
         </div>
-        <div className="grid grid-cols-[repeat(20,1fr)] grid-rows-[repeat(7,1fr)] gap-1 flex-grow">
+        <div className="grid grid-cols-[repeat(20,1fr)] grid-rows-[repeat(7,1fr)] grid-flow-col gap-1 flex-grow">
           {heatmapCells.map((level, i) => (
             <div key={i} className={`aspect-square rounded-[4px] ${heatColors[level]}`} />
           ))}
