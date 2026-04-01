@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Check } from "lucide-react";
 import { useLanguage, type LanguageCode } from "@/i18n/LanguageContext";
 import { useTranslation } from "@/i18n/LanguageContext";
+import SwipeBack from "@/components/SwipeBack";
 
 const languages: { code: LanguageCode; native: string }[] = [
   { code: "zh-CN", native: "简体中文" },
@@ -18,7 +19,7 @@ const LanguageSettings = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-background">
+    <SwipeBack className="min-h-screen bg-background">
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="flex items-center justify-between px-4 h-14">
           <button
@@ -54,7 +55,7 @@ const LanguageSettings = () => {
           {t("lang.comingSoon")}
         </p>
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 

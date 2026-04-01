@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
+import SwipeBack from "@/components/SwipeBack";
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
@@ -132,7 +133,7 @@ const WorkoutPlayer = () => {
   const courseTitle = course?.title || t("workout.training");
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
+    <SwipeBack className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img src={course?.image_url || "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} alt="" className="w-full h-full object-cover opacity-90" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)" }} />
@@ -174,7 +175,7 @@ const WorkoutPlayer = () => {
           </div>
         </div>
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 

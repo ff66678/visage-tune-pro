@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Settings } from "lucide-react";
 import ProfileDetailContent from "@/components/ProfileDetailContent";
 import SettingsDrawer from "@/components/SettingsDrawer";
+import SwipeBack from "@/components/SwipeBack";
 
 const ProfileDetail = () => {
   const navigate = useNavigate();
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background flex justify-center">
+    <SwipeBack className="min-h-screen bg-background flex justify-center">
       <div className="w-full max-w-[480px] min-h-screen relative pb-8 no-scrollbar overflow-y-auto">
         {/* Top bar overlay */}
         <div className="sticky top-0 z-50 px-4 pt-4 flex justify-between items-center">
@@ -31,7 +32,7 @@ const ProfileDetail = () => {
           <ProfileDetailContent />
         </div>
       </div>
-    </div>
+    </SwipeBack>
   );
 };
 
