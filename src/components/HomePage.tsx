@@ -215,7 +215,7 @@ const HomePage = () => {
             <div
               key={item.id}
               className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden cursor-pointer transition-colors active:bg-muted"
-              onClick={() => navigate(`/course/${item.id}`)}
+              onClick={() => navigate(`/course/${item.id}`, { state: { fromTab: 0 } })}
             >
               <div className="relative aspect-square overflow-hidden">
                 <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
