@@ -200,7 +200,7 @@ const zhCN: Record<string, string> = {
   "onboarding.time20Desc": "全面蜕变完整护理",
   "onboarding.planReady": "您的专属计划已就绪",
   "onboarding.planReadyDesc": "基于您的目标和时间表，我们为您定制了最佳方案。",
-  "onboarding.planName": ""焕采新生"计划",
+  "onboarding.planName": "\u201C焕采新生\u201D计划",
   "onboarding.dailyTime": "每日 {0}",
   "onboarding.planFeature1": "针对眼周与下颌线的定制练习",
   "onboarding.planFeature2": "每周进度跟踪与面部分析",
