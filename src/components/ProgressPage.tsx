@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Camera, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
