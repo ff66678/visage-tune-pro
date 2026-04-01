@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
