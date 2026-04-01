@@ -36,25 +36,26 @@ const Index = () => {
       setIsTabSwitch(false);
       scrollPositions.delete(activeTab);
       scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
-      setShowAnimation(true);
-      // Clear animation class after it finishes
-      const timer = setTimeout(() => setShowAnimation(false), 350);
+      setAnimationClass("animate-fade-in");
+      const timer = setTimeout(() => setAnimationClass(""), 450);
       return () => clearTimeout(timer);
     } else {
-      setShowAnimation(false);
+      setAnimationClass("animate-fade-in-opacity");
       const saved = scrollPositions.get(activeTab) || 0;
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
         });
       });
+      const timer = setTimeout(() => setAnimationClass(""), 300);
+      return () => clearTimeout(timer);
     }
   }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
       <div ref={scrollRef} className="w-full max-w-[480px] h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
-        <div className={showAnimation ? "animate-fade-in" : ""}>
+        <div className={animationClass}>
           <ActivePage />
         </div>
         <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
