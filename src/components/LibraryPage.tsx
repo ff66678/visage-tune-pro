@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { scrollPositions } from "@/lib/scrollPositions";
-import { useRef as useReactRef } from "react";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 const difficultyColor = (d: string) => {
   const dl = d.toLowerCase();
@@ -51,6 +51,7 @@ const LibraryPage = () => {
   const [scrolled, setScrolled] = useState(() => (scrollPositions.get(1) || 0) > 20);
   const collapseRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
+  const scrollContainerRef = useScrollContainer();
 
   useEffect(() => {
     // Enable transitions only after first paint to avoid animation on mount
@@ -63,12 +64,13 @@ const LibraryPage = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    const container = document.querySelector('.no-scrollbar');
-    if (!container) return;
-    const onScroll = () => setScrolled(container.scrollTop > 20);
-    container.addEventListener('scroll', onScroll);
-    return () => container.removeEventListener('scroll', onScroll);
-  }, []);
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    onScroll();
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [scrollContainerRef]);
   const featuredCourse = useMemo(() => {
     if (!courses) return null;
     return courses.find((c) => c.is_featured) || courses[0] || null;

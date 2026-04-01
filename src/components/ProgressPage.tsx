@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Camera, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
@@ -8,6 +8,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useTranslation, useLanguage } from "@/i18n/LanguageContext";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 const formatLocalDate = (d: Date) => {
   const yyyy = d.getFullYear();
@@ -26,6 +27,17 @@ const ProgressPage = () => {
   const { data: recentPhotos = [] } = useProgressPhotos();
   const uploadMutation = useUploadProgressPhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useScrollContainer();
+
+  useEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [scrollContainerRef]);
 
   const today = new Date();
   const todayStr = formatLocalDate(today);
@@ -89,7 +101,7 @@ const ProgressPage = () => {
 
   return (
     <div>
-      <header className="flex justify-between items-center px-6 pt-6 pb-2">
+      <header className={`flex justify-between items-center px-6 pb-2 sticky top-0 bg-background/85 backdrop-blur-xl z-40 transition-all duration-300 ${scrolled ? 'pt-3' : 'pt-6'}`}>
         <Popover>
           <PopoverTrigger asChild>
             <button className="w-9 h-9 rounded-full bg-surface-elevated flex items-center justify-center cursor-pointer hover:bg-surface-hover transition-colors">

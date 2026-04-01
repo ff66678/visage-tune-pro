@@ -5,6 +5,7 @@ import HomePage from "@/components/HomePage";
 import LibraryPage from "@/components/LibraryPage";
 import AnalysisPage from "@/components/AnalysisPage";
 import ProgressPage from "@/components/ProgressPage";
+import { ScrollProvider } from "@/contexts/ScrollContext";
 
 const pages = [HomePage, LibraryPage, AnalysisPage, ProgressPage];
 
@@ -65,9 +66,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex justify-center">
       <div ref={scrollRef} className="w-full max-w-[480px] h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
-        <div ref={animRef}>
-          <ActivePage />
-        </div>
+        <ScrollProvider value={{ scrollRef }}>
+          <div ref={animRef}>
+            <ActivePage />
+          </div>
+        </ScrollProvider>
         <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
     </div>

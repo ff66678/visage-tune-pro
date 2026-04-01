@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { useCourses } from "@/hooks/useCourses";
 import { useProducts } from "@/hooks/useProducts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/i18n/LanguageContext";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 const gradeColor = (grade: string) => {
   if (grade.startsWith("A")) return "text-emerald-600";
@@ -22,6 +23,17 @@ const AnalysisPage = () => {
   const location = useLocation();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useScrollContainer();
+
+  useEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [scrollContainerRef]);
   const { data: latest, isLoading: loadingLatest } = useLatestAnalysis();
   const { data: history = [] } = useFaceAnalyses();
   const { data: photos = [] } = useProgressPhotos();
@@ -86,14 +98,14 @@ const AnalysisPage = () => {
   const recommendedCourses = getRecommendedCourses();
 
   return (
-    <div className="px-5 pt-14 pb-8 space-y-5">
+    <div className="pb-8 space-y-5">
       <input type="file" accept="image/*" capture="user" ref={fileInputRef} onChange={handleCapture} className="hidden" />
-      <div className="flex items-center justify-between">
+      <div className={`flex items-center justify-between px-5 sticky top-0 bg-background/85 backdrop-blur-xl z-40 transition-all duration-300 ${scrolled ? 'pt-3 pb-2' : 'pt-14 pb-3'}`}>
         <h1 className="text-xl font-bold text-foreground">{t("analysis.title")}</h1>
         <ScanFace className="w-6 h-6 text-primary" />
       </div>
 
-      <div className="rounded-3xl bg-gradient-to-b from-primary/10 via-card to-card p-6 pt-8 flex flex-col items-center shadow-sm">
+      <div className="rounded-3xl bg-gradient-to-b from-primary/10 via-card to-card p-6 pt-8 flex flex-col items-center shadow-sm mx-5">
         <div className="relative mb-8">
           <Sparkles className="absolute -top-3 -left-6 w-5 h-5 text-accent-gold/60" />
           <Sparkles className="absolute top-1/4 -left-8 w-4 h-4 text-accent-gold/40" />
@@ -138,7 +150,7 @@ const AnalysisPage = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 mx-5">
         <div className="rounded-2xl bg-card border border-border p-4 space-y-1">
           <div className="flex items-center gap-2 text-xs text-muted-foreground"><TrendingUp className="w-3.5 h-3.5" />{t("analysis.elasticity")}</div>
           <div className="text-3xl font-bold text-foreground">{latest ? latest.elasticity_score : "--"}</div>
@@ -151,7 +163,7 @@ const AnalysisPage = () => {
         </div>
       </div>
 
-      <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
+      <div className="rounded-2xl bg-card border border-border p-4 space-y-3 mx-5">
         <h3 className="text-sm font-semibold text-foreground">{t("analysis.details")}</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -173,7 +185,7 @@ const AnalysisPage = () => {
       </div>
 
       {recommendedCourses.length > 0 && (
-        <div className="space-y-3">
+        <div className="space-y-3 mx-5">
           <h3 className="text-sm font-semibold text-foreground">{t("analysis.recommendedCourses")}</h3>
           <div className="space-y-2">
             {recommendedCourses.map((course) => (
@@ -192,7 +204,7 @@ const AnalysisPage = () => {
       )}
 
       {products.length > 0 && (
-        <div className="space-y-3">
+        <div className="space-y-3 mx-5">
           <h3 className="text-sm font-semibold text-foreground">{t("analysis.recommendedProducts")}</h3>
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
             {products.map((product) => (

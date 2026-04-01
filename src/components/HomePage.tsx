@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Gift, Star, Crown, Clock, Dumbbell, Flame, Heart, Zap, BookOpen, Play, ChevronRight } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
@@ -10,6 +10,7 @@ import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "@/i18n/LanguageContext";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   力量: <Dumbbell className="w-5 h-5" />,
@@ -21,8 +22,19 @@ const defaultCategoryIcon = <BookOpen className="w-5 h-5" />;
 
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useScrollContainer();
   // Reset startClicked when component re-renders (e.g. navigating back)
   useEffect(() => { setStartClicked(false); }, []);
+
+  useEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    onScroll(); // init
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [scrollContainerRef]);
   const navigate = useNavigate();
   const location = useLocation();
   const { data: courses, isLoading } = useCourses();
@@ -86,7 +98,7 @@ const HomePage = () => {
   return (
     <div>
       {/* Top Nav */}
-      <nav className="flex justify-between items-center px-6 pt-8 pb-4 sticky top-0 bg-background/85 backdrop-blur-xl z-40">
+      <nav className={`flex justify-between items-center px-6 pb-4 sticky top-0 bg-background/85 backdrop-blur-xl z-40 transition-all duration-300 ${scrolled ? 'pt-3' : 'pt-8'}`}>
         <div className="flex items-center gap-3">
           <Avatar className="w-10 h-10 ring-[1.5px] ring-primary cursor-pointer" onClick={handleAvatarClick}>
             {avatarUrl && <AvatarImage src={avatarUrl} alt="Avatar" />}
