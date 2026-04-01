@@ -1,4 +1,4 @@
-import { useRef, useCallback, type ReactNode } from "react";
+import { useRef, useCallback, forwardRef, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface SwipeBackProps {
@@ -7,7 +7,7 @@ interface SwipeBackProps {
   className?: string;
 }
 
-const SwipeBack = ({ children, edgeWidth = 30, className = "" }: SwipeBackProps) => {
+const SwipeBack = forwardRef<HTMLDivElement, SwipeBackProps>(({ children, edgeWidth = 30, className = "" }, _ref) => {
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const startX = useRef(0);
@@ -77,6 +77,8 @@ const SwipeBack = ({ children, edgeWidth = 30, className = "" }: SwipeBackProps)
       {children}
     </div>
   );
-};
+});
+
+SwipeBack.displayName = "SwipeBack";
 
 export default SwipeBack;

@@ -47,6 +47,7 @@ const WorkoutPlayer = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const fromTab = (location.state as any)?.fromTab ?? 0;
+  const fromCourse = (location.state as any)?.fromCourse as string | undefined;
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
   const [isFinished, setIsFinished] = useState(false);
@@ -143,9 +144,10 @@ const WorkoutPlayer = () => {
       el.style.transition = "transform 0.35s cubic-bezier(0.4, 0, 1, 1)";
       el.style.transform = "translate3d(0, 100%, 0)";
       setSkipNextAnimation(true);
-      setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 340);
+      const target = fromCourse || `/?tab=${fromTab}`;
+      setTimeout(() => navigate(target, { replace: true }), 340);
     });
-  }, [navigate, fromTab]);
+  }, [navigate, fromTab, fromCourse]);
 
 
   const courseTitle = course?.title || t("workout.training");
