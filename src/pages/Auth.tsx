@@ -40,6 +40,23 @@ const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?
     } finally { setLoading(false); }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error(t("auth.enterEmailFirst"));
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success(t("auth.resetEmailSent"));
+    } catch (error: any) {
+      toast.error(error.message || "Error");
+    } finally { setLoading(false); }
+  };
+
   const handleGoogleLogin = async () => {
     const redirectUri = onSuccess
       ? `${window.location.origin}/onboarding`
@@ -109,7 +126,16 @@ const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        {isLogin && (
+          <button
+            onClick={handleForgotPassword}
+            className="block w-full text-center text-sm text-muted-foreground mt-4 hover:text-primary transition-colors"
+          >
+            {t("auth.forgotPassword")}
+          </button>
+        )}
+
+        <p className="text-center text-sm text-muted-foreground mt-4">
           {isLogin ? t("auth.noAccount") : t("auth.hasAccount")}
           <button onClick={() => setIsLogin(!isLogin)} className="text-primary font-medium ml-1 hover:underline">
             {isLogin ? t("auth.signup") : t("auth.login")}

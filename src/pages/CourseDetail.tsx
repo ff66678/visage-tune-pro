@@ -3,6 +3,7 @@ import { useNavigate, useParams, useSearchParams, useLocation } from "react-rout
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
+import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import { useToast } from "@/hooks/use-toast";
@@ -15,6 +16,7 @@ const CourseDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { data: favoriteIds = new Set() } = useFavoriteIds();
   const toggleFavorite = useToggleFavorite();
+  const { user } = useAuth();
   const isFavorited = id ? favoriteIds.has(id) : false;
   const [searchParams] = useSearchParams();
   const [showContentGate, setShowContentGate] = useState(searchParams.get("showPaywall") === "true");
@@ -35,8 +37,20 @@ const CourseDetail = () => {
   };
 
   const handleStartWorkout = () => {
+    if (!user) {
+      navigate(`/auth?returnTo=${encodeURIComponent(`/course/${id}?showPaywall=true`)}`);
+      return;
+    }
     if (isPaid) navigate(`/workout/${course!.id}`, { state: { fromTab } });
     else setShowContentGate(true);
+  };
+
+  const handleFavoriteClick = () => {
+    if (!user) {
+      toast({ title: t("course.loginFirst") });
+      return;
+    }
+    if (id) toggleFavorite.mutate({ courseId: id, isFavorited });
   };
 
   const handleContentGatePaid = async () => {
@@ -80,7 +94,7 @@ const CourseDetail = () => {
           <button onClick={handleShare} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
             <Share2 className="w-5 h-5" />
           </button>
-          <button onClick={() => id && toggleFavorite.mutate({ courseId: id, isFavorited })}
+          <button onClick={handleFavoriteClick}
             className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center shadow-sm transition-colors"
             style={{ color: isFavorited ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}>
             <Heart className="w-5 h-5" fill={isFavorited ? "currentColor" : "none"} />

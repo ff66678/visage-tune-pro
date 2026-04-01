@@ -18,6 +18,7 @@ import ProfileDetail from "./pages/ProfileDetail.tsx";
 import Favorites from "./pages/Favorites.tsx";
 import RecentlyPlayed from "./pages/RecentlyPlayed.tsx";
 import LanguageSettings from "./pages/LanguageSettings.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -68,6 +69,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/" element={<Index />} />
               <Route path="/paywall" element={<ProtectedRoute><Paywall onClose={() => window.history.back()} /></ProtectedRoute>} />
               <Route path="/onboarding" element={<Onboarding />} />

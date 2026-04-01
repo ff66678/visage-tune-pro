@@ -4,6 +4,7 @@ import { Settings, Clock, Play, ChevronRight } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useWorkoutStats, useHeatmapData, useRecentCourses } from "@/hooks/useWorkoutLogs";
 import { useCourses } from "@/hooks/useCourses";
+import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import SettingsDrawer from "@/components/SettingsDrawer";
 import { useTranslation, useLanguage } from "@/i18n/LanguageContext";
 
@@ -23,6 +24,7 @@ const ProfilePage = () => {
   const heatmapCells = useHeatmapData();
   const { data: recentCourses = [] } = useRecentCourses();
   const { data: allCourses = [] } = useCourses();
+  const { isPaid } = usePaywallStatus();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [heroHovered, setHeroHovered] = useState(false);
 
@@ -87,7 +89,7 @@ const ProfilePage = () => {
             <span key={i} className="text-[10px] text-muted-foreground font-medium leading-none">{l}</span>
           ))}
         </div>
-        <div className="grid grid-cols-[repeat(20,1fr)] grid-rows-[repeat(7,1fr)] gap-1 flex-grow">
+        <div className="grid grid-cols-[repeat(20,1fr)] grid-rows-[repeat(7,1fr)] grid-flow-col gap-1 flex-grow">
           {heatmapCells.map((level, i) => (
             <div key={i} className={`aspect-square rounded-[4px] ${heatColors[level]}`} />
           ))}
@@ -99,7 +101,7 @@ const ProfilePage = () => {
 
       {nextCourse && (
         <div className="mx-6 rounded-3xl overflow-hidden relative h-[220px] bg-surface cursor-pointer shadow-sm"
-          onMouseEnter={() => setHeroHovered(true)} onMouseLeave={() => setHeroHovered(false)} onClick={() => navigate(`/course/${nextCourse.id}`, { state: { fromTab: 3 } })}>
+          onMouseEnter={() => setHeroHovered(true)} onMouseLeave={() => setHeroHovered(false)} onClick={() => navigate(`/course/${nextCourse.id}`, { state: { fromCourse: "/profile" } })}>
           <img src={nextCourse.image_url} alt={nextCourse.title} className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-500" style={{ transform: heroHovered ? "scale(1.03)" : "scale(1)" }} />
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent flex flex-col justify-between p-4 px-6">
             <div className="flex justify-between items-center"><span className="text-[13px] text-card/90 font-medium">{nextCourse.duration}</span></div>
@@ -108,7 +110,7 @@ const ProfilePage = () => {
                 <div className="text-[13px] text-card/80 font-semibold uppercase tracking-wider mb-0.5">{t("profile.recommend")}</div>
                 <div className="text-2xl font-semibold tracking-tight text-card">{nextCourse.title}</div>
               </div>
-              <button onClick={(e) => { e.stopPropagation(); navigate(`/course/${nextCourse.id}`, { state: { fromTab: 3 } }); }} className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer">
+              <button onClick={(e) => { e.stopPropagation(); navigate(`/course/${nextCourse.id}`, { state: { fromCourse: "/profile" } }); }} className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer">
                 <Play className="w-[18px] h-[18px]" fill="currentColor" />
               </button>
             </div>
@@ -120,7 +122,7 @@ const ProfilePage = () => {
         <div className="px-6 mt-6 flex flex-col gap-3">
           <h3 className="text-lg font-semibold tracking-tight">{t("profile.recentWorkouts")}</h3>
           {recentCourses.map((item: any) => item ? (
-            <div key={item.id} onClick={() => navigate(`/course/${item.id}`, { state: { fromTab: 3 } })} className="bg-surface rounded-xl p-3 flex items-center gap-4 cursor-pointer hover:bg-surface-hover transition-colors">
+            <div key={item.id} onClick={() => navigate(`/course/${item.id}`, { state: { fromCourse: "/profile" } })} className="bg-surface rounded-xl p-3 flex items-center gap-4 cursor-pointer hover:bg-surface-hover transition-colors">
               <div className="w-[68px] h-[68px] rounded-lg bg-surface-elevated relative overflow-hidden flex-shrink-0">
                 <img src={item.image_url} alt={item.title} className="w-full h-full object-cover opacity-90" />
               </div>
@@ -134,15 +136,17 @@ const ProfilePage = () => {
         </div>
       )}
 
-      <div className="flex flex-col items-center text-center px-6 mt-8 mb-12">
-        <button onClick={() => navigate("/paywall")} className="inline-flex items-center gap-2 bg-card border border-foreground/[0.04] px-4 py-2 pl-2 rounded-full text-sm font-semibold shadow-sm mb-4 cursor-pointer">
-          <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">+</div>
-          {t("profile.premium")}
-        </button>
-        <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-          {t("profile.unlockDesc")}<br />{t("profile.upgradePremium")}
-        </p>
-      </div>
+      {!isPaid && (
+        <div className="flex flex-col items-center text-center px-6 mt-8 mb-12">
+          <button onClick={() => navigate("/paywall")} className="inline-flex items-center gap-2 bg-card border border-foreground/[0.04] px-4 py-2 pl-2 rounded-full text-sm font-semibold shadow-sm mb-4 cursor-pointer">
+            <div className="w-6 h-6 rounded-full bg-accent-gold flex items-center justify-center text-card text-xs shadow-md">+</div>
+            {t("profile.premium")}
+          </button>
+          <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+            {t("profile.unlockDesc")}<br />{t("profile.upgradePremium")}
+          </p>
+        </div>
+      )}
 
       <SettingsDrawer open={settingsOpen} onOpenChange={setSettingsOpen} />
     </div>
