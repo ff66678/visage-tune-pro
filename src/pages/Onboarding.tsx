@@ -430,10 +430,6 @@ const Onboarding = () => {
     );
   }
 
-  if (showAuth) {
-    return <Auth showClose={false} />;
-  }
-
   if (showSuccess) {
     return <SuccessScreen onStart={handleSuccessNext} />;
   }
