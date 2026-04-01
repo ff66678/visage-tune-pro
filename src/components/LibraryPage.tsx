@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { scrollPositions } from "@/lib/scrollPositions";
-import { useRef as useReactRef } from "react";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 const difficultyColor = (d: string) => {
   const dl = d.toLowerCase();
