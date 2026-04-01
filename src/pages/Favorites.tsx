@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Clock, Heart } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
