@@ -99,7 +99,7 @@ const ProfilePage = () => {
 
       {nextCourse && (
         <div className="mx-6 rounded-3xl overflow-hidden relative h-[220px] bg-surface cursor-pointer shadow-sm"
-          onMouseEnter={() => setHeroHovered(true)} onMouseLeave={() => setHeroHovered(false)} onClick={() => navigate(`/course/${nextCourse.id}`)}>
+          onMouseEnter={() => setHeroHovered(true)} onMouseLeave={() => setHeroHovered(false)} onClick={() => navigate(`/course/${nextCourse.id}`, { state: { fromTab: 3 } })}>
           <img src={nextCourse.image_url} alt={nextCourse.title} className="absolute inset-0 w-full h-full object-cover opacity-90 transition-transform duration-500" style={{ transform: heroHovered ? "scale(1.03)" : "scale(1)" }} />
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent flex flex-col justify-between p-4 px-6">
             <div className="flex justify-between items-center"><span className="text-[13px] text-card/90 font-medium">{nextCourse.duration}</span></div>
