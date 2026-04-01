@@ -9,7 +9,7 @@ import ProgressPage from "@/components/ProgressPage";
 const pages = [HomePage, LibraryPage, AnalysisPage, ProgressPage];
 
 // Module-level storage — survives component unmount/remount
-import { scrollPositions, getIsTabSwitch, setIsTabSwitch } from "@/lib/scrollPositions";
+import { scrollPositions, getIsTabSwitch, setIsTabSwitch, getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
