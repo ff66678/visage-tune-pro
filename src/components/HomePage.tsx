@@ -224,7 +224,7 @@ const HomePage = () => {
               <div className="p-2.5 space-y-1">
                 <div className="text-xs font-medium text-foreground line-clamp-2 leading-tight">{item.title}</div>
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] text-muted-foreground">{item.difficulty} · {item.duration}</span>
+                  <span className="text-[11px] text-muted-foreground">{t("difficulty." + item.difficulty)} · {item.duration}</span>
                   <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
                     <ChevronRight className="w-3.5 h-3.5 text-primary-foreground" />
                   </div>
