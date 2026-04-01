@@ -35,7 +35,7 @@ const CourseDetail = () => {
   };
 
   const handleStartWorkout = () => {
-    if (isPaid) navigate(`/workout/${course!.id}`);
+    if (isPaid) navigate(`/workout/${course!.id}`, { state: { fromTab } });
     else setShowContentGate(true);
   };
 
