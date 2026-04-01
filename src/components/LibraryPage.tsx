@@ -49,6 +49,12 @@ const LibraryPage = () => {
   const [showSort, setShowSort] = useState(false);
   const [scrolled, setScrolled] = useState(() => (scrollPositions.get(1) || 0) > 20);
   const collapseRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Enable transitions only after first paint to avoid animation on mount
+    requestAnimationFrame(() => setMounted(true));
+  }, []);
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
   const { data: favoriteIds } = useFavoriteIds();
