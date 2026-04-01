@@ -130,10 +130,19 @@ const WorkoutPlayer = () => {
     else { setIsPlaying((prev) => !prev); }
   };
 
+  const handleClose = () => {
+    if (containerRef.current) {
+      containerRef.current.style.transition = "transform 0.35s ease-in, opacity 0.35s ease-in";
+      containerRef.current.style.transform = "translateY(100%)";
+      containerRef.current.style.opacity = "0";
+      setTimeout(() => navigate(-1), 320);
+    }
+  };
+
   const courseTitle = course?.title || t("workout.training");
 
   return (
-    <SwipeBack className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
+    <div ref={containerRef} className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden animate-slide-in-up">
       <div className="absolute inset-0 z-0">
         <img src={course?.image_url || "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} alt="" className="w-full h-full object-cover opacity-90" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)" }} />
