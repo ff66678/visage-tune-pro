@@ -31,7 +31,7 @@ const MembershipPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <SwipeBack className="min-h-screen bg-background flex flex-col">
       <div className="pt-14 px-6 pb-4 flex items-center gap-4">
         <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-card flex items-center justify-center text-foreground shadow-sm">
           <ChevronLeft className="w-5 h-5" />
