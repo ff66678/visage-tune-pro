@@ -329,9 +329,10 @@ const zhTW: Record<string, string> = {
   "workout.completed": "訓練完成！已記錄",
 
   // Difficulty mapping
-  "difficulty.初级": "初級",
+  "difficulty.入门": "入門",
   "difficulty.中级": "中級",
-  "difficulty.高级": "高級",
+  "difficulty.进阶": "進階",
+  "difficulty.进阶级": "進階級",
 
   // Tag mapping
   "tag.热门": "熱門",

@@ -329,9 +329,10 @@ const ko: Record<string, string> = {
   "workout.completed": "트레이닝 완료! 기록됨",
 
   // Difficulty mapping
-  "difficulty.初级": "초급",
+  "difficulty.入门": "초급",
   "difficulty.中级": "중급",
-  "difficulty.高级": "고급",
+  "difficulty.进阶": "고급",
+  "difficulty.进阶级": "전문가",
 
   // Tag mapping
   "tag.热门": "인기",

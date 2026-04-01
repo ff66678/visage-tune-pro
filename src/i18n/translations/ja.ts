@@ -329,9 +329,10 @@ const ja: Record<string, string> = {
   "workout.completed": "トレーニング完了！記録しました",
 
   // Difficulty mapping
-  "difficulty.初级": "初級",
+  "difficulty.入门": "初級",
   "difficulty.中级": "中級",
-  "difficulty.高级": "上級",
+  "difficulty.进阶": "上級",
+  "difficulty.进阶级": "エキスパート",
 
   // Tag mapping
   "tag.热门": "人気",
