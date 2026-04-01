@@ -14,10 +14,29 @@ const Index = () => {
   const setActiveTab = (tab: number) => setSearchParams({ tab: String(tab) }, { replace: true });
   const ActivePage = pages[activeTab];
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollPositions = useRef<Map<number, number>>(new Map());
+  const prevTabRef = useRef<number>(activeTab);
 
+  // Save scroll position on scroll
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    const el = scrollRef.current;
+    if (!el) return;
+    const handleScroll = () => {
+      scrollPositions.current.set(activeTab, el.scrollTop);
+    };
+    el.addEventListener("scroll", handleScroll, { passive: true });
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, [activeTab]);
+
+  // Restore/reset scroll on tab change only
+  useEffect(() => {
+    if (prevTabRef.current !== activeTab) {
+      const saved = scrollPositions.current.get(activeTab) || 0;
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+      });
+      prevTabRef.current = activeTab;
+    }
   }, [activeTab]);
 
   return (
