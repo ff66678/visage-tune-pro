@@ -4,11 +4,12 @@ import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import Paywall from "@/pages/Paywall";
 import { useTranslation } from "@/i18n/LanguageContext";
 import SwipeBack from "@/components/SwipeBack";
+import { toast } from "sonner";
 
 const MembershipPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isPaid, isLoading } = usePaywallStatus();
+  const { isPaid, isLoading, restorePurchases, isNative } = usePaywallStatus();
 
   if (isLoading) {
     return (
@@ -85,11 +86,31 @@ const MembershipPage = () => {
               <span className="text-sm font-medium text-foreground">{t("membership.switchPlan")}</span>
               <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180" />
             </button>
-            <button className="w-full flex items-center justify-between p-4 text-left">
+            <button
+              onClick={async () => {
+                if (!isNative) {
+                  toast(t("paywall.restoreWebHint") || "Restore is available on the mobile app");
+                  return;
+                }
+                try {
+                  const success = await restorePurchases();
+                  toast.success(success ? (t("paywall.restoreSuccess") || "Restored!") : (t("paywall.restoreNone") || "No purchases found"));
+                } catch { toast.error("Restore failed"); }
+              }}
+              className="w-full flex items-center justify-between p-4 text-left"
+            >
               <span className="text-sm font-medium text-foreground">{t("membership.restorePurchase")}</span>
               <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180" />
             </button>
-            <button className="w-full flex items-center justify-between p-4 text-left">
+            <button
+              onClick={() => {
+                if (isNative) {
+                  // On iOS/Android, subscriptions are managed through App Store / Play Store
+                  toast(t("membership.cancelHint") || "Manage your subscription in device Settings → Subscriptions");
+                }
+              }}
+              className="w-full flex items-center justify-between p-4 text-left"
+            >
               <span className="text-sm font-medium text-muted-foreground">{t("membership.cancel")}</span>
               <ChevronLeft className="w-4 h-4 text-muted-foreground rotate-180" />
             </button>
