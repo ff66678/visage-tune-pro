@@ -45,14 +45,14 @@ const Index = () => {
       const timer = setTimeout(() => el.classList.remove("animate-fade-in"), 450);
       return () => clearTimeout(timer);
     } else {
-      // Sub-page return: no animation, just restore scroll
-      el.classList.remove("animate-fade-in", "animate-fade-in-opacity");
+      // 子页面返回：从左滑入
+      el.classList.remove("animate-fade-in", "animate-fade-in-opacity", "animate-slide-in-left");
+      void el.offsetWidth;
+      el.classList.add("animate-slide-in-left");
       const saved = scrollPositions.get(activeTab) || 0;
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
-        });
-      });
+      scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+      const timer = setTimeout(() => el.classList.remove("animate-slide-in-left"), 350);
+      return () => clearTimeout(timer);
     }
   }, [activeTab]);
 
