@@ -8,6 +8,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useTranslation, useLanguage } from "@/i18n/LanguageContext";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 const formatLocalDate = (d: Date) => {
   const yyyy = d.getFullYear();
