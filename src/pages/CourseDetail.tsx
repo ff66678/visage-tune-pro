@@ -80,10 +80,16 @@ const CourseDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background p-6 space-y-4">
-        <Skeleton className="h-[380px] w-full rounded-lg" />
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-20 w-full" />
+      <div className="min-h-screen bg-background space-y-0">
+        <Skeleton className="h-[380px] w-full rounded-none" />
+        <div className="px-6 -mt-12 relative z-10">
+          <Skeleton className="h-[220px] w-full rounded-[32px]" />
+        </div>
+        <div className="px-6 mt-4 space-y-3">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-20 w-full rounded-3xl" />
+          <Skeleton className="h-14 w-full rounded-2xl" />
+        </div>
       </div>
     );
   }
