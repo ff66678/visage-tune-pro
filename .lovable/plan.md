@@ -1,25 +1,37 @@
 
 
-## Plan: 统一有照片日期的浅色圈样式
+## Plan: 登录页移到引导页前面
+
+### 当前流程
+引导页问卷 → 加载动画 → 成功页 → **登录页** → 付费墙 → 完成
+
+### 目标流程
+**登录页** → 引导页问卷 → 加载动画 → 成功页 → 付费墙 → 完成
 
 ### 改动
 
-**`src/components/ProgressPage.tsx`** — 两处修改：
+**1. `src/pages/Onboarding.tsx`**
 
-1. **周历条（第197-204行）**：`d.isToday` 分支去掉边框，改为与 `hasPhoto` 一致的浅色背景 `bg-primary/15 text-primary`。今天如果没照片也不再显示虚圈，只用文字颜色区分。
+- 在组件顶部，渲染任何步骤之前，先检查 `user` 是否为空。如果未登录，直接渲染 `<Auth showClose={false} />`，不进入问卷流程。
+- 删除 `handleSuccessNext` 中判断未登录显示 Auth 的分支，成功页之后直接进入付费墙（此时用户必定已登录）。
+- 删除 `showAuth` 状态及相关的 `useEffect`（不再需要在中间步骤显示登录）。
+
+**2. `src/App.tsx`**
+
+- `/onboarding` 路由保持公开（不包在 `ProtectedRoute` 里），因为 Onboarding 组件自己处理登录逻辑。
+
+### 技术细节
 
 ```
-d.isSelected → bg-primary text-primary-foreground shadow-md（不变）
-d.hasPhoto   → bg-primary/15 text-primary font-bold（不变）
-d.isToday    → bg-primary/15 text-primary（改为浅色圈，去掉 border）
-默认         → text-foreground（不变）
+// Onboarding 组件内，在所有步骤渲染之前：
+if (!loading && !user) {
+  return <Auth showClose={false} />;
+}
+
+// handleSuccessNext 简化为：
+const handleSuccessNext = () => {
+  setShowSuccess(false);
+  setShowPaywall(true);
+};
 ```
-
-2. **月历弹窗（第131-134行）**：`day_today` 样式也加上 `bg-primary/15`，与 `hasPhoto` 颜色统一：
-
-```tsx
-day_today: "bg-primary/15 text-primary font-bold aria-selected:bg-primary aria-selected:text-primary-foreground"
-```
-
-这样周历和月历中，有照片的日期和今天都统一使用相同的浅色圆圈，视觉一致。
 
