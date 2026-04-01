@@ -276,7 +276,7 @@ const LibraryPage = () => {
                     <div
                       key={course.id}
                       className="flex-shrink-0 w-[140px] rounded-2xl overflow-hidden bg-card shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
-                      onClick={() => navigate(`/course/${course.id}`)}
+                      onClick={() => navigate(`/course/${course.id}`, { state: { fromTab: 1 } })}
                     >
                       <div className="relative">
                         <img src={course.image_url} alt={course.title} className="w-full h-[90px] object-cover" />
