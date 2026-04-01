@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { LanguageProvider } from "@/i18n/LanguageContext";
 import Index from "./pages/Index.tsx";
 import Auth from "./pages/Auth.tsx";
 import Paywall from "./pages/Paywall.tsx";
@@ -59,30 +60,32 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
-            <Route path="/" element={<Index />} />
-            <Route path="/paywall" element={<ProtectedRoute><Paywall onClose={() => window.history.back()} /></ProtectedRoute>} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/course/:id" element={<CourseDetail />} />
-            <Route path="/membership" element={<ProtectedRoute><Membership /></ProtectedRoute>} />
-            <Route path="/gift" element={<GiftPage />} />
-            <Route path="/profile" element={<ProtectedRoute><ProfileDetail /></ProtectedRoute>} />
-            <Route path="/category/:category" element={<CategoryAll />} />
-            <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
-            <Route path="/recently-played" element={<ProtectedRoute><RecentlyPlayed /></ProtectedRoute>} />
-            <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
-            <Route path="/language" element={<ProtectedRoute><LanguageSettings /></ProtectedRoute>} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
+              <Route path="/" element={<Index />} />
+              <Route path="/paywall" element={<ProtectedRoute><Paywall onClose={() => window.history.back()} /></ProtectedRoute>} />
+              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/course/:id" element={<CourseDetail />} />
+              <Route path="/membership" element={<ProtectedRoute><Membership /></ProtectedRoute>} />
+              <Route path="/gift" element={<GiftPage />} />
+              <Route path="/profile" element={<ProtectedRoute><ProfileDetail /></ProtectedRoute>} />
+              <Route path="/category/:category" element={<CategoryAll />} />
+              <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
+              <Route path="/recently-played" element={<ProtectedRoute><RecentlyPlayed /></ProtectedRoute>} />
+              <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
+              <Route path="/language" element={<ProtectedRoute><LanguageSettings /></ProtectedRoute>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 
