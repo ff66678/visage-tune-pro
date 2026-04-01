@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Clock, Play } from "lucide-react";
 import { useRecentCourses } from "@/hooks/useWorkoutLogs";
