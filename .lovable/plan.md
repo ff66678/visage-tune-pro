@@ -1,97 +1,107 @@
 
 
-## 全产品 Bug 和逻辑问题审查
+## Plan: 多语言国际化 (i18n)
 
-经过全面代码审查，发现以下问题：
+### 概述
+为整个应用添加多语言支持，支持5种语言：简体中文、繁體中文、English、日本語、한국어。使用 React Context + JSON 翻译文件的轻量方案。
 
----
+### 架构设计
 
-### Bug 1（严重）：WorkoutPlayer 不记录训练日志
+```text
+src/
+├── i18n/
+│   ├── LanguageContext.tsx    ← 语言上下文 + Provider
+│   ├── translations/
+│   │   ├── zh-CN.ts          ← 简体中文（默认）
+│   │   ├── zh-TW.ts          ← 繁體中文
+│   │   ├── en.ts             ← English
+│   │   ├── ja.ts             ← 日本語
+│   │   └── ko.ts             ← 한국어
+│   └── useTranslation.ts     ← hook: const { t } = useTranslation()
+```
 
-**位置**：`src/pages/WorkoutPlayer.tsx`
+### 改动文件
 
-训练计时器倒计时到 0 后，什么都没发生——没有调用 `workout_logs` 的 insert。用户完成训练后，首页的"每周进度"、"连续打卡"、热力图等数据全部不会更新。
+**1. 新建 `src/i18n/LanguageContext.tsx`**
+- 创建 `LanguageContext`，存储当前语言，持久化到 `localStorage`
+- 提供 `useLanguage()` hook 返回 `{ language, setLanguage }`
+- 提供 `useTranslation()` hook 返回 `{ t }` 函数，按 key 取翻译
 
-**修复**：训练完成时（seconds === 0），调用 supabase 插入一条 workout_log 记录，并 invalidate 相关 query。
+**2. 新建 5 个翻译文件**
+- 每个文件导出一个扁平化的 key-value 对象
+- 按模块分组 key（如 `home.greeting.morning`、`paywall.startTrial`）
+- 中文文件基于现有硬编码文本，其他语言翻译对应内容
 
----
-
-### Bug 2（严重）：WorkoutPlayer 收藏按钮是假的
-
-**位置**：`src/pages/WorkoutPlayer.tsx` 第42行、第119行
-
-收藏状态用 `useState(false)` 管理，仅是本地 UI 切换，没有读取也没有写入 `favorites` 表。退出页面就丢失。
-
-**修复**：改用 `useFavoriteIds` 和 `useToggleFavorite` hooks（与 CourseDetail 一致）。
-
----
-
-### Bug 3（中等）：WorkoutPlayer 内容硬编码
-
-**位置**：`src/pages/WorkoutPlayer.tsx` 第133-134行
-
-无论打开哪个课程，动作名称始终显示 "V字手势提升"，说明文字也是固定的。应该从课程数据动态读取。
-
-**修复**：用 `course?.title` 和 `course?.description` 替代硬编码文本。
-
----
-
-### Bug 4（中等）：Google OAuth 登录后 Onboarding 不会继续问卷
-
-**位置**：`src/pages/Auth.tsx` 第53-54行
-
-当 `onSuccess` 存在时（即从 Onboarding 调用），Google OAuth 的 `redirect_uri` 设为 `/onboarding`。OAuth 回调后浏览器加载 `/onboarding`，但这是一次全新的页面加载。组件会重新挂载，`loading` 先为 true，等 session 恢复后 `user` 有值，此时 `onboardingCompleted` 可能还是 null（正在查询中），导致短暂闪烁或直接跳过问卷进入首页。
-
-实际上这不是致命 bug，因为 `onboardingCompleted === null` 时会显示 loading，而查询完成后若为 false 则正常进入问卷。但风险在于：如果 profile 还没创建（新用户首次 OAuth 登录），`fetchOnboardingStatus` 会返回 false，此时正确。所以这个**基本正常**，但需要确认新用户注册时 profile 是否自动创建。
-
----
-
-### Bug 5（中等）：新用户注册后没有自动创建 profile
-
-**位置**：`src/contexts/AuthContext.tsx`
-
-`fetchOnboardingStatus` 查询 profile，但如果是新注册用户，profile 表可能没有记录。`maybeSingle` 之类的查询未使用，用的是 `.single()` —— 如果没有记录会报错。
-
-**修复**：需要确认是否有数据库 trigger 自动创建 profile。如果没有，应该在 AuthContext 中当 profile 不存在时自动 insert 一条。
-
----
-
-### Bug 6（轻微）：Paywall 月度订阅的续订日期硬编码
-
-**位置**：`src/pages/Paywall.tsx` 第202行
-
-`自动续订至 2025年5月4日` 是硬编码的过去日期。年度订阅也是硬编码 `2027年4月4日`。
-
-**修复**：动态计算日期，月度 = 当前日期 + 1 个月，年度 = 当前日期 + 1 年。
-
----
-
-### Bug 7（轻微）：Console 警告 — Function components cannot be given refs
-
-**位置**：`src/components/HomePage.tsx` 和 `src/pages/Index.tsx`
-
-`Skeleton` 和 `BottomTabBar` 组件被传入 ref 但未使用 `forwardRef`。不影响功能但会在控制台产生大量警告。
-
-**修复**：Index.tsx 中 `scrollRef` 应绑定在容器 div 上（已绑定），问题可能来自其他地方给 Skeleton 传 ref。检查后发现 Index 的 `<ActivePage />` 渲染方式可能导致 ref 误传。
-
----
-
-### Bug 8（轻微）：首页"今天还没有计划"点击跳转 `/library` 但该路由不存在
-
-**位置**：`src/components/HomePage.tsx` 第191行
-
-点击会跳到 `/library`，但 App.tsx 路由表中没有 `/library` 路由，会到 NotFound 页面。课程库在底部 tab 第二个（tab=1）。
-
-**修复**：改为 `navigate("/?tab=1")`。
-
----
-
-### 改动汇总
-
-| 文件 | 改动 |
+翻译覆盖范围（约 300+ 个文本 key）：
+| 模块 | 涉及文件 |
 |---|---|
-| `src/pages/WorkoutPlayer.tsx` | 添加训练完成时的日志写入；用真实 hooks 替换假收藏；动态显示课程内容 |
-| `src/pages/Paywall.tsx` | 动态计算续订日期 |
-| `src/components/HomePage.tsx` | 修复 `/library` 导航为 `/?tab=1` |
-| `src/contexts/AuthContext.tsx` | 新用户 profile 不存在时自动创建 |
+| 首页 | HomePage.tsx |
+| 课程库 | LibraryPage.tsx, CategoryAll.tsx |
+| 分析 | AnalysisPage.tsx |
+| 记录 | ProgressPage.tsx |
+| 个人 | ProfilePage.tsx, ProfileDetailContent.tsx |
+| 引导 | Onboarding.tsx（6个步骤 + 加载 + 成功页）|
+| 付费墙 | Paywall.tsx |
+| 会员 | Membership.tsx |
+| 训练 | WorkoutPlayer.tsx |
+| 课程详情 | CourseDetail.tsx |
+| 收藏 | Favorites.tsx |
+| 最近播放 | RecentlyPlayed.tsx |
+| 礼物 | GiftPage.tsx |
+| 设置 | SettingsDrawer.tsx |
+| 语言设置 | LanguageSettings.tsx |
+| 登录 | Auth.tsx |
+| 底部栏 | BottomTabBar.tsx |
+| 404 | NotFound.tsx |
+
+**3. 修改 `src/pages/LanguageSettings.tsx`**
+- 选择语言时调用 `setLanguage(code)` 保存到 context
+- 读取当前语言高亮显示
+
+**4. 修改 `src/main.tsx`**
+- 用 `<LanguageProvider>` 包裹 App
+
+**5. 修改所有含硬编码文本的组件**（约 18 个文件）
+- 导入 `useTranslation`
+- 将所有中文字符串替换为 `t("key")`
+- 日期格式化的 locale 参数也跟随语言切换
+
+### 翻译示例
+
+```typescript
+// zh-CN.ts
+export default {
+  "home.greeting.morning": "早上好，",
+  "home.greeting.afternoon": "下午好，",
+  "home.greeting.evening": "晚上好，",
+  "home.weeklyProgress": "每周进度",
+  "home.completed": "完成 {0}%",
+  "home.todayPlan": "今日计划",
+  "home.startNow": "立即开始",
+  "home.noPlan": "今天还没有计划",
+  "home.noPlanDesc": "去课程库挑选一个吧 →",
+  "home.recommended": "为你推荐",
+  "home.recentTraining": "最近训练",
+  "home.myFavorites": "我的喜欢",
+  "home.recentlyPlayed": "最近播放",
+  // ... 约 300 个 key
+}
+
+// en.ts
+export default {
+  "home.greeting.morning": "Good morning, ",
+  "home.greeting.afternoon": "Good afternoon, ",
+  "home.greeting.evening": "Good evening, ",
+  "home.weeklyProgress": "Weekly Progress",
+  "home.completed": "{0}% Complete",
+  // ...
+}
+```
+
+### 技术细节
+
+- **动态插值**：`t("home.completed", [percentage])` 替换 `{0}` 占位符
+- **日期 locale**：语言映射 `{ "zh-CN": "zh-CN", "en": "en-US", "ja": "ja-JP", "ko": "ko-KR", "zh-TW": "zh-TW" }`
+- **持久化**：`localStorage.setItem("app-language", code)`
+- **默认语言**：简体中文
 
