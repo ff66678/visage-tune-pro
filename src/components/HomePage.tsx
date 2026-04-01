@@ -22,8 +22,19 @@ const defaultCategoryIcon = <BookOpen className="w-5 h-5" />;
 
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useScrollContainer();
   // Reset startClicked when component re-renders (e.g. navigating back)
   useEffect(() => { setStartClicked(false); }, []);
+
+  useEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    onScroll(); // init
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [scrollContainerRef]);
   const navigate = useNavigate();
   const location = useLocation();
   const { data: courses, isLoading } = useCourses();
