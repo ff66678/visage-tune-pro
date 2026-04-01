@@ -383,9 +383,10 @@ const LibraryPage = () => {
                         onClick={() => navigate(`/course/${category.routines[0].id}`, { state: { fromTab: 1 } })}
                       >
                         <img
-                          src={category.routines[0].image_url}
+                           src={category.routines[0].image_url}
                           alt={category.routines[0].title}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                         <button
