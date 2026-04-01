@@ -100,7 +100,7 @@ const CourseDetail = () => {
   }
 
   return (
-    <SwipeBack className={`min-h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
+    <SwipeBack className={`h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
       {createPortal(
         <div className={`fixed top-0 left-0 w-full px-6 pb-3 flex justify-between items-center z-20 transition-all duration-300 ${scrolled ? 'pt-[max(1.5rem,env(safe-area-inset-top))] bg-background/85 backdrop-blur-xl' : 'pt-[max(3rem,env(safe-area-inset-top))] bg-transparent backdrop-blur-none'}`}>
           <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
