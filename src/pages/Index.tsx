@@ -17,7 +17,7 @@ const Index = () => {
   const setActiveTab = (tab: number) => setSearchParams({ tab: String(tab) }, { replace: true });
   const ActivePage = pages[activeTab];
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [animationClass, setAnimationClass] = useState("");
+  const animRef = useRef<HTMLDivElement>(null);
 
   // Save scroll position on scroll
   useEffect(() => {
@@ -32,30 +32,34 @@ const Index = () => {
 
   // Restore scroll on mount and tab change
   useEffect(() => {
+    const el = animRef.current;
+    if (!el) return;
+
     if (getIsTabSwitch()) {
       setIsTabSwitch(false);
       scrollPositions.delete(activeTab);
       scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
-      setAnimationClass("animate-fade-in");
-      const timer = setTimeout(() => setAnimationClass(""), 450);
+      // Direct DOM manipulation — same frame, no flash
+      el.classList.remove("animate-fade-in-opacity");
+      el.classList.add("animate-fade-in");
+      const timer = setTimeout(() => el.classList.remove("animate-fade-in"), 450);
       return () => clearTimeout(timer);
     } else {
-      setAnimationClass("animate-fade-in-opacity");
+      // Sub-page return: no animation, just restore scroll
+      el.classList.remove("animate-fade-in", "animate-fade-in-opacity");
       const saved = scrollPositions.get(activeTab) || 0;
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
         });
       });
-      const timer = setTimeout(() => setAnimationClass(""), 300);
-      return () => clearTimeout(timer);
     }
   }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
       <div ref={scrollRef} className="w-full max-w-[480px] h-screen relative pb-[100px] no-scrollbar overflow-y-auto">
-        <div className={animationClass}>
+        <div ref={animRef}>
           <ActivePage />
         </div>
         <BottomTabBar activeTab={activeTab} onTabChange={setActiveTab} />
