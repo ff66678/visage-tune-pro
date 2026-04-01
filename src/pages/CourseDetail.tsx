@@ -91,21 +91,24 @@ const CourseDetail = () => {
 
   return (
     <SwipeBack className={`min-h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
-      <div className="absolute top-12 left-0 w-full px-6 flex justify-between items-center z-20">
-        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <div className="flex gap-3">
-          <button onClick={handleShare} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
-            <Share2 className="w-5 h-5" />
+      {createPortal(
+        <div className="fixed top-0 left-0 w-full px-6 pt-[max(3rem,env(safe-area-inset-top))] flex justify-between items-center z-20">
+          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
+            <ChevronLeft className="w-5 h-5" />
           </button>
-          <button onClick={handleFavoriteClick}
-            className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center shadow-sm transition-colors"
-            style={{ color: isFavorited ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}>
-            <Heart className="w-5 h-5" fill={isFavorited ? "currentColor" : "none"} />
-          </button>
-        </div>
-      </div>
+          <div className="flex gap-3">
+            <button onClick={handleShare} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
+              <Share2 className="w-5 h-5" />
+            </button>
+            <button onClick={handleFavoriteClick}
+              className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center shadow-sm transition-colors"
+              style={{ color: isFavorited ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}>
+              <Heart className="w-5 h-5" fill={isFavorited ? "currentColor" : "none"} />
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
 
       <div className="flex-1 overflow-y-auto pb-36 no-scrollbar">
         <div className="relative h-[380px] w-full">
