@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { X, Heart } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
-import { setSkipNextAnimation } from "@/lib/scrollPositions";
+
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
@@ -45,9 +45,6 @@ const PlayIcon = () => (
 const WorkoutPlayer = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const location = useLocation();
-  const fromTab = (location.state as any)?.fromTab ?? 0;
-  const fromCourse = (location.state as any)?.fromCourse as string | undefined;
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
   const [isFinished, setIsFinished] = useState(false);
@@ -143,11 +140,9 @@ const WorkoutPlayer = () => {
     requestAnimationFrame(() => {
       el.style.transition = "transform 0.35s cubic-bezier(0.4, 0, 1, 1)";
       el.style.transform = "translate3d(0, 100%, 0)";
-      setSkipNextAnimation(true);
-      const target = fromCourse || `/?tab=${fromTab}`;
-      setTimeout(() => navigate(target, { replace: true }), 340);
+      setTimeout(() => navigate(-1), 340);
     });
-  }, [navigate, fromTab, fromCourse]);
+  }, [navigate]);
 
 
   const courseTitle = course?.title || t("workout.training");
