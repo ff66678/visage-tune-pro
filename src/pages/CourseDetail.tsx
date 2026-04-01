@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 import { useNavigate, useParams, useSearchParams, useLocation } from "react-router-dom";
 import { ChevronLeft, Heart, Share2, Play, Star } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
@@ -12,6 +13,8 @@ import { useTranslation } from "@/i18n/LanguageContext";
 import SwipeBack from "@/components/SwipeBack";
 
 const CourseDetail = () => {
+  const shouldAnimate = !getSkipNextAnimation();
+  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { data: favoriteIds = new Set() } = useFavoriteIds();
@@ -85,7 +88,7 @@ const CourseDetail = () => {
   }
 
   return (
-    <SwipeBack className="min-h-screen bg-background flex flex-col relative overflow-hidden animate-slide-in-right">
+    <SwipeBack className={`min-h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
       <div className="absolute top-12 left-0 w-full px-6 flex justify-between items-center z-20">
         <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
           <ChevronLeft className="w-5 h-5" />

@@ -1,11 +1,15 @@
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/i18n/LanguageContext";
 import SwipeBack from "@/components/SwipeBack";
+import { getSkipNextAnimation, setSkipNextAnimation } from "@/lib/scrollPositions";
 
 const CategoryAll = () => {
+  const shouldAnimate = !getSkipNextAnimation();
+  useEffect(() => { if (!shouldAnimate) setSkipNextAnimation(false); }, []);
   const { category } = useParams<{ category: string }>();
   const navigate = useNavigate();
   const { data: courses, isLoading } = useCourses();
@@ -27,7 +31,7 @@ const CategoryAll = () => {
   const filtered = courses?.filter((c) => c.category === decodedCategory) || [];
 
   return (
-    <SwipeBack className="min-h-screen bg-background flex justify-center animate-slide-in-right">
+    <SwipeBack className={`min-h-screen bg-background flex justify-center ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
       <div className="w-full max-w-[480px] min-h-screen">
         <header className="px-6 pt-8 pb-4 sticky top-0 bg-background/90 backdrop-blur-xl z-40">
           <div className="flex items-center gap-3">
