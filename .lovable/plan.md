@@ -1,48 +1,67 @@
 
 
-## 修复：Tab 切换保留动画，子页面返回无动画
+## 修复切换导航栏和返回页面时的闪烁
 
-### 问题
+### 根因
 
-当前 `animate-fade-in` 在每次组件挂载时都触发（包含 translateY(10px) 位移），子页面返回时产生抖动。但用户希望 tab 切换时保留入场动画。
+`animationClass` 初始值为 `""`（无动画），组件先渲染一帧无动画的内容，然后 `useEffect` 触发设置动画类，导致**第二帧**才开始动画。这个"先显示再动画"的过程就是闪烁的来源。
 
-### 方案
+两种场景都受影响：
+- **Tab 切换**：先渲染完整内容 → 再加 `animate-fade-in`（从 opacity:0 + translateY 开始）= 闪一下
+- **子页面返回**：先渲染完整内容 → 再加 `animate-fade-in-opacity`（从 opacity:0 开始）= 闪一下
 
-在 `Index.tsx` 中，用一个包裹 `div` 根据 `isTabSwitch` 标志来决定是否添加 `animate-fade-in`。同时从各页面组件自身移除 `animate-fade-in`，统一由 Index 控制。
+### 修复方案
+
+改用 DOM 直接操作动画类，避免 React 状态更新导致的多帧渲染问题：
+
+1. 移除 `animationClass` state
+2. 用 `useRef` 引用动画包裹 div
+3. 在 `useEffect` 中直接通过 `ref.current.classList` 添加/移除动画类
+4. 初始渲染时 div 不带任何动画类（内容直接可见，无闪烁）
+5. Tab 切换时：先设 `opacity:0`，再添加动画类让其淡入
+6. 子页面返回时：不加任何动画，内容直接显示（配合滚动恢复即可，无需 opacity 过渡）
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/pages/Index.tsx` | 在 `<ActivePage />` 外包一层 div，根据 `isTabSwitch` 判断是否加 `animate-fade-in`；用 `useRef` 记录本次是否为 tab 切换 |
-| `src/components/HomePage.tsx` | 根 div 移除 `animate-fade-in` |
-| `src/components/LibraryPage.tsx` | 根 div 移除 `animate-fade-in` |
-| `src/components/AnalysisPage.tsx` | 根 div 如有则移除 `animate-fade-in` |
-| `src/components/ProgressPage.tsx` | 根 div 移除 `animate-fade-in` |
+| `src/pages/Index.tsx` | 移除 `animationClass` state；用 ref + classList 控制动画；子页面返回不加动画避免闪烁 |
 
 ### 具体实现
 
-**`src/pages/Index.tsx`**：
 ```tsx
-const wasTabSwitch = useRef(false);
+const animRef = useRef<HTMLDivElement>(null);
 
-// 在 restore scroll 的 useEffect 中
 useEffect(() => {
+  const el = animRef.current;
+  if (!el) return;
+  
   if (getIsTabSwitch()) {
-    wasTabSwitch.current = true;
     setIsTabSwitch(false);
-    // ... 置顶逻辑
+    scrollPositions.delete(activeTab);
+    scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    // 直接操作 DOM，同一帧内完成
+    el.classList.remove("animate-fade-in-opacity");
+    el.classList.add("animate-fade-in");
+    const timer = setTimeout(() => el.classList.remove("animate-fade-in"), 450);
+    return () => clearTimeout(timer);
   } else {
-    wasTabSwitch.current = false;
-    // ... 恢复逻辑
+    // 子页面返回：不加动画，直接恢复滚动
+    el.classList.remove("animate-fade-in", "animate-fade-in-opacity");
+    const saved = scrollPositions.get(activeTab) || 0;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+      });
+    });
   }
 }, [activeTab]);
 
 // 渲染
-<div className={wasTabSwitch.current ? "animate-fade-in" : ""}>
+<div ref={animRef}>
   <ActivePage />
 </div>
 ```
 
-各页面组件只需删除根 div 上的 `animate-fade-in` 类，动画控制权统一交给 Index。
+子页面返回时完全不加动画，内容直接出现 + 恢复滚动位置，体验最自然且不会闪烁。
 
