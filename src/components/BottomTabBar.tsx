@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/i18n/LanguageContext";
 import { toast } from "sonner";
+import { setIsTabSwitch } from "@/lib/scrollPositions";
 
 interface BottomTabBarProps {
   activeTab: number;
@@ -28,6 +29,7 @@ const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
       navigate("/auth");
       return;
     }
+    setIsTabSwitch(true);
     onTabChange(index);
   };
 
