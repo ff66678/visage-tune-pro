@@ -134,12 +134,15 @@ const WorkoutPlayer = () => {
   };
 
   const handleClose = useCallback(() => {
-    if (containerRef.current) {
-      containerRef.current.style.transition = "transform 0.35s ease-in, opacity 0.35s ease-in";
-      containerRef.current.style.transform = "translate3d(0, 100%, 0)";
-      containerRef.current.style.opacity = "0";
-      setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 320);
-    }
+    if (!containerRef.current) return;
+    const el = containerRef.current;
+    el.classList.remove("animate-slide-in-up");
+    el.style.willChange = "transform";
+    requestAnimationFrame(() => {
+      el.style.transition = "transform 0.35s cubic-bezier(0.4, 0, 1, 1)";
+      el.style.transform = "translate3d(0, 100%, 0)";
+      setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 340);
+    });
   }, [navigate, fromTab]);
 
 
