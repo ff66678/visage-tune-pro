@@ -247,7 +247,7 @@ const LibraryPage = () => {
                   <h2 className="text-white text-lg font-bold mb-1">{featuredCourse.title}</h2>
                   <div className="flex items-center gap-3 text-white/80 text-xs">
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{featuredCourse.duration}</span>
-                    <span>{featuredCourse.difficulty}</span>
+                    <span>{t("difficulty." + featuredCourse.difficulty)}</span>
                     {featuredCourse.rating && (
                       <span className="flex items-center gap-0.5"><Star className="w-3 h-3 fill-amber-400 text-amber-400" />{featuredCourse.rating}</span>
                     )}
