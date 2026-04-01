@@ -4,6 +4,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "@/i18n/LanguageContext";
 
+
 const Favorites = () => {
   const navigate = useNavigate();
   const { data: favorites = [], isLoading } = useFavorites();
