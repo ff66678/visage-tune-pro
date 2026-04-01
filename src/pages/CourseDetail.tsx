@@ -106,7 +106,7 @@ const CourseDetail = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-32 no-scrollbar">
+      <div className="flex-1 overflow-y-auto pb-36 no-scrollbar">
         <div className="relative h-[380px] w-full">
           <img src={course.image_url} alt={course.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
