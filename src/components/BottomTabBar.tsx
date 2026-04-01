@@ -29,6 +29,8 @@ const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
       navigate("/auth");
       return;
     }
+    // If already on this tab, do nothing to avoid stale isTabSwitch flag
+    if (index === activeTab) return;
     setIsTabSwitch(true);
     scrollPositions.delete(index);
     onTabChange(index);
