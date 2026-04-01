@@ -19,6 +19,8 @@ const CourseDetail = () => {
   const [searchParams] = useSearchParams();
   const [showContentGate, setShowContentGate] = useState(searchParams.get("showPaywall") === "true");
   const navigate = useNavigate();
+  const location = useLocation();
+  const fromTab = (location.state as any)?.fromTab ?? 0;
   const { data: course, isLoading } = useCourse(id);
   const { isPaid, markPaid } = usePaywallStatus();
   const { toast } = useToast();
