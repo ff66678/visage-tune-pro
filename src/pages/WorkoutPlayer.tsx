@@ -141,7 +141,10 @@ const WorkoutPlayer = () => {
     requestAnimationFrame(() => {
       el.style.transition = "transform 0.35s cubic-bezier(0.4, 0, 1, 1)";
       el.style.transform = "translate3d(0, 100%, 0)";
-      setTimeout(() => navigate(-1), 340);
+      setTimeout(() => {
+        setSkipNextAnimation(true);
+        navigate(-1);
+      }, 340);
     });
   }, [navigate]);
 
