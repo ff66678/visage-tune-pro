@@ -6,18 +6,7 @@ import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
 import { useAuth } from "@/contexts/AuthContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-
-const filters = [
-  { label: "全部", emoji: "🔥" },
-  { label: "眼部", emoji: "👁" },
-  { label: "下颌", emoji: "🦴" },
-  { label: "脸颊", emoji: "✨" },
-  { label: "全脸", emoji: "💎" },
-  { label: "额头", emoji: "🧠" },
-  { label: "颈部", emoji: "💆" },
-  { label: "太阳穴", emoji: "🌟" },
-  { label: "法令纹", emoji: "✋" },
-];
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const difficultyColor = (d: string) => {
   if (d === "初级") return "bg-emerald-500/90 text-white";
@@ -27,6 +16,31 @@ const difficultyColor = (d: string) => {
 };
 
 const LibraryPage = () => {
+  const { t } = useTranslation();
+
+  const filterKeys = [
+    { key: "library.all", emoji: "🔥", dbValue: "全部" },
+    { key: "library.eye", emoji: "👁", dbValue: "眼部" },
+    { key: "library.jaw", emoji: "🦴", dbValue: "下颌" },
+    { key: "library.cheek", emoji: "✨", dbValue: "脸颊" },
+    { key: "library.fullFace", emoji: "💎", dbValue: "全脸" },
+    { key: "library.forehead", emoji: "🧠", dbValue: "额头" },
+    { key: "library.neck", emoji: "💆", dbValue: "颈部" },
+    { key: "library.temple", emoji: "🌟", dbValue: "太阳穴" },
+    { key: "library.nasolabial", emoji: "✋", dbValue: "法令纹" },
+  ];
+
+  const categoryLabelKeys: Record<string, string> = {
+    "眼部": "library.catEye",
+    "下颌": "library.catJaw",
+    "脸颊": "library.catCheek",
+    "颈部": "library.catNeck",
+    "全脸": "library.catFullFace",
+    "额头": "library.catForehead",
+    "太阳穴": "library.catTemple",
+    "法令纹": "library.catNasolabial",
+  };
+
   const [activeFilter, setActiveFilter] = useState("全部");
   const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState<"default" | "rating" | "duration">("default");
@@ -62,20 +76,10 @@ const LibraryPage = () => {
   const groupedCategories = useMemo(() => {
     if (!courses) return [];
     const categoryMap: Record<string, { key: string; title: string; routines: typeof courses }> = {};
-    const categoryLabels: Record<string, string> = {
-      "眼部": "眼部 & 上脸",
-      "下颌": "下颌 & 轮廓",
-      "脸颊": "脸颊 & 光泽",
-      "颈部": "颈部护理",
-      "全脸": "全脸训练",
-      "额头": "额头紧致",
-      "太阳穴": "太阳穴护理",
-      "法令纹": "法令纹改善",
-    };
     courses.forEach((c) => {
       const key = c.category;
       if (!categoryMap[key]) {
-        categoryMap[key] = { key, title: categoryLabels[key] || key, routines: [] };
+        categoryMap[key] = { key, title: t(categoryLabelKeys[key] || key), routines: [] };
       }
       categoryMap[key].routines.push(c);
     });
@@ -91,7 +95,7 @@ const LibraryPage = () => {
         if (activeFilter === "全部") return cat.routines.length > 0;
         return cat.key === activeFilter && cat.routines.length > 0;
       });
-  }, [courses, searchValue, activeFilter]);
+  }, [courses, searchValue, activeFilter, t]);
 
   // Global sorted flat list for rating/duration sort modes
   const globalSortedCourses = useMemo(() => {
@@ -117,7 +121,7 @@ const LibraryPage = () => {
   const handleToggleFav = (e: React.MouseEvent, courseId: string) => {
     e.stopPropagation();
     if (!user) {
-      toast.error("请先登录");
+      toast.error(t("library.loginFirst"));
       return;
     }
     const isFav = favoriteIds?.has(courseId) || false;
@@ -139,7 +143,7 @@ const LibraryPage = () => {
           }}
         >
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold tracking-tight">课程库</h1>
+            <h1 className="text-2xl font-bold tracking-tight">{t("library.title")}</h1>
           </div>
 
           {/* Search */}
@@ -148,7 +152,7 @@ const LibraryPage = () => {
               <Search className="w-[18px] h-[18px] text-muted-foreground" />
               <input
                 type="text"
-                placeholder="搜索课程..."
+                placeholder={t("library.search")}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="border-none bg-transparent text-base text-foreground w-full outline-none placeholder:text-muted-foreground font-sans"
@@ -163,13 +167,13 @@ const LibraryPage = () => {
           </div>
         </div>
 
-        {/* Sort options - outside collapsible to avoid overflow:hidden clipping */}
+        {/* Sort options */}
         {showSort && (
           <div className="flex gap-2 mt-3 mb-2 animate-fade-in">
             {[
-              { key: "default" as const, label: "默认" },
-              { key: "rating" as const, label: "按评分" },
-              { key: "duration" as const, label: "按时长" },
+              { key: "default" as const, label: t("library.default") },
+              { key: "rating" as const, label: t("library.byRating") },
+              { key: "duration" as const, label: t("library.byDuration") },
             ].map((s) => (
               <button
                 key={s.key}
@@ -186,20 +190,20 @@ const LibraryPage = () => {
           </div>
         )}
 
-        {/* Filter tabs - always visible */}
+        {/* Filter tabs */}
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-          {filters.map((filter) => (
+          {filterKeys.map((filter) => (
             <button
-              key={filter.label}
-              onClick={() => setActiveFilter(filter.label)}
+              key={filter.dbValue}
+              onClick={() => setActiveFilter(filter.dbValue)}
               className={`px-4 py-2 rounded-full text-[13px] font-medium whitespace-nowrap transition-all cursor-pointer border-none flex items-center gap-1.5 ${
-                activeFilter === filter.label
+                activeFilter === filter.dbValue
                   ? "bg-primary text-primary-foreground shadow-md"
                   : "bg-surface-elevated text-muted-foreground hover:bg-surface-hover"
               }`}
             >
               <span>{filter.emoji}</span>
-              {filter.label}
+              {t(filter.key)}
             </button>
           ))}
         </div>
@@ -238,7 +242,7 @@ const LibraryPage = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-primary text-primary-foreground mb-2 inline-block">
-                    精选推荐
+                    {t("library.featured")}
                   </span>
                   <h2 className="text-white text-lg font-bold mb-1">{featuredCourse.title}</h2>
                   <div className="flex items-center gap-3 text-white/80 text-xs">
@@ -257,7 +261,7 @@ const LibraryPage = () => {
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Trophy className="w-4 h-4 text-primary" />
-                  <h2 className="text-base font-semibold text-foreground">热门排行</h2>
+                  <h2 className="text-base font-semibold text-foreground">{t("library.hotRanking")}</h2>
                 </div>
                 <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
                   {topRated.map((course, i) => (
@@ -289,8 +293,8 @@ const LibraryPage = () => {
             {sortBy !== "default" ? (
               <div className="mt-4">
                 <h2 className="text-base font-semibold text-foreground mb-3">
-                  {sortBy === "rating" ? "按评分排序" : "按时长排序"}
-                  <span className="text-muted-foreground text-xs ml-2">({globalSortedCourses.length} 个课程)</span>
+                  {sortBy === "rating" ? t("library.sortByRating") : t("library.sortByDuration")}
+                  <span className="text-muted-foreground text-xs ml-2">{t("library.courseCount", [globalSortedCourses.length])}</span>
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                   {globalSortedCourses.map((routine) => (
@@ -356,7 +360,7 @@ const LibraryPage = () => {
                         className="text-[13px] text-primary font-semibold cursor-pointer flex items-center gap-0.5"
                         onClick={() => navigate(`/category/${encodeURIComponent(category.key)}`)}
                       >
-                        查看全部
+                        {t("library.viewAll")}
                         <ChevronRight className="w-4 h-4" />
                       </span>
                     </div>

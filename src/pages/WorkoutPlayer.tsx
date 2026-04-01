@@ -7,6 +7,7 @@ import { useFavoriteIds, useToggleFavorite } from "@/hooks/useFavorites";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
@@ -41,6 +42,7 @@ const PlayIcon = () => (
 );
 
 const WorkoutPlayer = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
@@ -57,7 +59,7 @@ const WorkoutPlayer = () => {
 
   const handleToggleFavorite = () => {
     if (!user) {
-      toast("请先登录", { description: "登录后即可收藏课程" });
+      toast(t("workout.loginFirst"), { description: t("workout.loginToFav") });
       return;
     }
     if (!id) return;
@@ -87,21 +89,18 @@ const WorkoutPlayer = () => {
   const dashOffset = (1 - seconds / totalSeconds) * circumference;
   const elapsed = totalSeconds - seconds;
 
-  // Record workout log when finished
   useEffect(() => {
     if (seconds === 0 && !isFinished && user && id) {
       setIsFinished(true);
-      supabase
-        .from("workout_logs")
-        .insert({ user_id: user.id, course_id: id, duration_seconds: totalSeconds })
+      supabase.from("workout_logs").insert({ user_id: user.id, course_id: id, duration_seconds: totalSeconds })
         .then(({ error }) => {
           if (!error) {
             queryClient.invalidateQueries({ queryKey: ["workout-logs"] });
-            toast.success("训练完成！已记录");
+            toast.success(t("workout.completed"));
           }
         });
     }
-  }, [seconds, isFinished, user, id, totalSeconds, queryClient]);
+  }, [seconds, isFinished, user, id, totalSeconds, queryClient, t]);
 
   useEffect(() => {
     if (isPlaying && seconds > 0) {
@@ -130,48 +129,33 @@ const WorkoutPlayer = () => {
     else { setIsPlaying((prev) => !prev); }
   };
 
-  const courseTitle = course?.title || "训练中";
+  const courseTitle = course?.title || t("workout.training");
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden">
-      {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img
-          src={course?.image_url || "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"}
-          alt="Action Demo"
-          className="w-full h-full object-cover opacity-90"
-        />
+        <img src={course?.image_url || "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} alt="" className="w-full h-full object-cover opacity-90" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)" }} />
       </div>
 
-      {/* Top Navigation Bar */}
       <div className="absolute top-12 left-0 w-full px-6 flex justify-between items-center z-20">
         <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <div className="text-center">
-          <h2 className="text-sm font-bold tracking-wide">{courseTitle}</h2>
-        </div>
+        <div className="text-center"><h2 className="text-sm font-bold tracking-wide">{courseTitle}</h2></div>
         <button onClick={handleToggleFavorite} className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform">
-          <Heart
-            className={`w-5 h-5 transition-all duration-300 ${isFavorited ? 'scale-110' : 'text-white scale-100'}`}
-            style={isFavorited ? { color: 'hsl(var(--primary))', fill: 'hsl(var(--primary))' } : undefined}
-          />
+          <Heart className={`w-5 h-5 transition-all duration-300 ${isFavorited ? 'scale-110' : 'text-white scale-100'}`} style={isFavorited ? { color: 'hsl(var(--primary))', fill: 'hsl(var(--primary))' } : undefined} />
         </button>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center relative z-10 pt-20">
-        <div className="relative w-48 h-48 flex items-center justify-center mb-8">
-          <TimerRing dashOffset={dashOffset} />
-        </div>
+        <div className="relative w-48 h-48 flex items-center justify-center mb-8"><TimerRing dashOffset={dashOffset} /></div>
         <div className="text-center">
-          <h1 className="text-3xl font-bold mb-2">{course?.title || "训练中"}</h1>
+          <h1 className="text-3xl font-bold mb-2">{course?.title || t("workout.training")}</h1>
           <p className="text-white/70 text-sm px-12">{course?.description || ""}</p>
         </div>
       </div>
 
-      {/* Controls Bar */}
       <div className="relative z-10 border-t border-white/10 px-6 pt-6 pb-12 bg-white/5 backdrop-blur-3xl">
         <div className="flex items-center gap-3 mb-6">
           <span className="text-[10px] font-mono text-white/50">{formatTime(elapsed)}</span>
