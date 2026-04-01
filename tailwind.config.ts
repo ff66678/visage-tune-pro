@@ -100,6 +100,7 @@ export default {
         "fade-in-opacity": "fade-in-opacity 0.25s ease-out",
         "slide-in-left": "slide-in-left 0.3s ease-out",
         "slide-in-right": "slide-in-right 0.3s ease-out",
+        "slide-in-up": "slide-in-up 0.35s ease-out",
       },
     },
   },
