@@ -120,7 +120,7 @@ const ProfilePage = () => {
         <div className="px-6 mt-6 flex flex-col gap-3">
           <h3 className="text-lg font-semibold tracking-tight">{t("profile.recentWorkouts")}</h3>
           {recentCourses.map((item: any) => item ? (
-            <div key={item.id} onClick={() => navigate(`/course/${item.id}`)} className="bg-surface rounded-xl p-3 flex items-center gap-4 cursor-pointer hover:bg-surface-hover transition-colors">
+            <div key={item.id} onClick={() => navigate(`/course/${item.id}`, { state: { fromTab: 3 } })} className="bg-surface rounded-xl p-3 flex items-center gap-4 cursor-pointer hover:bg-surface-hover transition-colors">
               <div className="w-[68px] h-[68px] rounded-lg bg-surface-elevated relative overflow-hidden flex-shrink-0">
                 <img src={item.image_url} alt={item.title} className="w-full h-full object-cover opacity-90" />
               </div>
