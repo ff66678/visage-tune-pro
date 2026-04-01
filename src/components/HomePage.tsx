@@ -21,6 +21,8 @@ const defaultCategoryIcon = <BookOpen className="w-5 h-5" />;
 
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
+  // Reset startClicked when component re-renders (e.g. navigating back)
+  useEffect(() => { setStartClicked(false); }, []);
   const navigate = useNavigate();
   const location = useLocation();
   const { data: courses, isLoading } = useCourses();
