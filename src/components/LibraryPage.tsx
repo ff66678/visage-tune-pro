@@ -247,7 +247,7 @@ const LibraryPage = () => {
                   <h2 className="text-white text-lg font-bold mb-1">{featuredCourse.title}</h2>
                   <div className="flex items-center gap-3 text-white/80 text-xs">
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{featuredCourse.duration}</span>
-                    <span>{featuredCourse.difficulty}</span>
+                    <span>{t("difficulty." + featuredCourse.difficulty)}</span>
                     {featuredCourse.rating && (
                       <span className="flex items-center gap-0.5"><Star className="w-3 h-3 fill-amber-400 text-amber-400" />{featuredCourse.rating}</span>
                     )}
@@ -310,9 +310,9 @@ const LibraryPage = () => {
                           className="w-full h-[110px] object-cover"
                         />
                         <div className="absolute top-2 left-2">
-                          <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
-                            {routine.difficulty}
-                          </span>
+                           <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
+                             {t("difficulty." + routine.difficulty)}
+                           </span>
                         </div>
                         <button
                           className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
@@ -389,9 +389,9 @@ const LibraryPage = () => {
                           />
                         </button>
                         <div className="absolute top-2.5 left-2.5">
-                          <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-full ${difficultyColor(category.routines[0].difficulty)}`}>
-                            {category.routines[0].difficulty}
-                          </span>
+                           <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded-full ${difficultyColor(category.routines[0].difficulty)}`}>
+                             {t("difficulty." + category.routines[0].difficulty)}
+                           </span>
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 p-3">
                           <h3 className="text-white text-sm font-bold mb-1">{category.routines[0].title}</h3>
@@ -420,9 +420,9 @@ const LibraryPage = () => {
                                 className="w-full h-[110px] object-cover"
                               />
                               <div className="absolute top-2 left-2">
-                                <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
-                                  {routine.difficulty}
-                                </span>
+                                 <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
+                                   {t("difficulty." + routine.difficulty)}
+                                 </span>
                               </div>
                               <button
                                 className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"

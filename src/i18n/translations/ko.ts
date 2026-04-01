@@ -327,6 +327,16 @@ const ko: Record<string, string> = {
   "workout.loginFirst": "먼저 로그인해 주세요",
   "workout.loginToFav": "로그인하여 즐겨찾기 추가",
   "workout.completed": "트레이닝 완료! 기록됨",
+
+  // Difficulty mapping
+  "difficulty.初级": "초급",
+  "difficulty.中级": "중급",
+  "difficulty.高级": "고급",
+
+  // Tag mapping
+  "tag.热门": "인기",
+  "tag.新课": "신규",
+  "tag.推荐": "추천",
 };
 
 export default ko;

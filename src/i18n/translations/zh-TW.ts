@@ -327,6 +327,16 @@ const zhTW: Record<string, string> = {
   "workout.loginFirst": "請先登入",
   "workout.loginToFav": "登入後即可收藏課程",
   "workout.completed": "訓練完成！已記錄",
+
+  // Difficulty mapping
+  "difficulty.初级": "初級",
+  "difficulty.中级": "中級",
+  "difficulty.高级": "高級",
+
+  // Tag mapping
+  "tag.热门": "熱門",
+  "tag.新课": "新課",
+  "tag.推荐": "推薦",
 };
 
 export default zhTW;

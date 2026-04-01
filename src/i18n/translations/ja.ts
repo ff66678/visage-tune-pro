@@ -327,6 +327,16 @@ const ja: Record<string, string> = {
   "workout.loginFirst": "先にログインしてください",
   "workout.loginToFav": "ログインしてお気に入りに追加",
   "workout.completed": "トレーニング完了！記録しました",
+
+  // Difficulty mapping
+  "difficulty.初级": "初級",
+  "difficulty.中级": "中級",
+  "difficulty.高级": "上級",
+
+  // Tag mapping
+  "tag.热门": "人気",
+  "tag.新课": "新着",
+  "tag.推荐": "おすすめ",
 };
 
 export default ja;

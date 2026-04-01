@@ -327,6 +327,16 @@ const en: Record<string, string> = {
   "workout.loginFirst": "Please log in first",
   "workout.loginToFav": "Log in to save favorites",
   "workout.completed": "Workout complete! Logged.",
+
+  // Difficulty mapping
+  "difficulty.初级": "Beginner",
+  "difficulty.中级": "Intermediate",
+  "difficulty.高级": "Advanced",
+
+  // Tag mapping
+  "tag.热门": "Popular",
+  "tag.新课": "New",
+  "tag.推荐": "Featured",
 };
 
 export default en;
