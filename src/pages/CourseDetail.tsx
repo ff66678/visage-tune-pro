@@ -31,6 +31,16 @@ const CourseDetail = () => {
   const { data: course, isLoading } = useCourse(id);
   const { isPaid, markPaid } = usePaywallStatus();
   const { toast } = useToast();
+  const [scrolled, setScrolled] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleShare = async () => {
     if (!course) return;
@@ -92,16 +102,16 @@ const CourseDetail = () => {
   return (
     <SwipeBack className={`min-h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
       {createPortal(
-        <div className="fixed top-0 left-0 w-full px-6 pt-[max(3rem,env(safe-area-inset-top))] pb-3 flex justify-between items-center z-20 bg-gradient-to-b from-black/40 to-transparent backdrop-blur-sm">
-          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
+        <div className={`fixed top-0 left-0 w-full px-6 pb-3 flex justify-between items-center z-20 bg-background/85 backdrop-blur-xl transition-all duration-300 ${scrolled ? 'pt-[max(1.5rem,env(safe-area-inset-top))]' : 'pt-[max(3rem,env(safe-area-inset-top))]'}`}>
+          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
             <ChevronLeft className="w-5 h-5" />
           </button>
           <div className="flex gap-3">
-            <button onClick={handleShare} className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
+            <button onClick={handleShare} className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
               <Share2 className="w-5 h-5" />
             </button>
             <button onClick={handleFavoriteClick}
-              className="w-10 h-10 rounded-full bg-card/85 backdrop-blur-xl flex items-center justify-center shadow-sm transition-colors"
+              className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center shadow-sm transition-colors"
               style={{ color: isFavorited ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}>
               <Heart className="w-5 h-5" fill={isFavorited ? "currentColor" : "none"} />
             </button>
@@ -110,7 +120,7 @@ const CourseDetail = () => {
         document.body
       )}
 
-      <div className="flex-1 overflow-y-auto pb-36 no-scrollbar">
+      <div ref={contentRef} className="flex-1 overflow-y-auto pb-36 no-scrollbar">
         <div className="relative h-[380px] w-full">
           <img src={course.image_url} alt={course.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
