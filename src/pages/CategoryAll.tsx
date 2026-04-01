@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
