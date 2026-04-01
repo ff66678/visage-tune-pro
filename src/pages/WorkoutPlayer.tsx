@@ -153,8 +153,7 @@ const WorkoutPlayer = () => {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden animate-slide-in-up"
-      style={{ transform: "translate3d(0, 0, 0)" }}
+      className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden animate-slide-in-up will-change-transform"
     >
       <div className="absolute inset-0 z-0">
         <img src={course?.image_url || "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} alt="" className="w-full h-full object-cover opacity-90" />
