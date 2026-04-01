@@ -100,7 +100,7 @@ const CourseDetail = () => {
   }
 
   return (
-    <SwipeBack className={`min-h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
+    <SwipeBack className={`h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
       {createPortal(
         <div className={`fixed top-0 left-0 w-full px-6 pb-3 flex justify-between items-center z-20 transition-all duration-300 ${scrolled ? 'pt-[max(1.5rem,env(safe-area-inset-top))] bg-background/85 backdrop-blur-xl' : 'pt-[max(3rem,env(safe-area-inset-top))] bg-transparent backdrop-blur-none'}`}>
           <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
@@ -194,7 +194,7 @@ const CourseDetail = () => {
       </div>
 
       {createPortal(
-        <div className="fixed bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))] z-30">
+        <div className="fixed bottom-0 left-0 w-full bg-background/85 backdrop-blur-xl px-6 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))] z-30">
           <button onClick={handleStartWorkout}
             className="w-full h-14 bg-gradient-to-br from-primary to-primary/80 rounded-2xl text-primary-foreground font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
             <Play className="w-5 h-5 fill-current" />{t("course.startWorkout")}
