@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { X, Heart } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
 import { useAuth } from "@/contexts/AuthContext";
