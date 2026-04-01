@@ -82,7 +82,7 @@ const HomePage = () => {
   }, [courses]);
 
   return (
-    <div className="animate-fade-in">
+    <div>
       {/* Top Nav */}
       <nav className="flex justify-between items-center px-6 pt-8 pb-4 sticky top-0 bg-background/85 backdrop-blur-xl z-40">
         <div className="flex items-center gap-3">
