@@ -169,7 +169,7 @@ const HomePage = () => {
         >
           <div>
             <h3 className="text-xl font-semibold mb-1">{todayPlan.title}</h3>
-            <p className="text-[13px] opacity-90">{todayPlan.duration} · {todayPlan.intensity ? t("home.intensity", [todayPlan.intensity]) : todayPlan.difficulty}</p>
+            <p className="text-[13px] opacity-90">{todayPlan.duration} · {todayPlan.intensity ? t("home.intensity", [todayPlan.intensity]) : t("difficulty." + todayPlan.difficulty)}</p>
           </div>
           <button
             className="bg-card text-primary border-none px-5 py-2.5 rounded-full font-semibold text-sm cursor-pointer transition-all"
