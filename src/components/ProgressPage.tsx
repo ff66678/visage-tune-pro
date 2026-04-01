@@ -130,7 +130,7 @@ const ProgressPage = () => {
               }}
               classNames={{
                 day_today:
-                  "border-2 border-primary text-primary bg-transparent aria-selected:border-0 aria-selected:bg-primary aria-selected:text-primary-foreground",
+                  "text-primary font-bold bg-transparent aria-selected:bg-primary aria-selected:text-primary-foreground",
               }}
             />
           </PopoverContent>
