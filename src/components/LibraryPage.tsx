@@ -64,12 +64,13 @@ const LibraryPage = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    const container = document.querySelector('.no-scrollbar');
-    if (!container) return;
-    const onScroll = () => setScrolled(container.scrollTop > 20);
-    container.addEventListener('scroll', onScroll);
-    return () => container.removeEventListener('scroll', onScroll);
-  }, []);
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    onScroll();
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, [scrollContainerRef]);
   const featuredCourse = useMemo(() => {
     if (!courses) return null;
     return courses.find((c) => c.is_featured) || courses[0] || null;
