@@ -163,7 +163,7 @@ const AnalysisPage = () => {
         </div>
       </div>
 
-      <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
+      <div className="rounded-2xl bg-card border border-border p-4 space-y-3 mx-5">
         <h3 className="text-sm font-semibold text-foreground">{t("analysis.details")}</h3>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
