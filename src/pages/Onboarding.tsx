@@ -362,9 +362,18 @@ const Onboarding = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
 
+  // loading 状态显示加载动画
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   // 未登录用户先显示登录页
-  if (!loading && !user) {
-    return <Auth showClose={false} />;
+  if (!user) {
+    return <Auth showClose={false} onSuccess={() => {}} />;
   }
 
   // 已完成引导的用户直接跳转首页
