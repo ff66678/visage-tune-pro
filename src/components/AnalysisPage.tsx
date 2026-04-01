@@ -105,7 +105,7 @@ const AnalysisPage = () => {
         <ScanFace className="w-6 h-6 text-primary" />
       </div>
 
-      <div className="rounded-3xl bg-gradient-to-b from-primary/10 via-card to-card p-6 pt-8 flex flex-col items-center shadow-sm">
+      <div className="rounded-3xl bg-gradient-to-b from-primary/10 via-card to-card p-6 pt-8 flex flex-col items-center shadow-sm mx-5">
         <div className="relative mb-8">
           <Sparkles className="absolute -top-3 -left-6 w-5 h-5 text-accent-gold/60" />
           <Sparkles className="absolute top-1/4 -left-8 w-4 h-4 text-accent-gold/40" />
