@@ -310,9 +310,9 @@ const LibraryPage = () => {
                           className="w-full h-[110px] object-cover"
                         />
                         <div className="absolute top-2 left-2">
-                          <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
-                            {routine.difficulty}
-                          </span>
+                           <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
+                             {t("difficulty." + routine.difficulty)}
+                           </span>
                         </div>
                         <button
                           className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center"
