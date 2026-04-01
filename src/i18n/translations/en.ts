@@ -329,9 +329,10 @@ const en: Record<string, string> = {
   "workout.completed": "Workout complete! Logged.",
 
   // Difficulty mapping
-  "difficulty.初级": "Beginner",
+  "difficulty.入门": "Beginner",
   "difficulty.中级": "Intermediate",
-  "difficulty.高级": "Advanced",
+  "difficulty.进阶": "Advanced",
+  "difficulty.进阶级": "Expert",
 
   // Tag mapping
   "tag.热门": "Popular",

@@ -9,9 +9,9 @@ import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
 
 const difficultyColor = (d: string) => {
-  if (d === "初级") return "bg-emerald-500/90 text-white";
+  if (d === "入门") return "bg-emerald-500/90 text-white";
   if (d === "中级") return "bg-amber-500/90 text-white";
-  if (d === "高级") return "bg-rose-500/90 text-white";
+  if (d === "进阶" || d === "进阶级") return "bg-rose-500/90 text-white";
   return "bg-muted text-muted-foreground";
 };
 

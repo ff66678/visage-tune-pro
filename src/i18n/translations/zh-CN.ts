@@ -349,9 +349,10 @@ const zhCN: Record<string, string> = {
   "workout.completed": "训练完成！已记录",
 
   // Difficulty mapping
-  "difficulty.初级": "初级",
+  "difficulty.入门": "入门",
   "difficulty.中级": "中级",
-  "difficulty.高级": "高级",
+  "difficulty.进阶": "进阶",
+  "difficulty.进阶级": "进阶级",
 
   // Tag mapping
   "tag.热门": "热门",
