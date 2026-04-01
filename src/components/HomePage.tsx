@@ -59,7 +59,11 @@ const HomePage = () => {
   const favCount = favorites.length;
   const { isPaid } = usePaywallStatus();
 
-  const { weekData, percentage } = useWeeklyProgress();
+  const weekdayLabels = [
+    t("weekday.mon"), t("weekday.tue"), t("weekday.wed"),
+    t("weekday.thu"), t("weekday.fri"), t("weekday.sat"), t("weekday.sun")
+  ];
+  const { weekData, percentage } = useWeeklyProgress(weekdayLabels);
   const { streak } = useWorkoutStats();
   const todayPlan = courses?.find((c) => c.is_today_plan);
   const recommended = courses?.filter((c) => c.is_featured) ?? [];
@@ -151,7 +155,7 @@ const HomePage = () => {
                 <div className="w-12 h-12 rounded-2xl bg-surface flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
                   {categoryIcons[cat] || defaultCategoryIcon}
                 </div>
-                <span className="text-[11px] text-muted-foreground font-medium">{cat}</span>
+                <span className="text-[11px] text-muted-foreground font-medium">{t("category." + cat) || cat}</span>
               </button>
             ))}
           </div>

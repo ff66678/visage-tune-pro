@@ -97,7 +97,7 @@ export const useWorkoutStats = () => {
   return { totalWorkouts, activeWeeks, streak, longestStreak, categories, totalDuration, practiceDays };
 };
 
-export const useWeeklyProgress = () => {
+export const useWeeklyProgress = (weekdayLabels?: string[]) => {
   const { data: logs = [] } = useWorkoutLogs();
 
   const today = new Date();
@@ -107,7 +107,7 @@ export const useWeeklyProgress = () => {
   const monday = new Date(today);
   monday.setDate(today.getDate() + mondayOffset);
 
-  const labels = ["一", "二", "三", "四", "五", "六", "日"];
+  const labels = weekdayLabels || ["一", "二", "三", "四", "五", "六", "日"];
   const counts = new Array(7).fill(0);
 
   logs.forEach((l) => {

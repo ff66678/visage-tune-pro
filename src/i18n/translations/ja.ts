@@ -337,6 +337,23 @@ const ja: Record<string, string> = {
   "tag.热门": "人気",
   "tag.新课": "新着",
   "tag.推荐": "おすすめ",
+
+  "category.眼部": "目元",
+  "category.下颌": "あご",
+  "category.脸颊": "頬",
+  "category.全脸": "フルフェイス",
+  "category.额头": "額",
+  "category.颈部": "首",
+  "category.太阳穴": "こめかみ",
+  "category.法令纹": "ほうれい線",
+
+  "weekday.mon": "月",
+  "weekday.tue": "火",
+  "weekday.wed": "水",
+  "weekday.thu": "木",
+  "weekday.fri": "金",
+  "weekday.sat": "土",
+  "weekday.sun": "日",
 };
 
 export default ja;
