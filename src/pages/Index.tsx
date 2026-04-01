@@ -5,6 +5,7 @@ import HomePage from "@/components/HomePage";
 import LibraryPage from "@/components/LibraryPage";
 import AnalysisPage from "@/components/AnalysisPage";
 import ProgressPage from "@/components/ProgressPage";
+import { ScrollProvider } from "@/contexts/ScrollContext";
 
 const pages = [HomePage, LibraryPage, AnalysisPage, ProgressPage];
 
