@@ -1,36 +1,52 @@
 
 
-## 改回 WorkoutPlayer 关闭时返回上一页
+## 修复：WorkoutPlayer 关闭后子页面不要重播入场动画
 
 ### 问题
 
-当前 WorkoutPlayer 关闭时用 `navigate(target, { replace: true })` 跳到 `/?tab=X` 或 `fromCourse`，这会跳过中间页面（如 CourseDetail），直接回到 Tab 首页。用户希望恢复为返回上一个页面（即 CourseDetail）。
+WorkoutPlayer 点叉叉关闭后 `navigate(-1)` 回到 CourseDetail，CourseDetail 重新挂载时 `animate-slide-in-right` 再次播放，导致用户看到"下滑退出 + 右滑进入"两个动画叠加，不自然。
+
+### 方案
+
+利用已有的 `skipNextAnimation` 标志机制：
+
+1. **WorkoutPlayer.tsx**：`handleClose` 中调用 `setSkipNextAnimation(true)`
+2. **CourseDetail.tsx**（及其他子页面 Favorites、CategoryAll、RecentlyPlayed）：挂载时检查 `getSkipNextAnimation()`，如果为 `true` 则不添加 `animate-slide-in-right`，直接显示
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/pages/WorkoutPlayer.tsx` | `handleClose` 改为 `navigate(-1)`，移除 `fromTab`/`fromCourse` 相关逻辑，移除 `setSkipNextAnimation` |
+| `src/pages/WorkoutPlayer.tsx` | `handleClose` 中 `navigate(-1)` 前调用 `setSkipNextAnimation(true)` |
+| `src/pages/CourseDetail.tsx` | 用 `useEffect` 检查 `getSkipNextAnimation()`，为 true 时移除 `animate-slide-in-right` class 并重置标志 |
+| `src/pages/Favorites.tsx` | 同上 |
+| `src/pages/CategoryAll.tsx` | 同上 |
+| `src/pages/RecentlyPlayed.tsx` | 同上 |
 
-### 具体变更
+### 实现细节
 
-**WorkoutPlayer.tsx `handleClose`**：
-
+**WorkoutPlayer.tsx** — handleClose 中添加：
 ```typescript
-const handleClose = useCallback(() => {
-  if (!containerRef.current) return;
-  const el = containerRef.current;
-  el.classList.remove("animate-slide-in-up");
-  el.style.willChange = "transform";
-  requestAnimationFrame(() => {
-    el.style.transition = "transform 0.35s cubic-bezier(0.4, 0, 1, 1)";
-    el.style.transform = "translate3d(0, 100%, 0)";
-    setTimeout(() => navigate(-1), 340);
-  });
-}, [navigate]);
+import { setSkipNextAnimation } from "@/lib/scrollPositions";
+// ...
+setTimeout(() => {
+  setSkipNextAnimation(true);
+  navigate(-1);
+}, 340);
 ```
 
-- 删除 `fromTab`、`fromCourse` 的读取和使用
-- 删除 `setSkipNextAnimation(true)`（不再需要，因为不会重新挂载 Index）
-- 用 `navigate(-1)` 回到浏览器历史中的上一页（CourseDetail），浏览器自动恢复滚动位置
+**CourseDetail.tsx 等子页面** — 改为条件性添加动画 class：
+```tsx
+const containerRef = useRef<HTMLDivElement>(null);
+const shouldAnimate = !getSkipNextAnimation();
+
+useEffect(() => {
+  if (getSkipNextAnimation()) {
+    setSkipNextAnimation(false);
+  }
+}, []);
+
+// SwipeBack className 中用条件：
+className={`... ${shouldAnimate ? 'animate-slide-in-right' : ''}`}
+```
 
