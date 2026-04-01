@@ -171,7 +171,7 @@ const HomePage = () => {
                 onClick={() => navigate(`/category/${encodeURIComponent(cat)}`)}
                 className="flex flex-col items-center gap-1.5 min-w-[56px] bg-transparent border-none cursor-pointer group"
               >
-                <div className="w-12 h-12 rounded-2xl bg-surface flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-card flex items-center justify-center text-primary group-hover:bg-primary/10 transition-colors">
                   {categoryIcons[cat] || defaultCategoryIcon}
                 </div>
                 <span className="text-[11px] text-muted-foreground font-medium">{t("category." + cat) || cat}</span>
@@ -224,20 +224,21 @@ const HomePage = () => {
       {/* Recommended */}
       <h2 className="px-6 mt-5 mb-3 text-lg font-semibold tracking-tight">{t("home.recommended")}</h2>
       {isLoading ? (
-        <div className="flex gap-4 px-6">
-          <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
-          <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
+        <div className="flex gap-3 px-6">
+          <Skeleton className="min-w-[144px] h-[200px] rounded-3xl" />
+          <Skeleton className="min-w-[144px] h-[200px] rounded-3xl" />
+          <Skeleton className="min-w-[144px] h-[200px] rounded-3xl" />
         </div>
       ) : (
-        <div className="flex gap-3 overflow-x-auto pb-2 px-6 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-2 px-6 no-scrollbar snap-x snap-mandatory">
           {recommended.map((item) => (
             <div
               key={item.id}
-              className="flex-shrink-0 w-36 rounded-2xl bg-card border border-border overflow-hidden cursor-pointer transition-colors active:bg-muted"
+              className="flex-shrink-0 w-36 rounded-3xl bg-card border border-border overflow-hidden cursor-pointer active-press snap-start"
               onClick={() => navigate(`/course/${item.id}`, { state: { fromTab: 0 } })}
             >
               <div className="relative aspect-square overflow-hidden">
-                <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+                <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
                 {item.tag && (
                   <span className="absolute top-2 left-2 bg-primary/90 text-primary-foreground text-[10px] px-2 py-0.5 rounded-full">
                     {t("tag." + item.tag)}
@@ -269,7 +270,7 @@ const HomePage = () => {
                 className="bg-surface rounded-2xl p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-surface-elevated transition-colors"
                 onClick={() => navigate(`/course/${course.id}`, { state: { fromTab: 0 } })}
               >
-                <img src={course.image_url} alt={course.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+                <img src={course.image_url} alt={course.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" loading="lazy" />
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-semibold text-foreground line-clamp-1">{course.title}</h3>
                   <div className="flex items-center gap-2 text-muted-foreground mt-0.5">

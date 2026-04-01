@@ -64,3 +64,17 @@
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { scrollbar-width: none; }
 }
+
+/* Image fade-in on load */
+.img-fade {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.img-fade[data-loaded="true"] {
+  opacity: 1;
+}
+
+/* Unified press feedback for interactive cards */
+.active-press {
+  @apply active:scale-[0.97] transition-transform duration-150;
+}

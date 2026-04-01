@@ -80,10 +80,16 @@ const CourseDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background p-6 space-y-4">
-        <Skeleton className="h-[380px] w-full rounded-lg" />
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-20 w-full" />
+      <div className="min-h-screen bg-background space-y-0">
+        <Skeleton className="h-[380px] w-full rounded-none" />
+        <div className="px-6 -mt-12 relative z-10">
+          <Skeleton className="h-[220px] w-full rounded-[32px]" />
+        </div>
+        <div className="px-6 mt-4 space-y-3">
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="h-20 w-full rounded-3xl" />
+          <Skeleton className="h-14 w-full rounded-2xl" />
+        </div>
       </div>
     );
   }
@@ -103,15 +109,15 @@ const CourseDetail = () => {
     <SwipeBack className={`h-screen bg-background flex flex-col relative overflow-hidden ${shouldAnimate ? 'animate-slide-in-right' : ''}`}>
       {createPortal(
         <div className={`fixed top-0 left-0 w-full px-6 pb-3 flex justify-between items-center z-20 transition-all duration-300 ${scrolled ? 'pt-[max(1.5rem,env(safe-area-inset-top))] bg-background/85 backdrop-blur-xl' : 'pt-[max(3rem,env(safe-area-inset-top))] bg-transparent backdrop-blur-none'}`}>
-          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
+          <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm active:scale-90 transition-transform">
             <ChevronLeft className="w-5 h-5" />
           </button>
           <div className="flex gap-3">
-            <button onClick={handleShare} className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm">
+            <button onClick={handleShare} className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center text-foreground shadow-sm active:scale-90 transition-transform">
               <Share2 className="w-5 h-5" />
             </button>
             <button onClick={handleFavoriteClick}
-              className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center shadow-sm transition-colors"
+              className="w-10 h-10 rounded-full bg-background/85 backdrop-blur-xl flex items-center justify-center shadow-sm active:scale-90 transition-all"
               style={{ color: isFavorited ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))" }}>
               <Heart className="w-5 h-5" fill={isFavorited ? "currentColor" : "none"} />
             </button>
@@ -126,8 +132,8 @@ const CourseDetail = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
         </div>
 
-        <div className="px-6 -mt-12 relative z-10">
-          <div className="bg-card p-6 rounded-[32px] shadow-sm">
+      <div className="px-6 -mt-12 relative z-10">
+          <div className="bg-card p-6 rounded-[32px] shadow-md">
             <div className="flex gap-2 mb-3">
               {course.tag && <span className="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-wider">{t("tag." + course.tag)}</span>}
               <span className="px-3 py-1 bg-secondary text-muted-foreground text-[10px] font-bold rounded-full uppercase tracking-wider">{t("difficulty." + course.difficulty)}</span>

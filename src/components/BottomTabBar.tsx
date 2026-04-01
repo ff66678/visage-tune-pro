@@ -37,7 +37,7 @@ const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] h-[84px] bg-surface/95 backdrop-blur-xl flex justify-around items-center pb-5 border-t border-foreground/5 z-50">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] h-[84px] bg-surface/95 backdrop-blur-xl flex justify-around items-center pb-5 shadow-[0_-1px_8px_rgba(0,0,0,0.04)] z-50">
       {tabs.map((tab, i) => (
         <button
           key={i}

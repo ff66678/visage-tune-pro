@@ -274,15 +274,15 @@ const LibraryPage = () => {
                   <Trophy className="w-4 h-4 text-primary" />
                   <h2 className="text-base font-semibold text-foreground">{t("library.hotRanking")}</h2>
                 </div>
-                <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
                   {topRated.map((course, i) => (
                     <div
                       key={course.id}
-                      className="flex-shrink-0 w-[140px] rounded-2xl overflow-hidden bg-card shadow-sm cursor-pointer active:scale-[0.97] transition-transform relative"
+                      className="flex-shrink-0 w-[140px] rounded-2xl overflow-hidden bg-card shadow-sm cursor-pointer active-press relative snap-start"
                       onClick={() => navigate(`/course/${course.id}`, { state: { fromTab: 1 } })}
                     >
                       <div className="relative">
-                        <img src={course.image_url} alt={course.title} className="w-full h-[90px] object-cover" />
+                        <img src={course.image_url} alt={course.title} className="w-full h-[90px] object-cover" loading="lazy" />
                         <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
                           {i + 1}
                         </div>
@@ -319,6 +319,7 @@ const LibraryPage = () => {
                           src={routine.image_url}
                           alt={routine.title}
                           className="w-full h-[110px] object-cover"
+                          loading="lazy"
                         />
                         <div className="absolute top-2 left-2">
                            <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
@@ -382,9 +383,10 @@ const LibraryPage = () => {
                         onClick={() => navigate(`/course/${category.routines[0].id}`, { state: { fromTab: 1 } })}
                       >
                         <img
-                          src={category.routines[0].image_url}
+                           src={category.routines[0].image_url}
                           alt={category.routines[0].title}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                         <button
@@ -426,9 +428,10 @@ const LibraryPage = () => {
                           >
                             <div className="relative">
                               <img
-                                src={routine.image_url}
+                               src={routine.image_url}
                                 alt={routine.title}
                                 className="w-full h-[110px] object-cover"
+                                loading="lazy"
                               />
                               <div className="absolute top-2 left-2">
                                  <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
