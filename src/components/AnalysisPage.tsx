@@ -204,7 +204,7 @@ const AnalysisPage = () => {
       )}
 
       {products.length > 0 && (
-        <div className="space-y-3">
+        <div className="space-y-3 mx-5">
           <h3 className="text-sm font-semibold text-foreground">{t("analysis.recommendedProducts")}</h3>
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide">
             {products.map((product) => (
