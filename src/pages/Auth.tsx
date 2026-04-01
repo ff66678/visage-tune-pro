@@ -109,7 +109,16 @@ const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?
           </button>
         </form>
 
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        {isLogin && (
+          <button
+            onClick={handleForgotPassword}
+            className="block w-full text-center text-sm text-muted-foreground mt-4 hover:text-primary transition-colors"
+          >
+            {t("auth.forgotPassword")}
+          </button>
+        )}
+
+        <p className="text-center text-sm text-muted-foreground mt-4">
           {isLogin ? t("auth.noAccount") : t("auth.hasAccount")}
           <button onClick={() => setIsLogin(!isLogin)} className="text-primary font-medium ml-1 hover:underline">
             {isLogin ? t("auth.signup") : t("auth.login")}
