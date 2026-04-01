@@ -183,7 +183,7 @@ const HomePage = () => {
             }}
             onClick={() => {
               setStartClicked(true);
-              setTimeout(() => navigate(`/course/${todayPlan.id}`), 300);
+              setTimeout(() => navigate(`/course/${todayPlan.id}`, { state: { fromTab: 0 } }), 300);
             }}
           >
             {startClicked ? t("home.starting") : t("home.startNow")}
