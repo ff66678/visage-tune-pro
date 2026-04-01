@@ -160,7 +160,7 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
             <span className="text-[17px] font-semibold text-foreground">¥12.50/月</span>
           </div>
           <p className="text-[10px] text-muted-foreground mt-5 uppercase tracking-wide font-medium">
-            按年扣费 ¥150，可随时取消。自动续订至 2027年4月4日。
+            {`按年扣费 ¥150，可随时取消。自动续订至 ${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}。`}
           </p>
         </div>
 
