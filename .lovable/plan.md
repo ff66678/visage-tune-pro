@@ -1,39 +1,41 @@
 
 
-## 修复底部按钮为 fixed 定位 + safe area 适配
+## 修复 "开始训练" 按钮在滚动时不固定的问题
 
-### 问题
+### 根因
 
-当前按钮用 `absolute bottom-0`，在 `SwipeBack` 容器内定位。由于容器有 `overflow-hidden`，按钮在某些情况下可能被遮挡或不随视口固定。需要改为 `fixed` 并适配 iPhone safe area。
+`SwipeBack` 组件对容器应用了 `transform: translate3d(0, 0, 0)`（第 75 行），CSS 规范中 **transform 会创建新的包含块**，导致内部的 `position: fixed` 元素相对于该容器定位而非视口，按钮因此跟随内容滚动。
+
+### 方案
+
+用 React Portal 将按钮渲染到 `document.body`，绕过 SwipeBack 的 transform 包含块限制。
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/pages/CourseDetail.tsx` | 按钮容器改为 `fixed`，添加 safe area padding；内容区添加底部 padding 防遮挡 |
+| `src/pages/CourseDetail.tsx` | 将底部按钮区域用 `createPortal` 渲染到 `document.body` |
 
 ### 具体变更
 
-**1. 按钮容器**（第 182 行）：
-```tsx
-// 从
-<div className="absolute bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-8 z-30">
+**CourseDetail.tsx**：
 
-// 改为
-<div className="fixed bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))] z-30">
+1. 顶部添加 `import { createPortal } from "react-dom"`
+2. 将第 182-187 行的按钮 div 用 portal 包裹：
+
+```tsx
+{createPortal(
+  <div className="fixed bottom-0 left-0 w-full bg-card/85 backdrop-blur-xl px-6 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))] z-30">
+    <button onClick={handleStartWorkout}
+      className="w-full h-14 bg-gradient-to-br from-primary to-primary/80 rounded-2xl text-primary-foreground font-bold flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
+      <Play className="w-5 h-5 fill-current" />{t("course.startWorkout")}
+    </button>
+  </div>,
+  document.body
+)}
 ```
 
-- `fixed` 确保始终固定在屏幕底部
-- `pb-[max(2rem,env(safe-area-inset-bottom))]` 在 iPhone 上用 safe area inset，普通设备最少 2rem
+3. 内容区 `pb-36` 保持不变，确保底部留白
 
-**2. 内容滚动区**（第 108 行）：
-```tsx
-// 从
-<div className="flex-1 overflow-y-auto pb-32 no-scrollbar">
-
-// 改为
-<div className="flex-1 overflow-y-auto pb-36 no-scrollbar">
-```
-
-增加底部 padding 防止内容被按钮遮挡（`pb-36` = 9rem，足够覆盖按钮高度 + safe area）。
+这样按钮直接挂载到 body 上，`fixed` 定位相对于视口生效，不受 SwipeBack 的 transform 影响。
 
