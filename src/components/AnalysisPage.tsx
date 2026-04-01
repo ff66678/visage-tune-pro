@@ -8,6 +8,7 @@ import { useCourses } from "@/hooks/useCourses";
 import { useProducts } from "@/hooks/useProducts";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/i18n/LanguageContext";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 const gradeColor = (grade: string) => {
   if (grade.startsWith("A")) return "text-emerald-600";
