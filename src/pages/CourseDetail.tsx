@@ -42,7 +42,7 @@ const CourseDetail = () => {
   const handleContentGatePaid = async () => {
     await markPaid();
     setShowContentGate(false);
-    navigate(`/workout/${course!.id}`);
+    navigate(`/workout/${course!.id}`, { state: { fromTab } });
   };
 
   if (showContentGate) {

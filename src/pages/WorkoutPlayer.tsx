@@ -138,7 +138,7 @@ const WorkoutPlayer = () => {
       containerRef.current.style.transition = "transform 0.35s ease-in, opacity 0.35s ease-in";
       containerRef.current.style.transform = "translateY(100%)";
       containerRef.current.style.opacity = "0";
-      setTimeout(() => navigate("/?tab=1", { replace: true }), 320);
+      setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 320);
     }
   };
 

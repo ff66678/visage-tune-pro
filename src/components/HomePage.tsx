@@ -248,7 +248,7 @@ const HomePage = () => {
               <div
                 key={course.id}
                 className="bg-surface rounded-2xl p-3.5 flex items-center gap-3.5 cursor-pointer hover:bg-surface-elevated transition-colors"
-                onClick={() => navigate(`/course/${course.id}`)}
+                onClick={() => navigate(`/course/${course.id}`, { state: { fromTab: 0 } })}
               >
                 <img src={course.image_url} alt={course.title} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1 min-w-0">
