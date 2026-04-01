@@ -274,7 +274,7 @@ const LibraryPage = () => {
                   <Trophy className="w-4 h-4 text-primary" />
                   <h2 className="text-base font-semibold text-foreground">{t("library.hotRanking")}</h2>
                 </div>
-                <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+                <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 snap-x snap-mandatory">
                   {topRated.map((course, i) => (
                     <div
                       key={course.id}
