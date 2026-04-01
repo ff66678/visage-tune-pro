@@ -48,13 +48,10 @@ const Index = () => {
       // Sub-page return: no animation, just restore scroll
       el.classList.remove("animate-fade-in", "animate-fade-in-opacity");
       const saved = scrollPositions.get(activeTab) || 0;
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
-        });
-      });
-    }
-  }, [activeTab]);
+    scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+    return () => clearTimeout(timer2);
+  }
+}, [activeTab]);
 
   return (
     <div className="min-h-screen bg-background flex justify-center">
