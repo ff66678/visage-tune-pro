@@ -77,6 +77,8 @@ const SwipeBack = forwardRef<HTMLDivElement, SwipeBackProps>(({ children, edgeWi
       {children}
     </div>
   );
-};
+});
+
+SwipeBack.displayName = "SwipeBack";
 
 export default SwipeBack;

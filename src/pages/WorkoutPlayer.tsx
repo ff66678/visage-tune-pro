@@ -144,7 +144,8 @@ const WorkoutPlayer = () => {
       el.style.transition = "transform 0.35s cubic-bezier(0.4, 0, 1, 1)";
       el.style.transform = "translate3d(0, 100%, 0)";
       setSkipNextAnimation(true);
-      setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 340);
+      const target = fromCourse || `/?tab=${fromTab}`;
+      setTimeout(() => navigate(target, { replace: true }), 340);
     });
   }, [navigate, fromTab]);
 

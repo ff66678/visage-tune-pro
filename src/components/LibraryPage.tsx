@@ -11,9 +11,10 @@ import { scrollPositions } from "@/lib/scrollPositions";
 import { useRef as useReactRef } from "react";
 
 const difficultyColor = (d: string) => {
-  if (d === "入门") return "bg-emerald-500/90 text-white";
-  if (d === "中级") return "bg-amber-500/90 text-white";
-  if (d === "进阶" || d === "进阶级") return "bg-rose-500/90 text-white";
+  const dl = d.toLowerCase();
+  if (d === "入门" || dl === "beginner" || dl === "easy") return "bg-emerald-500/90 text-white";
+  if (d === "中级" || dl === "intermediate" || dl === "medium") return "bg-amber-500/90 text-white";
+  if (d === "进阶" || d === "进阶级" || dl === "advanced" || dl === "hard") return "bg-rose-500/90 text-white";
   return "bg-muted text-muted-foreground";
 };
 
