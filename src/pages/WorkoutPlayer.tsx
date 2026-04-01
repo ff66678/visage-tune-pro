@@ -140,11 +140,9 @@ const WorkoutPlayer = () => {
     requestAnimationFrame(() => {
       el.style.transition = "transform 0.35s cubic-bezier(0.4, 0, 1, 1)";
       el.style.transform = "translate3d(0, 100%, 0)";
-      setSkipNextAnimation(true);
-      const target = fromCourse || `/?tab=${fromTab}`;
-      setTimeout(() => navigate(target, { replace: true }), 340);
+      setTimeout(() => navigate(-1), 340);
     });
-  }, [navigate, fromTab, fromCourse]);
+  }, [navigate]);
 
 
   const courseTitle = course?.title || t("workout.training");
