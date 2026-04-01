@@ -8,35 +8,33 @@ import ProgressPage from "@/components/ProgressPage";
 
 const pages = [HomePage, LibraryPage, AnalysisPage, ProgressPage];
 
+// Module-level storage — survives component unmount/remount
+const scrollPositions = new Map<number, number>();
+
 const Index = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = Number(searchParams.get("tab") || 0);
   const setActiveTab = (tab: number) => setSearchParams({ tab: String(tab) }, { replace: true });
   const ActivePage = pages[activeTab];
   const scrollRef = useRef<HTMLDivElement>(null);
-  const scrollPositions = useRef<Map<number, number>>(new Map());
-  const prevTabRef = useRef<number>(activeTab);
 
   // Save scroll position on scroll
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
     const handleScroll = () => {
-      scrollPositions.current.set(activeTab, el.scrollTop);
+      scrollPositions.set(activeTab, el.scrollTop);
     };
     el.addEventListener("scroll", handleScroll, { passive: true });
     return () => el.removeEventListener("scroll", handleScroll);
   }, [activeTab]);
 
-  // Restore/reset scroll on tab change only
+  // Restore scroll on mount and tab change
   useEffect(() => {
-    if (prevTabRef.current !== activeTab) {
-      const saved = scrollPositions.current.get(activeTab) || 0;
-      requestAnimationFrame(() => {
-        scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
-      });
-      prevTabRef.current = activeTab;
-    }
+    const saved = scrollPositions.get(activeTab) || 0;
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+    });
   }, [activeTab]);
 
   return (
