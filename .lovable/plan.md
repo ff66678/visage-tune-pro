@@ -1,37 +1,42 @@
 
 
-## 多语言 Bug 修复（3处）
+## Plan: 修复 intensity 未翻译的底层原因
 
-### Bug 1：分析页推荐课程的 difficulty 没翻译
+### 根因分析
 
-**位置**：`src/components/AnalysisPage.tsx` 第185行
+第176行代码：`t("home.intensity", [todayPlan.intensity])`
 
-`{course.difficulty}` 直接显示数据库原始值（入门/中级/进阶），没用 `t()` 包裹。
+问题在于 `todayPlan.intensity` 是数据库原始中文值（"高"、"中"、"中等"、"低"），直接作为参数插入翻译模板。英文模板是 `"{0} intensity"`，所以结果是 **"高 intensity"** — 中英混杂。
 
-**修复**：改为 `{t("difficulty." + course.difficulty)}`
+`course_translations` 表没有 `intensity` 列，所以翻译合并逻辑不会覆盖它。
 
-### Bug 2：分析页推荐商品的 tag 和 name 没翻译
+### 修复方案
 
-**位置**：`src/components/AnalysisPage.tsx` 第204行、207行
+由于 intensity 只有4个固定值，用前端翻译映射最简洁：
 
-- `{product.tag}` 没用 `t("tag." + product.tag)` 包裹
-- `{product.name}` 是数据库动态内容，需要和课程一样建翻译表，或者用前端映射
+**1. 5个翻译文件各添加 intensity 映射**
 
-商品数量较少且固定，方案：
-- **tag**：用 `t("tag." + product.tag)` 包裹（已有 tag 翻译映射）
-- **name/description**：创建 `product_translations` 表，与课程翻译方案一致，插入各语言的商品名称翻译数据
+```
+"intensity.高": "High"      // ja: "高", ko: "높음", zh-TW: "高"
+"intensity.中": "Medium"     // ja: "中", ko: "중간"
+"intensity.中等": "Medium"   // ja: "中程度", ko: "중간"
+"intensity.低": "Low"        // ja: "低", ko: "낮음"
+```
 
-### Bug 3：首页"今日计划"课程的 tag 已用 `t()` 翻译（第224行），但分析页的相同逻辑漏了
+**2. `src/components/HomePage.tsx` 第176行**
 
-已在 Bug 2 中覆盖。
+将 `t("home.intensity", [todayPlan.intensity])` 改为 `t("home.intensity", [t("intensity." + todayPlan.intensity)])`
 
----
+这样先翻译 intensity 值，再插入模板：英文结果为 "High intensity"。
 
 ### 改动汇总
 
 | 文件 | 改动 |
 |---|---|
-| 数据库迁移 | 创建 `product_translations` 表并插入翻译数据 |
-| `src/hooks/useProducts.ts` | 添加语言感知，合并 `product_translations` |
-| `src/components/AnalysisPage.tsx` | difficulty 用 `t()` 包裹；tag 用 `t()` 包裹 |
+| `src/i18n/translations/en.ts` | 添加4个 intensity 翻译 key |
+| `src/i18n/translations/ja.ts` | 添加4个 intensity 翻译 key |
+| `src/i18n/translations/ko.ts` | 添加4个 intensity 翻译 key |
+| `src/i18n/translations/zh-CN.ts` | 添加4个 intensity 翻译 key |
+| `src/i18n/translations/zh-TW.ts` | 添加4个 intensity 翻译 key |
+| `src/components/HomePage.tsx` | 第176行嵌套 `t()` 调用 |
 
