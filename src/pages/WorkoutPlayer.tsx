@@ -149,8 +149,8 @@ const WorkoutPlayer = () => {
       </div>
 
       <div className="absolute top-12 left-0 w-full px-6 flex justify-between items-center z-20">
-        <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
-          <ChevronLeft className="w-5 h-5" />
+        <button onClick={handleClose} className="w-10 h-10 rounded-full flex items-center justify-center text-white border border-white/20 bg-white/15 backdrop-blur-xl">
+          <X className="w-5 h-5" />
         </button>
         <div className="text-center"><h2 className="text-sm font-bold tracking-wide">{courseTitle}</h2></div>
         <button onClick={handleToggleFavorite} className="w-10 h-10 rounded-full flex items-center justify-center border border-white/20 bg-white/15 backdrop-blur-xl active:scale-90 transition-transform">
