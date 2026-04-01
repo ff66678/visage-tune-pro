@@ -126,7 +126,7 @@ const ProgressPage = () => {
               modifiers={{ hasPhoto: recentPhotos.map(p => new Date(p.photo_date + "T00:00:00")) }}
               modifiersClassNames={{
                 hasPhoto:
-                  "relative after:content-[''] after:absolute after:bottom-0.5 after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:rounded-full after:bg-primary aria-selected:after:hidden",
+                  "bg-primary/15 text-primary font-bold aria-selected:bg-primary aria-selected:text-primary-foreground",
               }}
               classNames={{
                 day_today:
