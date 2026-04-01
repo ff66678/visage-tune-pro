@@ -27,6 +27,17 @@ const ProgressPage = () => {
   const { data: recentPhotos = [] } = useProgressPhotos();
   const uploadMutation = useUploadProgressPhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const scrollContainerRef = useScrollContainer();
+
+  useEffect(() => {
+    const el = scrollContainerRef?.current;
+    if (!el) return;
+    const onScroll = () => setScrolled(el.scrollTop > 20);
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [scrollContainerRef]);
 
   const today = new Date();
   const todayStr = formatLocalDate(today);
