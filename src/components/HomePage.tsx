@@ -217,7 +217,7 @@ const HomePage = () => {
                 <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
                 {item.tag && (
                   <span className="absolute top-2 left-2 bg-primary/90 text-primary-foreground text-[10px] px-2 py-0.5 rounded-full">
-                    {item.tag}
+                    {t("tag." + item.tag)}
                   </span>
                 )}
               </div>
