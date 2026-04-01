@@ -50,7 +50,7 @@ const Index = () => {
       scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
       el.classList.remove("animate-fade-in");
       el.classList.add("animate-fade-in-opacity");
-      const timer = setTimeout(() => el.classList.remove("animate-fade-in"), 450);
+      const timer = setTimeout(() => el.classList.remove("animate-fade-in-opacity"), 300);
       return () => clearTimeout(timer);
     } else {
       el.classList.remove("animate-fade-in", "animate-fade-in-opacity", "animate-slide-in-left");

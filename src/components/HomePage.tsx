@@ -224,9 +224,10 @@ const HomePage = () => {
       {/* Recommended */}
       <h2 className="px-6 mt-5 mb-3 text-lg font-semibold tracking-tight">{t("home.recommended")}</h2>
       {isLoading ? (
-        <div className="flex gap-4 px-6">
-          <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
-          <Skeleton className="min-w-[200px] h-[220px] rounded-2xl" />
+        <div className="flex gap-3 px-6">
+          <Skeleton className="min-w-[144px] h-[200px] rounded-3xl" />
+          <Skeleton className="min-w-[144px] h-[200px] rounded-3xl" />
+          <Skeleton className="min-w-[144px] h-[200px] rounded-3xl" />
         </div>
       ) : (
         <div className="flex gap-3 overflow-x-auto pb-2 px-6 no-scrollbar snap-x snap-mandatory">
