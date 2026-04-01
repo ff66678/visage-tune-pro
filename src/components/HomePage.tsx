@@ -10,6 +10,7 @@ import { usePaywallStatus } from "@/hooks/usePaywallStatus";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useTranslation } from "@/i18n/LanguageContext";
+import { useScrollContainer } from "@/contexts/ScrollContext";
 
 const categoryIcons: Record<string, React.ReactNode> = {
   力量: <Dumbbell className="w-5 h-5" />,
