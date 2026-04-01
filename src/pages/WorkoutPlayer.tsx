@@ -45,6 +45,8 @@ const PlayIcon = () => (
 const WorkoutPlayer = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const fromTab = (location.state as any)?.fromTab ?? 0;
   const [isPlaying, setIsPlaying] = useState(true);
   const [seconds, setSeconds] = useState(45);
   const [isFinished, setIsFinished] = useState(false);
