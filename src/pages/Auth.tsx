@@ -5,7 +5,7 @@ import { lovable } from "@/integrations/lovable/index";
 import { Mail, Lock, User, Eye, EyeOff, X } from "lucide-react";
 import { toast } from "sonner";
 
-const Auth = ({ showClose = true }: { showClose?: boolean }) => {
+const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?: () => void }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const returnTo = new URLSearchParams(location.search).get("returnTo") || "/";
