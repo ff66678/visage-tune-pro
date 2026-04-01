@@ -31,12 +31,18 @@ const Index = () => {
 
   // Restore scroll on mount and tab change
   useEffect(() => {
-    const saved = scrollPositions.get(activeTab) || 0;
-    requestAnimationFrame(() => {
+    if (getIsTabSwitch()) {
+      setIsTabSwitch(false);
+      scrollPositions.delete(activeTab);
+      scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    } else {
+      const saved = scrollPositions.get(activeTab) || 0;
       requestAnimationFrame(() => {
-        scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+        requestAnimationFrame(() => {
+          scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
+        });
       });
-    });
+    }
   }, [activeTab]);
 
   return (

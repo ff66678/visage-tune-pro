@@ -29,6 +29,7 @@ const BottomTabBar = ({ activeTab, onTabChange }: BottomTabBarProps) => {
       navigate("/auth");
       return;
     }
+    setIsTabSwitch(true);
     onTabChange(index);
   };
 
