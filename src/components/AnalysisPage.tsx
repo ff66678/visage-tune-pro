@@ -98,9 +98,9 @@ const AnalysisPage = () => {
   const recommendedCourses = getRecommendedCourses();
 
   return (
-    <div className="px-5 pt-14 pb-8 space-y-5">
+    <div className="pb-8 space-y-5">
       <input type="file" accept="image/*" capture="user" ref={fileInputRef} onChange={handleCapture} className="hidden" />
-      <div className="flex items-center justify-between">
+      <div className={`flex items-center justify-between px-5 sticky top-0 bg-background/85 backdrop-blur-xl z-40 transition-all duration-300 ${scrolled ? 'pt-3 pb-2' : 'pt-14 pb-3'}`}>
         <h1 className="text-xl font-bold text-foreground">{t("analysis.title")}</h1>
         <ScanFace className="w-6 h-6 text-primary" />
       </div>
