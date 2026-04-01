@@ -1,33 +1,23 @@
 
 
-## 修复课程库返回时页面跳动
+## 修复课程库返回时的跳动
 
 ### 根因
 
-当从 CategoryAll 返回到课程库 tab 时：
+`scrolled` 的初始值已正确基于保存的滚动位置计算，但 header 的 CSS 设置了 `transition-all duration-500 ease-in-out`。当组件挂载时，虽然 `scrolled=true`，但 CSS 过渡动画仍会从初始布局状态（未折叠）**动画到**折叠状态，耗时 500ms，这就是可见的"跳动"。
 
-1. `Index` 组件重新挂载，`LibraryPage` 也重新挂载
-2. `scrolled` 状态初始值为 `false` → 标题栏和搜索框**完整显示**
-3. 页面先以 scroll=0 渲染（标题完整展开）
-4. `requestAnimationFrame` 恢复滚动位置（比如 500px）
-5. scroll 事件触发，`scrolled` 变为 `true` → 标题栏**折叠隐藏**
-
-第3→5步的切换导致了可见的"跳动"：标题栏先展开再折叠。
+此外，`requestAnimationFrame` 恢复滚动位置也可能在第一帧渲染后才执行，造成短暂的位置不一致。
 
 ### 修复方案
 
-让 `scrolled` 的初始值基于模块级保存的滚动位置，这样组件首次渲染就使用正确的折叠状态，避免闪跳。
+在 `LibraryPage` 中添加一个 `mounted` ref，初始为 `false`，挂载后通过 `useEffect` 设为 `true`。在 header 和可折叠区域的 `className`/`style` 中，当 `mounted` 为 `false` 时不添加 `transition` 类，避免首次渲染时的过渡动画。
+
+同时在 `Index.tsx` 中，将 `requestAnimationFrame` 改为双层嵌套（确保 DOM 完全就绪后再恢复滚动）。
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/components/LibraryPage.tsx` | 将 `scrolled` 初始值从 `false` 改为根据 `scrollPositions.get(1) > 20` 计算；从 Index.tsx 导出 `scrollPositions` |
-| `src/pages/Index.tsx` | 导出 `scrollPositions` 供 LibraryPage 使用 |
-
-具体做法：
-- `Index.tsx`：`export const scrollPositions = new Map<number, number>();`（加 export）
-- `LibraryPage.tsx`：`import { scrollPositions } from "@/pages/Index";`，然后 `const [scrolled, setScrolled] = useState((scrollPositions.get(1) || 0) > 20);`
-
-这样返回时 LibraryPage 首次渲染就知道该折叠还是展开标题栏，不会闪跳。
+| `src/components/LibraryPage.tsx` | 添加 `mounted` ref，首次渲染禁用 transition；挂载后启用 |
+| `src/pages/Index.tsx` | 双层 `requestAnimationFrame` 确保滚动恢复时机更准确 |
 
