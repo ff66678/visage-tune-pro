@@ -24,6 +24,7 @@ const ProfilePage = () => {
   const heatmapCells = useHeatmapData();
   const { data: recentCourses = [] } = useRecentCourses();
   const { data: allCourses = [] } = useCourses();
+  const { isPaid } = usePaywallStatus();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [heroHovered, setHeroHovered] = useState(false);
 
