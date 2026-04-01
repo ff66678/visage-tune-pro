@@ -1,33 +1,29 @@
 
 
-## 添加左滑返回手势
-
-### 方案
-
-创建一个 `SwipeBack` 组件，监听触摸事件，当用户从屏幕左边缘（≤30px）开始向右滑动超过阈值时，触发 `navigate(-1)` 返回。包裹在所有子页面的根元素上。
+## WorkoutPlayer 关闭按钮 + 下滑退出动画
 
 ### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/components/SwipeBack.tsx` | 新建组件，监听 touchstart/touchmove/touchend，判断左边缘起滑 + 右滑距离 > 80px 则返回 |
-| `src/pages/CourseDetail.tsx` | 用 `<SwipeBack>` 包裹根内容 |
-| `src/pages/CategoryAll.tsx` | 同上 |
-| `src/pages/Favorites.tsx` | 同上 |
-| `src/pages/RecentlyPlayed.tsx` | 同上 |
-| `src/pages/ProfileDetail.tsx` | 同上 |
-| `src/pages/Membership.tsx` | 同上 |
-| `src/pages/LanguageSettings.tsx` | 同上 |
-| `src/pages/WorkoutPlayer.tsx` | 同上 |
+| `tailwind.config.ts` | 添加 `slide-out-down` keyframe（从 `translateY(0)` → `translateY(100%)`）和 `slide-in-up` keyframe（从 `translateY(100%)` → `translateY(0)`） |
+| `src/pages/WorkoutPlayer.tsx` | 1) 将 `ChevronLeft` 图标换成 `X` 图标；2) 关闭按钮点击时不直接 `navigate(-1)`，而是先给整个页面容器播放 `slide-out-down` 动画（向下滑出），动画结束后再 `navigate(-1)`；3) 页面入场时用 `slide-in-up` 从下往上滑入（替代原来的 `slide-in-right`）；4) 移除 `SwipeBack` 包裹（因为这个页面改用上下滑动交互，左滑返回不适合） |
 
-### SwipeBack 实现逻辑
+### 具体实现
 
+**关闭逻辑**：
 ```tsx
-// 核心逻辑：
-// touchstart: 记录起始 X，仅当 X ≤ 30px（左边缘）时激活
-// touchmove: 计算水平位移，实时平移页面内容（跟手效果）
-// touchend: 若位移 > 屏幕宽度 1/3，执行 navigate(-1)；否则弹回
+const containerRef = useRef<HTMLDivElement>(null);
+
+const handleClose = () => {
+  if (containerRef.current) {
+    containerRef.current.style.transition = "transform 0.35s ease-in, opacity 0.35s ease-in";
+    containerRef.current.style.transform = "translateY(100%)";
+    containerRef.current.style.opacity = "0";
+    setTimeout(() => navigate(-1), 320);
+  }
+};
 ```
 
-组件会给内容添加跟手的 `translateX` 效果，松手时根据滑动距离决定是完成返回还是弹回原位，体验接近 iOS 原生。
+按钮从 `<ChevronLeft>` 改为 `<X>`，onClick 调用 `handleClose`。
 
