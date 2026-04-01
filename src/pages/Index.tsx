@@ -17,7 +17,7 @@ const Index = () => {
   const setActiveTab = (tab: number) => setSearchParams({ tab: String(tab) }, { replace: true });
   const ActivePage = pages[activeTab];
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [showAnimation, setShowAnimation] = useState(false);
+  const [animationClass, setAnimationClass] = useState("");
 
   // Save scroll position on scroll
   useEffect(() => {
