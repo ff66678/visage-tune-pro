@@ -200,7 +200,7 @@ const ProgressPage = () => {
                       : d.hasPhoto
                       ? "bg-primary/15 text-primary font-bold"
                       : d.isToday
-                      ? "border-2 border-primary text-primary"
+                      ? "bg-primary/15 text-primary"
                       : "text-foreground"
                   }`}
                 >
