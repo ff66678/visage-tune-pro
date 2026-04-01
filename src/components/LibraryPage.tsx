@@ -282,7 +282,7 @@ const LibraryPage = () => {
                       onClick={() => navigate(`/course/${course.id}`, { state: { fromTab: 1 } })}
                     >
                       <div className="relative">
-                        <img src={course.image_url} alt={course.title} className="w-full h-[90px] object-cover" />
+                        <img src={course.image_url} alt={course.title} className="w-full h-[90px] object-cover" loading="lazy" />
                         <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
                           {i + 1}
                         </div>
