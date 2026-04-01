@@ -319,6 +319,7 @@ const LibraryPage = () => {
                           src={routine.image_url}
                           alt={routine.title}
                           className="w-full h-[110px] object-cover"
+                          loading="lazy"
                         />
                         <div className="absolute top-2 left-2">
                            <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded-full ${difficultyColor(routine.difficulty)}`}>
