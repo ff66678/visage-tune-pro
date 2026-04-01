@@ -139,10 +139,10 @@ const LibraryPage = () => {
   return (
     <div className="animate-fade-in">
       {/* Header */}
-      <header className={`px-6 sticky top-0 bg-background/90 backdrop-blur-xl z-40 transition-all duration-500 ease-in-out ${scrolled ? 'pt-2 pb-1' : 'pt-8 pb-2'}`}>
+      <header className={`px-6 sticky top-0 bg-background/90 backdrop-blur-xl z-40 ${mounted ? 'transition-all duration-500 ease-in-out' : ''} ${scrolled ? 'pt-2 pb-1' : 'pt-8 pb-2'}`}>
         <div
           ref={collapseRef}
-          className="overflow-hidden transition-all duration-500 ease-in-out"
+          className={`overflow-hidden ${mounted ? 'transition-all duration-500 ease-in-out' : ''}`}
           style={{
             maxHeight: scrolled ? 0 : collapseRef.current?.scrollHeight || 200,
             opacity: scrolled ? 0 : 1,
