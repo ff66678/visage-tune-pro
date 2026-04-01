@@ -1,59 +1,97 @@
 
 
-## 发现的 Bug 和逻辑问题
+## 全产品 Bug 和逻辑问题审查
 
-### Bug 1（严重）：引导页登录后被导航走，无法继续问卷
+经过全面代码审查，发现以下问题：
 
-**问题**：Onboarding 组件在未登录时渲染 `<Auth showClose={false} />`。但 Auth 组件登录成功后会调用 `navigate(returnTo)`，而 `returnTo` 来自 URL 参数（`/onboarding` 没有 `returnTo` 参数），默认值是 `"/"`。结果用户登录后被导航到首页，**永远无法进入问卷**。
+---
 
-Google OAuth 同理：`redirect_uri` 带的 `returnTo=/`，登录后回到 `/auth?returnTo=/`，AuthRoute 检测到已登录直接跳到 `/`。
+### Bug 1（严重）：WorkoutPlayer 不记录训练日志
 
-**修复**：给 Auth 组件添加 `onSuccess` 回调。当存在该回调时，登录成功后调用回调而非 `navigate`。Onboarding 中传入空回调（什么都不做），让组件自然 re-render 后显示问卷。
+**位置**：`src/pages/WorkoutPlayer.tsx`
 
-```tsx
-// Auth.tsx
-const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?: () => void }) => {
-  // ...
-  // 邮箱登录成功后：
-  if (onSuccess) {
-    onSuccess();
-  } else {
-    navigate(returnTo, { replace: true });
-  }
-  // Google OAuth redirect_uri 也需要处理：
-  // 当 onSuccess 存在时，不传 returnTo 参数给 redirect_uri
-};
+训练计时器倒计时到 0 后，什么都没发生——没有调用 `workout_logs` 的 insert。用户完成训练后，首页的"每周进度"、"连续打卡"、热力图等数据全部不会更新。
 
-// Onboarding.tsx
-<Auth showClose={false} onSuccess={() => {}} />
-```
+**修复**：训练完成时（seconds === 0），调用 supabase 插入一条 workout_log 记录，并 invalidate 相关 query。
 
-### Bug 2（中等）：loading 状态下闪烁
+---
 
-**问题**：Onboarding 组件在 `loading` 为 true 时，两个 early return 都不触发（第366、371行），代码落到底部渲染问卷 UI，此时 `user` 为 null。虽然不会报错，但会出现短暂闪烁。
+### Bug 2（严重）：WorkoutPlayer 收藏按钮是假的
 
-**修复**：在最前面加 loading 状态的加载动画：
+**位置**：`src/pages/WorkoutPlayer.tsx` 第42行、第119行
 
-```tsx
-if (loading) {
-  return <加载动画 />;
-}
-```
+收藏状态用 `useState(false)` 管理，仅是本地 UI 切换，没有读取也没有写入 `favorites` 表。退出页面就丢失。
 
-### Bug 3（轻微）：首页不强制未完成引导的用户去引导页
+**修复**：改用 `useFavoriteIds` 和 `useToggleFavorite` hooks（与 CourseDetail 一致）。
 
-**问题**：`/` 路由是公开的，不经过 `ProtectedRoute`。所以登录但未完成引导的用户可以自由使用首页，只有访问受保护路由时才被强制跳转引导页。这可能是设计意图，但如果希望强制引导，需要在 Index 页面也加检查。
+---
 
-**建议**：确认这是否符合预期。如需强制，在 Index 组件中加一个判断。
+### Bug 3（中等）：WorkoutPlayer 内容硬编码
+
+**位置**：`src/pages/WorkoutPlayer.tsx` 第133-134行
+
+无论打开哪个课程，动作名称始终显示 "V字手势提升"，说明文字也是固定的。应该从课程数据动态读取。
+
+**修复**：用 `course?.title` 和 `course?.description` 替代硬编码文本。
+
+---
+
+### Bug 4（中等）：Google OAuth 登录后 Onboarding 不会继续问卷
+
+**位置**：`src/pages/Auth.tsx` 第53-54行
+
+当 `onSuccess` 存在时（即从 Onboarding 调用），Google OAuth 的 `redirect_uri` 设为 `/onboarding`。OAuth 回调后浏览器加载 `/onboarding`，但这是一次全新的页面加载。组件会重新挂载，`loading` 先为 true，等 session 恢复后 `user` 有值，此时 `onboardingCompleted` 可能还是 null（正在查询中），导致短暂闪烁或直接跳过问卷进入首页。
+
+实际上这不是致命 bug，因为 `onboardingCompleted === null` 时会显示 loading，而查询完成后若为 false 则正常进入问卷。但风险在于：如果 profile 还没创建（新用户首次 OAuth 登录），`fetchOnboardingStatus` 会返回 false，此时正确。所以这个**基本正常**，但需要确认新用户注册时 profile 是否自动创建。
+
+---
+
+### Bug 5（中等）：新用户注册后没有自动创建 profile
+
+**位置**：`src/contexts/AuthContext.tsx`
+
+`fetchOnboardingStatus` 查询 profile，但如果是新注册用户，profile 表可能没有记录。`maybeSingle` 之类的查询未使用，用的是 `.single()` —— 如果没有记录会报错。
+
+**修复**：需要确认是否有数据库 trigger 自动创建 profile。如果没有，应该在 AuthContext 中当 profile 不存在时自动 insert 一条。
+
+---
+
+### Bug 6（轻微）：Paywall 月度订阅的续订日期硬编码
+
+**位置**：`src/pages/Paywall.tsx` 第202行
+
+`自动续订至 2025年5月4日` 是硬编码的过去日期。年度订阅也是硬编码 `2027年4月4日`。
+
+**修复**：动态计算日期，月度 = 当前日期 + 1 个月，年度 = 当前日期 + 1 年。
+
+---
+
+### Bug 7（轻微）：Console 警告 — Function components cannot be given refs
+
+**位置**：`src/components/HomePage.tsx` 和 `src/pages/Index.tsx`
+
+`Skeleton` 和 `BottomTabBar` 组件被传入 ref 但未使用 `forwardRef`。不影响功能但会在控制台产生大量警告。
+
+**修复**：Index.tsx 中 `scrollRef` 应绑定在容器 div 上（已绑定），问题可能来自其他地方给 Skeleton 传 ref。检查后发现 Index 的 `<ActivePage />` 渲染方式可能导致 ref 误传。
+
+---
+
+### Bug 8（轻微）：首页"今天还没有计划"点击跳转 `/library` 但该路由不存在
+
+**位置**：`src/components/HomePage.tsx` 第191行
+
+点击会跳到 `/library`，但 App.tsx 路由表中没有 `/library` 路由，会到 NotFound 页面。课程库在底部 tab 第二个（tab=1）。
+
+**修复**：改为 `navigate("/?tab=1")`。
+
+---
 
 ### 改动汇总
 
-**`src/pages/Auth.tsx`**
-- 新增 `onSuccess?: () => void` prop
-- 邮箱登录成功后，有 `onSuccess` 则调用它，否则 `navigate(returnTo)`
-- Google OAuth 的 `redirect_uri`：当有 `onSuccess` 时不带 `returnTo`
-
-**`src/pages/Onboarding.tsx`**
-- `<Auth showClose={false} onSuccess={() => {}} />` 传入空回调
-- 在 `loading` 为 true 时返回加载动画
+| 文件 | 改动 |
+|---|---|
+| `src/pages/WorkoutPlayer.tsx` | 添加训练完成时的日志写入；用真实 hooks 替换假收藏；动态显示课程内容 |
+| `src/pages/Paywall.tsx` | 动态计算续订日期 |
+| `src/components/HomePage.tsx` | 修复 `/library` 导航为 `/?tab=1` |
+| `src/contexts/AuthContext.tsx` | 新用户 profile 不存在时自动创建 |
 
