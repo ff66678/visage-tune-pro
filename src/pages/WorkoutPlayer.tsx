@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { X, Heart } from "lucide-react";
 import { useCourse } from "@/hooks/useCourses";
@@ -8,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
-  
 
 const TimerRing = ({ dashOffset }: { dashOffset: number }) => (
   <svg className="w-full h-full" style={{ transform: "rotate(-90deg)" }}>
@@ -58,6 +57,12 @@ const WorkoutPlayer = () => {
   const toggleFavorite = useToggleFavorite();
   const queryClient = useQueryClient();
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Pull-down gesture refs
+  const startY = useRef(0);
+  const currentDeltaY = useRef(0);
+  const isSwipingDown = useRef(false);
+  const rafId = useRef(0);
 
   const isFavorited = id ? (favoriteIds?.has(id) ?? false) : false;
 
@@ -133,19 +138,91 @@ const WorkoutPlayer = () => {
     else { setIsPlaying((prev) => !prev); }
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     if (containerRef.current) {
       containerRef.current.style.transition = "transform 0.35s ease-in, opacity 0.35s ease-in";
-      containerRef.current.style.transform = "translateY(100%)";
+      containerRef.current.style.transform = "translate3d(0, 100%, 0)";
       containerRef.current.style.opacity = "0";
       setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 320);
     }
-  };
+  }, [navigate, fromTab]);
+
+  // Pull-down gesture handlers
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    startY.current = touch.clientY;
+    currentDeltaY.current = 0;
+    isSwipingDown.current = false;
+  }, []);
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    const y = e.touches[0].clientY;
+    const deltaY = y - startY.current;
+
+    // Only activate on downward swipe
+    if (!isSwipingDown.current) {
+      if (deltaY > 10) {
+        isSwipingDown.current = true;
+        if (containerRef.current) {
+          containerRef.current.style.transition = "none";
+          containerRef.current.style.willChange = "transform, opacity";
+        }
+      } else {
+        return;
+      }
+    }
+
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => {
+      if (!containerRef.current) return;
+      const clampedDelta = Math.max(0, deltaY);
+      currentDeltaY.current = clampedDelta;
+      const progress = clampedDelta / window.innerHeight;
+      const opacity = 1 - progress * 0.5;
+      const scale = 1 - progress * 0.05;
+      containerRef.current.style.transform = `translate3d(0, ${clampedDelta}px, 0) scale(${Math.max(0.95, scale)})`;
+      containerRef.current.style.opacity = `${Math.max(0.5, opacity)}`;
+    });
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
+    if (!isSwipingDown.current || !containerRef.current) {
+      return;
+    }
+    isSwipingDown.current = false;
+    cancelAnimationFrame(rafId.current);
+
+    const threshold = window.innerHeight * 0.25;
+    if (currentDeltaY.current > threshold) {
+      // Trigger close
+      containerRef.current.style.transition = "transform 0.3s ease-in, opacity 0.3s ease-in";
+      containerRef.current.style.transform = "translate3d(0, 100%, 0) scale(0.95)";
+      containerRef.current.style.opacity = "0";
+      setTimeout(() => navigate(`/?tab=${fromTab}`, { replace: true }), 280);
+    } else {
+      // Snap back
+      containerRef.current.style.transition = "transform 0.3s ease-out, opacity 0.3s ease-out";
+      containerRef.current.style.transform = "translate3d(0, 0, 0) scale(1)";
+      containerRef.current.style.opacity = "1";
+      setTimeout(() => {
+        if (containerRef.current) {
+          containerRef.current.style.willChange = "auto";
+        }
+      }, 310);
+    }
+  }, [navigate, fromTab]);
 
   const courseTitle = course?.title || t("workout.training");
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden animate-slide-in-up">
+    <div
+      ref={containerRef}
+      className="min-h-screen bg-black text-white flex flex-col relative overflow-hidden animate-slide-in-up"
+      style={{ transform: "translate3d(0, 0, 0)" }}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       <div className="absolute inset-0 z-0">
         <img src={course?.image_url || "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} alt="" className="w-full h-full object-cover opacity-90" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 40%, rgba(0,0,0,0.8) 100%)" }} />

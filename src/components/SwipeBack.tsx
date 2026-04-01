@@ -13,6 +13,7 @@ const SwipeBack = ({ children, edgeWidth = 30, className = "" }: SwipeBackProps)
   const startX = useRef(0);
   const currentX = useRef(0);
   const isSwiping = useRef(false);
+  const rafId = useRef(0);
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     const touch = e.touches[0];
@@ -22,35 +23,45 @@ const SwipeBack = ({ children, edgeWidth = 30, className = "" }: SwipeBackProps)
       currentX.current = 0;
       if (containerRef.current) {
         containerRef.current.style.transition = "none";
+        containerRef.current.style.willChange = "transform, opacity";
       }
     }
   }, [edgeWidth]);
 
   const onTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!isSwiping.current || !containerRef.current) return;
-    const deltaX = Math.max(0, e.touches[0].clientX - startX.current);
-    currentX.current = deltaX;
-    const opacity = 1 - deltaX / window.innerWidth * 0.4;
-    containerRef.current.style.transform = `translateX(${deltaX}px)`;
-    containerRef.current.style.opacity = `${Math.max(0.6, opacity)}`;
+    if (!isSwiping.current) return;
+    const x = e.touches[0].clientX;
+    cancelAnimationFrame(rafId.current);
+    rafId.current = requestAnimationFrame(() => {
+      if (!containerRef.current) return;
+      const deltaX = Math.max(0, x - startX.current);
+      currentX.current = deltaX;
+      const opacity = 1 - (deltaX / window.innerWidth) * 0.4;
+      containerRef.current.style.transform = `translate3d(${deltaX}px, 0, 0)`;
+      containerRef.current.style.opacity = `${Math.max(0.6, opacity)}`;
+    });
   }, []);
 
   const onTouchEnd = useCallback(() => {
     if (!isSwiping.current || !containerRef.current) return;
     isSwiping.current = false;
+    cancelAnimationFrame(rafId.current);
     const threshold = window.innerWidth / 3;
 
     if (currentX.current > threshold) {
-      // Complete the swipe: animate off-screen then navigate
       containerRef.current.style.transition = "transform 0.2s ease-out, opacity 0.2s ease-out";
-      containerRef.current.style.transform = `translateX(${window.innerWidth}px)`;
+      containerRef.current.style.transform = `translate3d(${window.innerWidth}px, 0, 0)`;
       containerRef.current.style.opacity = "0";
       setTimeout(() => navigate(-1), 180);
     } else {
-      // Snap back
       containerRef.current.style.transition = "transform 0.25s ease-out, opacity 0.25s ease-out";
-      containerRef.current.style.transform = "translateX(0)";
+      containerRef.current.style.transform = "translate3d(0, 0, 0)";
       containerRef.current.style.opacity = "1";
+      setTimeout(() => {
+        if (containerRef.current) {
+          containerRef.current.style.willChange = "auto";
+        }
+      }, 260);
     }
   }, [navigate]);
 
@@ -61,7 +72,7 @@ const SwipeBack = ({ children, edgeWidth = 30, className = "" }: SwipeBackProps)
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      style={{ willChange: "transform, opacity" }}
+      style={{ transform: "translate3d(0, 0, 0)" }}
     >
       {children}
     </div>
