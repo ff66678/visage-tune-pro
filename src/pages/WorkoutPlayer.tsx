@@ -147,7 +147,7 @@ const WorkoutPlayer = () => {
       const target = fromCourse || `/?tab=${fromTab}`;
       setTimeout(() => navigate(target, { replace: true }), 340);
     });
-  }, [navigate, fromTab]);
+  }, [navigate, fromTab, fromCourse]);
 
 
   const courseTitle = course?.title || t("workout.training");
