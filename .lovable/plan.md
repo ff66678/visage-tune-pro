@@ -1,53 +1,64 @@
 
 
-## 修复首页返回时顶部栏"跳下"问题
+## 用户体验优化方案
 
-### 根因
+### 1. 页面切换动画流畅度
 
-`HomePage` 中 `scrolled` 初始值为 `false`，导致顶部栏以 `pt-8`（大间距）渲染。之后 Index 恢复滚动位置 → 触发 scroll 事件 → `scrolled` 变为 `true` → 顶部栏缩为 `pt-3`。这个先大后小的过程就是用户看到的"跳下"。
+| 改动 | 文件 | 说明 |
+|---|---|---|
+| 图片懒加载 | `HomePage.tsx`, `LibraryPage.tsx` | 所有课程卡片和列表图片添加 `loading="lazy"` 减少页面切换时的卡顿 |
+| 课程卡片图片渐显 | `src/index.css` | 添加 `.img-fade` class，图片加载完成后从透明渐显为不透明，避免图片突然出现 |
+| Tab 切换动画优化 | `Index.tsx` | Tab 切换改用 `animate-fade-in-opacity`（纯透明度）替代 `animate-fade-in`（带 translateY），水平 Tab 切换不应有垂直位移感 |
 
-### 修复方案
+### 2. 加载体验
 
-在 `HomePage` 初始化 `scrolled` 时，直接读取当前 `scrollRef` 的 `scrollTop`，而不是固定写 `false`。
+| 改动 | 文件 | 说明 |
+|---|---|---|
+| 课程详情骨架屏优化 | `CourseDetail.tsx` | 加载状态改为更贴近实际布局的骨架屏：全宽封面图 + 圆角卡片 + 按钮区，减少布局抖动 |
+| 首页骨架屏丰富化 | `HomePage.tsx` | 为"今日计划"和"推荐课程"各添加更贴合实际形状的骨架屏 |
 
-### 改动
+### 3. 滚动与触控交互
 
-| 文件 | 改动 |
-|---|---|
-| `src/components/HomePage.tsx` 第 25 行 | `useState(false)` → `useState(() => { ... })` 用惰性初始化，读取 `scrollContainerRef` 当前 scrollTop |
+| 改动 | 文件 | 说明 |
+|---|---|---|
+| 横向滚动列表 snap | `HomePage.tsx`, `LibraryPage.tsx` | 推荐课程、热门排行等横向列表添加 `scroll-snap-type: x mandatory` 和子项 `scroll-snap-align: start`，滚动停止时自动对齐卡片 |
+| 按钮触控反馈 | 全局 `index.css` | 添加 `.active-press` 工具类：`active:scale-[0.97] transition-transform duration-150`，统一所有可点击卡片的按压反馈 |
+| 课程详情页顶部按钮触控 | `CourseDetail.tsx` | 三个顶部按钮添加 `active:scale-90` 按压缩放效果 |
 
-由于 `scrollContainerRef` 在 `useState` 初始化时还不可用（hooks 顺序问题），改为在第 30-37 行的 `useEffect` 中确保 **同步** 读取初始滚动位置：
+### 4. 视觉细节打磨
 
+| 改动 | 文件 | 说明 |
+|---|---|---|
+| 底部 Tab 栏阴影 | `BottomTabBar.tsx` | 顶部边框从 `border-foreground/5` 改为更柔和的 `shadow-[0_-1px_8px_rgba(0,0,0,0.04)]`，视觉更精致 |
+| 推荐卡片圆角统一 | `HomePage.tsx` | 推荐课程卡片圆角从 `rounded-2xl` 统一为 `rounded-3xl`，与首页其他卡片风格一致 |
+| 课程详情卡片阴影 | `CourseDetail.tsx` | 信息卡片从 `shadow-sm` 升级为 `shadow-md`，增加层次感 |
+| 分类快捷入口图标底色 | `HomePage.tsx` | 分类按钮的图标底色从 `bg-surface` 改为 `bg-card`，增加与背景的对比度 |
+
+### 技术细节
+
+**图片渐显 CSS（index.css）**：
+```css
+.img-fade {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.img-fade[data-loaded="true"] {
+  opacity: 1;
+}
+```
+配合 `onLoad` 事件设置 `data-loaded`。
+
+**横向 snap 滚动**：
 ```tsx
-const [scrolled, setScrolled] = useState(false);
-const scrollContainerRef = useScrollContainer();
-
-// 关键：用 useLayoutEffect 替代 useEffect，在渲染前同步读取滚动位置
-useLayoutEffect(() => {
-  const el = scrollContainerRef?.current;
-  if (!el) return;
-  setScrolled(el.scrollTop > 20);
-}, [scrollContainerRef]);
-
-useEffect(() => {
-  const el = scrollContainerRef?.current;
-  if (!el) return;
-  const onScroll = () => setScrolled(el.scrollTop > 20);
-  el.addEventListener("scroll", onScroll, { passive: true });
-  return () => el.removeEventListener("scroll", onScroll);
-}, [scrollContainerRef]);
+<div className="flex gap-3 overflow-x-auto snap-x snap-mandatory ...">
+  <div className="snap-start ...">
 ```
 
-但更根本的问题是：Index 的滚动恢复（第 59-60 行）在 `useEffect` 中执行，晚于 HomePage 的渲染。所以即使用 `useLayoutEffect`，首次渲染时 scrollTop 仍为 0。
-
-**真正的修复**：在 Index.tsx 中，将滚动恢复逻辑从 `useEffect` 提前到 `useLayoutEffect`，确保在浏览器绘制前就恢复滚动位置，这样 HomePage 的 `useLayoutEffect` 读到的就是正确的 scrollTop。
-
-| 文件 | 改动 |
-|---|---|
-| `src/pages/Index.tsx` 第 1 行 | import 加入 `useLayoutEffect` |
-| `src/pages/Index.tsx` 第 35 行 | 滚动恢复的 `useEffect` → `useLayoutEffect`，确保绘制前恢复位置 |
-| `src/components/HomePage.tsx` 第 1 行 | import 加入 `useLayoutEffect` |
-| `src/components/HomePage.tsx` 第 25-37 行 | 拆分为：`useLayoutEffect` 同步初始化 `scrolled` + `useEffect` 注册持续监听 |
-
-同样的修复也应用于 `AnalysisPage.tsx` 和 `ProgressPage.tsx`（如果它们有类似的 scrolled 状态）。
+**涉及文件总览**：
+- `src/index.css` — 新增工具类
+- `src/pages/Index.tsx` — Tab 切换动画
+- `src/pages/CourseDetail.tsx` — 骨架屏 + 触控 + 阴影
+- `src/components/HomePage.tsx` — 懒加载 + snap + 圆角 + 骨架屏
+- `src/components/LibraryPage.tsx` — 懒加载 + snap
+- `src/components/BottomTabBar.tsx` — 阴影优化
 
