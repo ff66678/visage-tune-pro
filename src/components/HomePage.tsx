@@ -59,7 +59,11 @@ const HomePage = () => {
   const favCount = favorites.length;
   const { isPaid } = usePaywallStatus();
 
-  const { weekData, percentage } = useWeeklyProgress();
+  const weekdayLabels = [
+    t("weekday.mon"), t("weekday.tue"), t("weekday.wed"),
+    t("weekday.thu"), t("weekday.fri"), t("weekday.sat"), t("weekday.sun")
+  ];
+  const { weekData, percentage } = useWeeklyProgress(weekdayLabels);
   const { streak } = useWorkoutStats();
   const todayPlan = courses?.find((c) => c.is_today_plan);
   const recommended = courses?.filter((c) => c.is_featured) ?? [];
