@@ -1,42 +1,30 @@
 
 
-## Plan: 修复 intensity 未翻译的底层原因
+## Plan: 返回时恢复滚动位置
 
-### 根因分析
+### 问题
 
-第176行代码：`t("home.intensity", [todayPlan.intensity])`
+当前 `Index.tsx` 的 `useEffect` 在 `activeTab` 变化时**无条件置顶**。用户从首页点击课程进入详情页，返回后滚动位置丢失，总是回到顶部。
 
-问题在于 `todayPlan.intensity` 是数据库原始中文值（"高"、"中"、"中等"、"低"），直接作为参数插入翻译模板。英文模板是 `"{0} intensity"`，所以结果是 **"高 intensity"** — 中英混杂。
+### 方案
 
-`course_translations` 表没有 `intensity` 列，所以翻译合并逻辑不会覆盖它。
+在离开 Index 页面前保存滚动位置，返回时恢复。
 
-### 修复方案
+**1. `src/pages/Index.tsx`**
 
-由于 intensity 只有4个固定值，用前端翻译映射最简洁：
+- 用 `useRef` 保存每个 tab 的滚动位置（`Map<number, number>`）
+- 监听 `scrollRef` 的 `scroll` 事件，实时记录当前 tab 的滚动位置
+- 将 `useEffect` 中的置顶逻辑改为：切换 tab 时恢复该 tab 之前保存的位置（如果有），否则置顶
+- 关键：**仅在 tab 切换时**恢复/置顶，从子页面返回时不触发置顶
 
-**1. 5个翻译文件各添加 intensity 映射**
+具体做法：
+- 添加 `prevTabRef` 跟踪上一个 tab 值
+- 当 `activeTab` 变化且 `prevTabRef.current !== activeTab` 时，保存旧 tab 的滚动位置，恢复新 tab 的滚动位置
+- 当 `activeTab` 未变化（即从子页面返回）时，不做任何滚动操作，浏览器/React 会自然保留位置
 
-```
-"intensity.高": "High"      // ja: "高", ko: "높음", zh-TW: "高"
-"intensity.中": "Medium"     // ja: "中", ko: "중간"
-"intensity.中等": "Medium"   // ja: "中程度", ko: "중간"
-"intensity.低": "Low"        // ja: "低", ko: "낮음"
-```
-
-**2. `src/components/HomePage.tsx` 第176行**
-
-将 `t("home.intensity", [todayPlan.intensity])` 改为 `t("home.intensity", [t("intensity." + todayPlan.intensity)])`
-
-这样先翻译 intensity 值，再插入模板：英文结果为 "High intensity"。
-
-### 改动汇总
+### 改动
 
 | 文件 | 改动 |
 |---|---|
-| `src/i18n/translations/en.ts` | 添加4个 intensity 翻译 key |
-| `src/i18n/translations/ja.ts` | 添加4个 intensity 翻译 key |
-| `src/i18n/translations/ko.ts` | 添加4个 intensity 翻译 key |
-| `src/i18n/translations/zh-CN.ts` | 添加4个 intensity 翻译 key |
-| `src/i18n/translations/zh-TW.ts` | 添加4个 intensity 翻译 key |
-| `src/components/HomePage.tsx` | 第176行嵌套 `t()` 调用 |
+| `src/pages/Index.tsx` | 添加 scroll 位置保存/恢复逻辑，移除无条件置顶 |
 
