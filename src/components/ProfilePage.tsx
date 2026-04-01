@@ -110,7 +110,7 @@ const ProfilePage = () => {
                 <div className="text-[13px] text-card/80 font-semibold uppercase tracking-wider mb-0.5">{t("profile.recommend")}</div>
                 <div className="text-2xl font-semibold tracking-tight text-card">{nextCourse.title}</div>
               </div>
-              <button onClick={(e) => { e.stopPropagation(); navigate(`/course/${nextCourse.id}`, { state: { fromTab: 3 } }); }} className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer">
+              <button onClick={(e) => { e.stopPropagation(); navigate(`/course/${nextCourse.id}`, { state: { fromCourse: "/profile" } }); }} className="w-11 h-11 rounded-full bg-card/95 flex items-center justify-center border-none text-primary shadow-lg cursor-pointer">
                 <Play className="w-[18px] h-[18px]" fill="currentColor" />
               </button>
             </div>
