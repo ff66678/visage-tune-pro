@@ -272,6 +272,18 @@ const zhCN: Record<string, string> = {
   "auth.hasAccount": "已有账号？",
   "auth.loginSuccess": "登录成功！",
   "auth.signupSuccess": "注册成功！请查看邮箱确认。",
+  "auth.forgotPassword": "忘记密码？",
+  "auth.enterEmailFirst": "请先输入邮箱地址",
+  "auth.resetEmailSent": "重置密码邮件已发送，请查收",
+  "auth.resetPasswordTitle": "重置密码",
+  "auth.resetPasswordDesc": "请输入新密码",
+  "auth.newPassword": "新密码",
+  "auth.confirmReset": "确认重置",
+  "auth.passwordMinLength": "密码至少需要6个字符",
+  "auth.passwordResetSuccess": "密码重置成功！",
+  "auth.invalidResetLink": "无效的重置链接",
+  "auth.backToLogin": "返回登录",
+  "course.loginFirst": "请先登录后再收藏",
 
   // Settings
   "settings.title": "设置",
