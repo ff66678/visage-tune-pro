@@ -117,15 +117,18 @@ const AnalysisPage = () => {
           <div className="w-[240px] h-[300px] rounded-[50%] border-[6px] border-surface-elevated/80 bg-surface-elevated/40 flex items-center justify-center p-3 shadow-inner">
             <div className="w-full h-full rounded-[50%] overflow-hidden bg-surface flex items-center justify-center">
               {isUploading ? (
-                <span className="inline-block h-8 w-8 rounded-full border-2 border-primary/40 border-t-primary animate-spin" />
+                <span key="uploading" className="inline-block h-8 w-8 rounded-full border-2 border-primary/40 border-t-primary animate-spin" />
               ) : latestPhoto ? (
                 <img
+                  key="photo"
                   src={latestPhoto.photo_url}
                   alt="最近照片"
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <Camera className="w-10 h-10 text-muted-foreground/50" />
+                <span key="empty" className="flex items-center justify-center">
+                  <Camera className="w-10 h-10 text-muted-foreground/50" />
+                </span>
               )}
             </div>
           </div>
