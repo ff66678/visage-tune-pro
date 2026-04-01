@@ -98,7 +98,7 @@ const HomePage = () => {
   return (
     <div>
       {/* Top Nav */}
-      <nav className="flex justify-between items-center px-6 pt-8 pb-4 sticky top-0 bg-background/85 backdrop-blur-xl z-40">
+      <nav className={`flex justify-between items-center px-6 pb-4 sticky top-0 bg-background/85 backdrop-blur-xl z-40 transition-all duration-300 ${scrolled ? 'pt-3' : 'pt-8'}`}>
         <div className="flex items-center gap-3">
           <Avatar className="w-10 h-10 ring-[1.5px] ring-primary cursor-pointer" onClick={handleAvatarClick}>
             {avatarUrl && <AvatarImage src={avatarUrl} alt="Avatar" />}
