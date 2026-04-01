@@ -1,37 +1,59 @@
 
 
-## Plan: 登录页移到引导页前面
+## 发现的 Bug 和逻辑问题
 
-### 当前流程
-引导页问卷 → 加载动画 → 成功页 → **登录页** → 付费墙 → 完成
+### Bug 1（严重）：引导页登录后被导航走，无法继续问卷
 
-### 目标流程
-**登录页** → 引导页问卷 → 加载动画 → 成功页 → 付费墙 → 完成
+**问题**：Onboarding 组件在未登录时渲染 `<Auth showClose={false} />`。但 Auth 组件登录成功后会调用 `navigate(returnTo)`，而 `returnTo` 来自 URL 参数（`/onboarding` 没有 `returnTo` 参数），默认值是 `"/"`。结果用户登录后被导航到首页，**永远无法进入问卷**。
 
-### 改动
+Google OAuth 同理：`redirect_uri` 带的 `returnTo=/`，登录后回到 `/auth?returnTo=/`，AuthRoute 检测到已登录直接跳到 `/`。
 
-**1. `src/pages/Onboarding.tsx`**
+**修复**：给 Auth 组件添加 `onSuccess` 回调。当存在该回调时，登录成功后调用回调而非 `navigate`。Onboarding 中传入空回调（什么都不做），让组件自然 re-render 后显示问卷。
 
-- 在组件顶部，渲染任何步骤之前，先检查 `user` 是否为空。如果未登录，直接渲染 `<Auth showClose={false} />`，不进入问卷流程。
-- 删除 `handleSuccessNext` 中判断未登录显示 Auth 的分支，成功页之后直接进入付费墙（此时用户必定已登录）。
-- 删除 `showAuth` 状态及相关的 `useEffect`（不再需要在中间步骤显示登录）。
-
-**2. `src/App.tsx`**
-
-- `/onboarding` 路由保持公开（不包在 `ProtectedRoute` 里），因为 Onboarding 组件自己处理登录逻辑。
-
-### 技术细节
-
-```
-// Onboarding 组件内，在所有步骤渲染之前：
-if (!loading && !user) {
-  return <Auth showClose={false} />;
-}
-
-// handleSuccessNext 简化为：
-const handleSuccessNext = () => {
-  setShowSuccess(false);
-  setShowPaywall(true);
+```tsx
+// Auth.tsx
+const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?: () => void }) => {
+  // ...
+  // 邮箱登录成功后：
+  if (onSuccess) {
+    onSuccess();
+  } else {
+    navigate(returnTo, { replace: true });
+  }
+  // Google OAuth redirect_uri 也需要处理：
+  // 当 onSuccess 存在时，不传 returnTo 参数给 redirect_uri
 };
+
+// Onboarding.tsx
+<Auth showClose={false} onSuccess={() => {}} />
 ```
+
+### Bug 2（中等）：loading 状态下闪烁
+
+**问题**：Onboarding 组件在 `loading` 为 true 时，两个 early return 都不触发（第366、371行），代码落到底部渲染问卷 UI，此时 `user` 为 null。虽然不会报错，但会出现短暂闪烁。
+
+**修复**：在最前面加 loading 状态的加载动画：
+
+```tsx
+if (loading) {
+  return <加载动画 />;
+}
+```
+
+### Bug 3（轻微）：首页不强制未完成引导的用户去引导页
+
+**问题**：`/` 路由是公开的，不经过 `ProtectedRoute`。所以登录但未完成引导的用户可以自由使用首页，只有访问受保护路由时才被强制跳转引导页。这可能是设计意图，但如果希望强制引导，需要在 Index 页面也加检查。
+
+**建议**：确认这是否符合预期。如需强制，在 Index 组件中加一个判断。
+
+### 改动汇总
+
+**`src/pages/Auth.tsx`**
+- 新增 `onSuccess?: () => void` prop
+- 邮箱登录成功后，有 `onSuccess` 则调用它，否则 `navigate(returnTo)`
+- Google OAuth 的 `redirect_uri`：当有 `onSuccess` 时不带 `returnTo`
+
+**`src/pages/Onboarding.tsx`**
+- `<Auth showClose={false} onSuccess={() => {}} />` 传入空回调
+- 在 `loading` 为 true 时返回加载动画
 
