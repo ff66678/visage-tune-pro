@@ -46,9 +46,10 @@ const PlayIcon = () => (
 const WorkoutPlayer = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [seconds, setSeconds] = useState(45);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [seconds, setSeconds] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const navigate = useNavigate();
   const { data: course } = useCourse(id);
