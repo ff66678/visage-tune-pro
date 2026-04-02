@@ -382,7 +382,14 @@ const Onboarding = () => {
 
   const completeOnboardingWithPayment = async () => {
     if (user) {
-      await supabase.from("profiles").update({ onboarding_completed: true, paywall_completed: true } as any).eq("user_id", user.id);
+      await supabase.from("profiles").update({
+        onboarding_completed: true,
+        paywall_completed: true,
+        onboarding_goal: goal,
+        skin_type: skinType,
+        concerns: concernsList,
+        preferred_time: time,
+      } as any).eq("user_id", user.id);
       setOnboardingCompleted(true);
       navigate("/");
     }
