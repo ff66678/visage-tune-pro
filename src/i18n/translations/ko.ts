@@ -385,6 +385,9 @@ const ko: Record<string, string> = {
   "weekday.fri": "금",
   "weekday.sat": "토",
   "weekday.sun": "일",
+
+  "analysis.success": "분석 완료 ✨",
+  "analysis.failed": "분석 실패: ",
 };
 
 export default ko;

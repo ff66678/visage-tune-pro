@@ -272,31 +272,43 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          concerns: string[] | null
           created_at: string
           display_name: string | null
           id: string
           onboarding_completed: boolean
+          onboarding_goal: string | null
           paywall_completed: boolean
+          preferred_time: string | null
+          skin_type: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          concerns?: string[] | null
           created_at?: string
           display_name?: string | null
           id?: string
           onboarding_completed?: boolean
+          onboarding_goal?: string | null
           paywall_completed?: boolean
+          preferred_time?: string | null
+          skin_type?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          concerns?: string[] | null
           created_at?: string
           display_name?: string | null
           id?: string
           onboarding_completed?: boolean
+          onboarding_goal?: string | null
           paywall_completed?: boolean
+          preferred_time?: string | null
+          skin_type?: string | null
           updated_at?: string
           user_id?: string
         }

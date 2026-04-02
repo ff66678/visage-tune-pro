@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useTranslation } from "@/i18n/LanguageContext";
 
 export interface FaceAnalysis {
   id: string;
@@ -57,6 +58,7 @@ export const useLatestAnalysis = () => {
 
 export const useRunAnalysis = () => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: async (photoUrl: string) => {
@@ -70,10 +72,10 @@ export const useRunAnalysis = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["face-analyses"] });
       queryClient.invalidateQueries({ queryKey: ["face-analysis-latest"] });
-      toast.success("分析完成 ✨");
+      toast.success(t("analysis.success"));
     },
     onError: (err: any) => {
-      toast.error("分析失败：" + (err.message || "未知错误"));
+      toast.error(t("analysis.failed") + (err.message || "Unknown error"));
     },
   });
 };
