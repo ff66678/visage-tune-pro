@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useLayoutEffect, useCallback } from "react";
+import { scrollPositions } from "@/lib/scrollPositions";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Gift, Star, Crown, Clock, Dumbbell, Flame, Heart, Zap, BookOpen, Play, ChevronRight } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
