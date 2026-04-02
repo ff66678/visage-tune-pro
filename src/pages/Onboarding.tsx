@@ -144,10 +144,10 @@ const ConcernsStep = ({ selected, onToggle, t }: { selected: string[]; onToggle:
 // Step 5: Time
 const TimeStep = ({ selected, onSelect, t }: { selected: string | null; onSelect: (v: string) => void; t: (k: string) => string }) => {
   const timeOptions = [
-    { icon: Clock, label: t("onboarding.time5"), desc: t("onboarding.time5Desc") },
-    { icon: Hourglass, label: t("onboarding.time10"), desc: t("onboarding.time10Desc") },
-    { icon: Timer, label: t("onboarding.time15"), desc: t("onboarding.time15Desc") },
-    { icon: Infinity, label: t("onboarding.time20"), desc: t("onboarding.time20Desc") },
+    { key: "5min", icon: Clock, label: t("onboarding.time5"), desc: t("onboarding.time5Desc") },
+    { key: "10min", icon: Hourglass, label: t("onboarding.time10"), desc: t("onboarding.time10Desc") },
+    { key: "15min", icon: Timer, label: t("onboarding.time15"), desc: t("onboarding.time15Desc") },
+    { key: "20min", icon: Infinity, label: t("onboarding.time20"), desc: t("onboarding.time20Desc") },
   ];
   return (
     <div className="flex-1 overflow-y-auto px-6 pb-32">
