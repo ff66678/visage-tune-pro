@@ -385,6 +385,9 @@ const zhTW: Record<string, string> = {
   "weekday.fri": "五",
   "weekday.sat": "六",
   "weekday.sun": "日",
+
+  "analysis.success": "分析完成 ✨",
+  "analysis.failed": "分析失敗：",
 };
 
 export default zhTW;

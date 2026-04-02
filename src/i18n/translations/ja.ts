@@ -385,6 +385,9 @@ const ja: Record<string, string> = {
   "weekday.fri": "金",
   "weekday.sat": "土",
   "weekday.sun": "日",
+
+  "analysis.success": "分析完了 ✨",
+  "analysis.failed": "分析に失敗しました：",
 };
 
 export default ja;

@@ -385,6 +385,9 @@ const en: Record<string, string> = {
   "weekday.fri": "Fri",
   "weekday.sat": "Sat",
   "weekday.sun": "Sun",
+
+  "analysis.success": "Analysis complete ✨",
+  "analysis.failed": "Analysis failed: ",
 };
 
 export default en;
