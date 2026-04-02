@@ -58,7 +58,7 @@ const WorkoutPlayer = () => {
   const toggleFavorite = useToggleFavorite();
   const queryClient = useQueryClient();
   const containerRef = useRef<HTMLDivElement>(null);
-
+  const isClosingRef = useRef(false);
 
   const isFavorited = id ? (favoriteIds?.has(id) ?? false) : false;
 
@@ -136,7 +136,8 @@ const WorkoutPlayer = () => {
   };
 
   const handleClose = useCallback(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || isClosingRef.current) return;
+    isClosingRef.current = true;
     const el = containerRef.current;
     el.classList.remove("animate-slide-in-up");
     el.style.willChange = "transform";
