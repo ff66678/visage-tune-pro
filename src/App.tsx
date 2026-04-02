@@ -19,7 +19,6 @@ import Favorites from "./pages/Favorites.tsx";
 import RecentlyPlayed from "./pages/RecentlyPlayed.tsx";
 import LanguageSettings from "./pages/LanguageSettings.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
-import OAuthCallback from "./pages/OAuthCallback.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -82,7 +81,6 @@ const App = () => (
               <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
               <Route path="/recently-played" element={<ProtectedRoute><RecentlyPlayed /></ProtectedRoute>} />
               <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
-              <Route path="/oauth-native-callback" element={<OAuthCallback />} />
               <Route path="/language" element={<ProtectedRoute><LanguageSettings /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>

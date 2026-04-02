@@ -2,9 +2,6 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { Capacitor } from "@capacitor/core";
-import { Browser } from "@capacitor/browser";
-import { App as CapApp } from "@capacitor/app";
 import { Mail, Lock, User, Eye, EyeOff, X } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslation } from "@/i18n/LanguageContext";
@@ -61,36 +58,9 @@ const Auth = ({ showClose = true, onSuccess }: { showClose?: boolean; onSuccess?
   };
 
   const handleGoogleLogin = async () => {
-    if (Capacitor.isNativePlatform()) {
-      const scheme = "app.lovable.faceyoga";
-      const webOrigin = "https://a760e783-0c5e-4cc7-bc79-1683400b12d2.lovableproject.com";
-      const callbackUrl = `${webOrigin}/oauth-native-callback?returnScheme=${encodeURIComponent(scheme)}`;
-
-      // Listen for custom URL scheme callback
-      const listener = await CapApp.addListener("appUrlOpen", async ({ url }) => {
-        try {
-          const params = new URL(url).searchParams;
-          const accessToken = params.get("access_token");
-          const refreshToken = params.get("refresh_token");
-          if (accessToken && refreshToken) {
-            await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-            await Browser.close();
-            listener.remove();
-            toast.success(t("auth.loginSuccess"));
-            navigate(returnTo, { replace: true });
-          }
-        } catch (err) {
-          listener.remove();
-          toast.error("Google login failed");
-        }
-      });
-
-      await Browser.open({ url: callbackUrl });
-    } else {
-      const redirectUri = `${window.location.origin}/auth?returnTo=${encodeURIComponent(returnTo)}`;
-      const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: redirectUri });
-      if (error) toast.error("Google login failed");
-    }
+    const redirectUri = `${window.location.origin}/auth?returnTo=${encodeURIComponent(returnTo)}`;
+    const { error } = await lovable.auth.signInWithOAuth("google", { redirect_uri: redirectUri });
+    if (error) toast.error("Google login failed");
   };
 
   return (
