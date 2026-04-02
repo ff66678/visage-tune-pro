@@ -19,6 +19,7 @@ import Favorites from "./pages/Favorites.tsx";
 import RecentlyPlayed from "./pages/RecentlyPlayed.tsx";
 import LanguageSettings from "./pages/LanguageSettings.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
+import OAuthCallback from "./pages/OAuthCallback.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
