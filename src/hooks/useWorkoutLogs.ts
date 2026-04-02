@@ -108,7 +108,7 @@ export const useWeeklyProgress = (weekdayLabels?: string[]) => {
   const monday = new Date(today);
   monday.setDate(today.getDate() + mondayOffset);
 
-  const labels = weekdayLabels || ["一", "二", "三", "四", "五", "六", "日"];
+  const labels = weekdayLabels || ["M", "T", "W", "T", "F", "S", "S"];
   const counts = new Array(7).fill(0);
 
   logs.forEach((l) => {

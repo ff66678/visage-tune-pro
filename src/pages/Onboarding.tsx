@@ -28,10 +28,10 @@ const WelcomeStep = ({ onNext, t }: { onNext: () => void; t: (k: string, a?: (st
 // Step 2: Goal
 const GoalStep = ({ selected, onSelect, t }: { selected: string | null; onSelect: (v: string) => void; t: (k: string) => string }) => {
   const goals = [
-    { icon: TrendingDown, label: t("onboarding.goalLift"), desc: t("onboarding.goalLiftDesc") },
-    { icon: Sparkles, label: t("onboarding.goalGlow"), desc: t("onboarding.goalGlowDesc") },
-    { icon: Clock, label: t("onboarding.goalAntiAge"), desc: t("onboarding.goalAntiAgeDesc") },
-    { icon: Heart, label: t("onboarding.goalRelax"), desc: t("onboarding.goalRelaxDesc") },
+    { key: "lift", icon: TrendingDown, label: t("onboarding.goalLift"), desc: t("onboarding.goalLiftDesc") },
+    { key: "glow", icon: Sparkles, label: t("onboarding.goalGlow"), desc: t("onboarding.goalGlowDesc") },
+    { key: "anti_age", icon: Clock, label: t("onboarding.goalAntiAge"), desc: t("onboarding.goalAntiAgeDesc") },
+    { key: "relax", icon: Heart, label: t("onboarding.goalRelax"), desc: t("onboarding.goalRelaxDesc") },
   ];
   return (
     <div className="flex-1 overflow-y-auto px-6 pb-32">
@@ -39,9 +39,9 @@ const GoalStep = ({ selected, onSelect, t }: { selected: string | null; onSelect
       <p className="text-sm text-muted-foreground mb-8">{t("onboarding.goalDesc")}</p>
       <div className="space-y-4">
         {goals.map((g) => {
-          const active = selected === g.label;
+          const active = selected === g.key;
           return (
-            <button key={g.label} onClick={() => onSelect(g.label)}
+            <button key={g.key} onClick={() => onSelect(g.key)}
               className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${active ? 'border-primary bg-primary/5' : 'border-transparent bg-card'}`}
               style={{ boxShadow: active ? undefined : '0 10px 30px -10px rgba(181,137,137,0.15)' }}>
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${active ? 'bg-primary/20' : 'bg-secondary'}`}>
@@ -65,10 +65,10 @@ const GoalStep = ({ selected, onSelect, t }: { selected: string | null; onSelect
 // Step 3: Skin Type
 const SkinTypeStep = ({ selected, onSelect, t }: { selected: string | null; onSelect: (v: string) => void; t: (k: string) => string }) => {
   const skinTypes = [
-    { icon: Droplets, label: t("onboarding.skinOily"), desc: t("onboarding.skinOilyDesc") },
-    { icon: Wind, label: t("onboarding.skinDry"), desc: t("onboarding.skinDryDesc") },
-    { icon: Link, label: t("onboarding.skinCombo"), desc: t("onboarding.skinComboDesc") },
-    { icon: Heart, label: t("onboarding.skinSensitive"), desc: t("onboarding.skinSensitiveDesc") },
+    { key: "oily", icon: Droplets, label: t("onboarding.skinOily"), desc: t("onboarding.skinOilyDesc") },
+    { key: "dry", icon: Wind, label: t("onboarding.skinDry"), desc: t("onboarding.skinDryDesc") },
+    { key: "combo", icon: Link, label: t("onboarding.skinCombo"), desc: t("onboarding.skinComboDesc") },
+    { key: "sensitive", icon: Heart, label: t("onboarding.skinSensitive"), desc: t("onboarding.skinSensitiveDesc") },
   ];
   return (
     <div className="flex-1 overflow-y-auto px-6 pb-32">
@@ -76,9 +76,9 @@ const SkinTypeStep = ({ selected, onSelect, t }: { selected: string | null; onSe
       <p className="text-sm text-muted-foreground mb-8">{t("onboarding.skinDesc")}</p>
       <div className="space-y-4">
         {skinTypes.map((s) => {
-          const active = selected === s.label;
+          const active = selected === s.key;
           return (
-            <button key={s.label} onClick={() => onSelect(s.label)}
+            <button key={s.key} onClick={() => onSelect(s.key)}
               className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${active ? 'border-primary bg-primary/5' : 'border-transparent bg-card'}`}
               style={{ boxShadow: active ? undefined : '0 10px 30px -10px rgba(181,137,137,0.15)' }}>
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${active ? 'bg-primary/20' : 'bg-secondary'}`}>
@@ -102,10 +102,10 @@ const SkinTypeStep = ({ selected, onSelect, t }: { selected: string | null; onSe
 // Step 4: Skin Concerns
 const ConcernsStep = ({ selected, onToggle, t }: { selected: string[]; onToggle: (v: string) => void; t: (k: string) => string }) => {
   const concerns = [
-    { icon: Sparkles, label: t("onboarding.concernLines"), desc: t("onboarding.concernLinesDesc") },
-    { icon: TrendingDown, label: t("onboarding.concernSag"), desc: t("onboarding.concernSagDesc") },
-    { icon: Moon, label: t("onboarding.concernDark"), desc: t("onboarding.concernDarkDesc") },
-    { icon: Frown, label: t("onboarding.concernDull"), desc: t("onboarding.concernDullDesc") },
+    { key: "lines", icon: Sparkles, label: t("onboarding.concernLines"), desc: t("onboarding.concernLinesDesc") },
+    { key: "sagging", icon: TrendingDown, label: t("onboarding.concernSag"), desc: t("onboarding.concernSagDesc") },
+    { key: "dark_circles", icon: Moon, label: t("onboarding.concernDark"), desc: t("onboarding.concernDarkDesc") },
+    { key: "dullness", icon: Frown, label: t("onboarding.concernDull"), desc: t("onboarding.concernDullDesc") },
   ];
   return (
     <div className="flex-1 overflow-y-auto px-6 pb-32">
@@ -113,9 +113,9 @@ const ConcernsStep = ({ selected, onToggle, t }: { selected: string[]; onToggle:
       <p className="text-sm text-muted-foreground mb-8">{t("onboarding.concernDesc")}</p>
       <div className="space-y-4">
         {concerns.map((c) => {
-          const active = selected.includes(c.label);
+          const active = selected.includes(c.key);
           return (
-            <button key={c.label} onClick={() => onToggle(c.label)}
+            <button key={c.key} onClick={() => onToggle(c.key)}
               className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${active ? 'border-primary bg-primary/5' : 'border-transparent bg-card'}`}
               style={{ boxShadow: active ? undefined : '0 10px 30px -10px rgba(181,137,137,0.15)' }}>
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${active ? 'bg-primary/20' : 'bg-secondary'}`}>
@@ -144,10 +144,10 @@ const ConcernsStep = ({ selected, onToggle, t }: { selected: string[]; onToggle:
 // Step 5: Time
 const TimeStep = ({ selected, onSelect, t }: { selected: string | null; onSelect: (v: string) => void; t: (k: string) => string }) => {
   const timeOptions = [
-    { icon: Clock, label: t("onboarding.time5"), desc: t("onboarding.time5Desc") },
-    { icon: Hourglass, label: t("onboarding.time10"), desc: t("onboarding.time10Desc") },
-    { icon: Timer, label: t("onboarding.time15"), desc: t("onboarding.time15Desc") },
-    { icon: Infinity, label: t("onboarding.time20"), desc: t("onboarding.time20Desc") },
+    { key: "5min", icon: Clock, label: t("onboarding.time5"), desc: t("onboarding.time5Desc") },
+    { key: "10min", icon: Hourglass, label: t("onboarding.time10"), desc: t("onboarding.time10Desc") },
+    { key: "15min", icon: Timer, label: t("onboarding.time15"), desc: t("onboarding.time15Desc") },
+    { key: "20min", icon: Infinity, label: t("onboarding.time20"), desc: t("onboarding.time20Desc") },
   ];
   return (
     <div className="flex-1 overflow-y-auto px-6 pb-32">
@@ -155,9 +155,9 @@ const TimeStep = ({ selected, onSelect, t }: { selected: string | null; onSelect
       <p className="text-sm text-muted-foreground mb-8">{t("onboarding.timeDesc")}</p>
       <div className="space-y-4">
         {timeOptions.map((opt) => {
-          const active = selected === opt.label;
+          const active = selected === opt.key;
           return (
-            <button key={opt.label} onClick={() => onSelect(opt.label)}
+            <button key={opt.key} onClick={() => onSelect(opt.key)}
               className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${active ? 'border-primary bg-primary/5' : 'border-transparent bg-card'}`}
               style={{ boxShadow: active ? undefined : '0 10px 30px -10px rgba(181,137,137,0.15)' }}>
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${active ? 'bg-primary/20' : 'bg-secondary'}`}>

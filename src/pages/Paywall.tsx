@@ -219,7 +219,7 @@ const Paywall = ({ mode = "onboarding", onClose, onPaid }: PaywallProps) => {
 
       <div className="h-40" />
 
-      <div className="fixed bottom-0 left-0 right-0 p-6 pt-16 z-20" style={{ background: "linear-gradient(to top, hsl(var(--background)) 60%, transparent)" }}>
+      <div className="fixed bottom-0 left-0 right-0 p-6 pt-16 z-20 max-w-[480px] mx-auto" style={{ background: "linear-gradient(to top, hsl(var(--background)) 60%, transparent)" }}>
         <button
           onClick={handleStartTrial}
           disabled={purchasing}
