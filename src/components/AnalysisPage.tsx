@@ -85,8 +85,9 @@ const AnalysisPage = () => {
 
   const getRecommendedCourses = () => {
     if (!latest) return courses.slice(0, 3);
+    // Note: course.category is always the raw DB value (Chinese), never translated
     const recommended = courses.filter((c) => {
-      const cat = c.category.toLowerCase();
+      const cat = c.category;
       if (latest.jawline_level === "fair" || latest.jawline_level === "poor") {
         if (cat.includes("下颌") || cat.includes("轮廓") || cat.includes("提升")) return true;
       }
