@@ -87,6 +87,7 @@ const WorkoutPlayer = () => {
       const parsed = parseDuration(course.duration);
       setTotalSeconds(parsed);
       setSeconds(parsed);
+      setIsReady(true);
     }
   }, [course?.duration]);
 
