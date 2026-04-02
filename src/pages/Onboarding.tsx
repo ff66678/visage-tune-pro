@@ -155,9 +155,9 @@ const TimeStep = ({ selected, onSelect, t }: { selected: string | null; onSelect
       <p className="text-sm text-muted-foreground mb-8">{t("onboarding.timeDesc")}</p>
       <div className="space-y-4">
         {timeOptions.map((opt) => {
-          const active = selected === opt.label;
+          const active = selected === opt.key;
           return (
-            <button key={opt.label} onClick={() => onSelect(opt.label)}
+            <button key={opt.key} onClick={() => onSelect(opt.key)}
               className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${active ? 'border-primary bg-primary/5' : 'border-transparent bg-card'}`}
               style={{ boxShadow: active ? undefined : '0 10px 30px -10px rgba(181,137,137,0.15)' }}>
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${active ? 'bg-primary/20' : 'bg-secondary'}`}>
