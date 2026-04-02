@@ -24,10 +24,7 @@ const AnalysisPage = () => {
   const location = useLocation();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [scrolled, setScrolled] = useState(() => {
-    const { scrollPositions } = require("@/lib/scrollPositions");
-    return (scrollPositions.get(2) || 0) > 20;
-  });
+  const [scrolled, setScrolled] = useState(() => (scrollPositions.get(2) || 0) > 20);
   const scrollContainerRef = useScrollContainer();
 
   useLayoutEffect(() => {

@@ -23,10 +23,7 @@ const defaultCategoryIcon = <BookOpen className="w-5 h-5" />;
 
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
-  const [scrolled, setScrolled] = useState(() => {
-    const { scrollPositions } = require("@/lib/scrollPositions");
-    return (scrollPositions.get(0) || 0) > 20;
-  });
+  const [scrolled, setScrolled] = useState(() => (scrollPositions.get(0) || 0) > 20);
   const scrollContainerRef = useScrollContainer();
   // Reset startClicked when component re-renders (e.g. navigating back)
   useEffect(() => { setStartClicked(false); }, []);
