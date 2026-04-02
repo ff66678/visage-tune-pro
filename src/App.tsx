@@ -82,6 +82,7 @@ const App = () => (
               <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
               <Route path="/recently-played" element={<ProtectedRoute><RecentlyPlayed /></ProtectedRoute>} />
               <Route path="/workout/:id" element={<ProtectedRoute><WorkoutPlayer /></ProtectedRoute>} />
+              <Route path="/oauth-native-callback" element={<OAuthCallback />} />
               <Route path="/language" element={<ProtectedRoute><LanguageSettings /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
