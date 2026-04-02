@@ -96,7 +96,7 @@ const WorkoutPlayer = () => {
   const elapsed = totalSeconds - seconds;
 
   useEffect(() => {
-    if (seconds === 0 && !isFinished && user && id) {
+    if (seconds === 0 && isReady && !isFinished && user && id) {
       setIsFinished(true);
       supabase.from("workout_logs").insert({ user_id: user.id, course_id: id, duration_seconds: totalSeconds })
         .then(({ error }) => {
