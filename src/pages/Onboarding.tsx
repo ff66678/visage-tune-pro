@@ -28,10 +28,10 @@ const WelcomeStep = ({ onNext, t }: { onNext: () => void; t: (k: string, a?: (st
 // Step 2: Goal
 const GoalStep = ({ selected, onSelect, t }: { selected: string | null; onSelect: (v: string) => void; t: (k: string) => string }) => {
   const goals = [
-    { icon: TrendingDown, label: t("onboarding.goalLift"), desc: t("onboarding.goalLiftDesc") },
-    { icon: Sparkles, label: t("onboarding.goalGlow"), desc: t("onboarding.goalGlowDesc") },
-    { icon: Clock, label: t("onboarding.goalAntiAge"), desc: t("onboarding.goalAntiAgeDesc") },
-    { icon: Heart, label: t("onboarding.goalRelax"), desc: t("onboarding.goalRelaxDesc") },
+    { key: "lift", icon: TrendingDown, label: t("onboarding.goalLift"), desc: t("onboarding.goalLiftDesc") },
+    { key: "glow", icon: Sparkles, label: t("onboarding.goalGlow"), desc: t("onboarding.goalGlowDesc") },
+    { key: "anti_age", icon: Clock, label: t("onboarding.goalAntiAge"), desc: t("onboarding.goalAntiAgeDesc") },
+    { key: "relax", icon: Heart, label: t("onboarding.goalRelax"), desc: t("onboarding.goalRelaxDesc") },
   ];
   return (
     <div className="flex-1 overflow-y-auto px-6 pb-32">
