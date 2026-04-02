@@ -113,9 +113,9 @@ const ConcernsStep = ({ selected, onToggle, t }: { selected: string[]; onToggle:
       <p className="text-sm text-muted-foreground mb-8">{t("onboarding.concernDesc")}</p>
       <div className="space-y-4">
         {concerns.map((c) => {
-          const active = selected.includes(c.label);
+          const active = selected.includes(c.key);
           return (
-            <button key={c.label} onClick={() => onToggle(c.label)}
+            <button key={c.key} onClick={() => onToggle(c.key)}
               className={`w-full flex items-center gap-4 p-5 rounded-3xl border-2 transition-all ${active ? 'border-primary bg-primary/5' : 'border-transparent bg-card'}`}
               style={{ boxShadow: active ? undefined : '0 10px 30px -10px rgba(181,137,137,0.15)' }}>
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${active ? 'bg-primary/20' : 'bg-secondary'}`}>
