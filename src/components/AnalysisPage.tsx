@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useLayoutEffect } from "react";
+import { scrollPositions } from "@/lib/scrollPositions";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ScanFace, TrendingUp, Shield, Eye, Smile, ChevronRight, Camera, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +24,7 @@ const AnalysisPage = () => {
   const location = useLocation();
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(() => (scrollPositions.get(2) || 0) > 20);
   const scrollContainerRef = useScrollContainer();
 
   useLayoutEffect(() => {

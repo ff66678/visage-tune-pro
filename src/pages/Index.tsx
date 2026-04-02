@@ -53,13 +53,9 @@ const Index = () => {
       const timer = setTimeout(() => el.classList.remove("animate-fade-in-opacity"), 300);
       return () => clearTimeout(timer);
     } else {
-      el.classList.remove("animate-fade-in", "animate-fade-in-opacity", "animate-slide-in-left");
-      void el.offsetWidth;
-      el.classList.add("animate-slide-in-left");
+      // Returning from sub-page: just restore scroll, no animation
       const saved = scrollPositions.get(activeTab) || 0;
       scrollRef.current?.scrollTo({ top: saved, behavior: 'instant' });
-      const timer = setTimeout(() => el.classList.remove("animate-slide-in-left"), 350);
-      return () => clearTimeout(timer);
     }
   }, [activeTab]);
 

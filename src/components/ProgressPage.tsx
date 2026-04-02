@@ -1,4 +1,5 @@
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from "react";
+import { scrollPositions } from "@/lib/scrollPositions";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Camera, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Sparkles, Loader2, ImageIcon } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
@@ -27,7 +28,7 @@ const ProgressPage = () => {
   const { data: recentPhotos = [] } = useProgressPhotos();
   const uploadMutation = useUploadProgressPhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(() => (scrollPositions.get(3) || 0) > 20);
   const scrollContainerRef = useScrollContainer();
 
   useLayoutEffect(() => {

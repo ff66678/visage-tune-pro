@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, useLayoutEffect, useCallback } from "react";
+import { scrollPositions } from "@/lib/scrollPositions";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Gift, Star, Crown, Clock, Dumbbell, Flame, Heart, Zap, BookOpen, Play, ChevronRight } from "lucide-react";
 import { useCourses } from "@/hooks/useCourses";
@@ -22,7 +23,7 @@ const defaultCategoryIcon = <BookOpen className="w-5 h-5" />;
 
 const HomePage = () => {
   const [startClicked, setStartClicked] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(() => (scrollPositions.get(0) || 0) > 20);
   const scrollContainerRef = useScrollContainer();
   // Reset startClicked when component re-renders (e.g. navigating back)
   useEffect(() => { setStartClicked(false); }, []);
