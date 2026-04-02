@@ -102,10 +102,10 @@ const SkinTypeStep = ({ selected, onSelect, t }: { selected: string | null; onSe
 // Step 4: Skin Concerns
 const ConcernsStep = ({ selected, onToggle, t }: { selected: string[]; onToggle: (v: string) => void; t: (k: string) => string }) => {
   const concerns = [
-    { icon: Sparkles, label: t("onboarding.concernLines"), desc: t("onboarding.concernLinesDesc") },
-    { icon: TrendingDown, label: t("onboarding.concernSag"), desc: t("onboarding.concernSagDesc") },
-    { icon: Moon, label: t("onboarding.concernDark"), desc: t("onboarding.concernDarkDesc") },
-    { icon: Frown, label: t("onboarding.concernDull"), desc: t("onboarding.concernDullDesc") },
+    { key: "lines", icon: Sparkles, label: t("onboarding.concernLines"), desc: t("onboarding.concernLinesDesc") },
+    { key: "sagging", icon: TrendingDown, label: t("onboarding.concernSag"), desc: t("onboarding.concernSagDesc") },
+    { key: "dark_circles", icon: Moon, label: t("onboarding.concernDark"), desc: t("onboarding.concernDarkDesc") },
+    { key: "dullness", icon: Frown, label: t("onboarding.concernDull"), desc: t("onboarding.concernDullDesc") },
   ];
   return (
     <div className="flex-1 overflow-y-auto px-6 pb-32">
