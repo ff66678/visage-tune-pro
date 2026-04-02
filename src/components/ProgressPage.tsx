@@ -27,7 +27,10 @@ const ProgressPage = () => {
   const { data: recentPhotos = [] } = useProgressPhotos();
   const uploadMutation = useUploadProgressPhoto();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(() => {
+    const { scrollPositions } = require("@/lib/scrollPositions");
+    return (scrollPositions.get(3) || 0) > 20;
+  });
   const scrollContainerRef = useScrollContainer();
 
   useLayoutEffect(() => {
