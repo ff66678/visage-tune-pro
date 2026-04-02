@@ -1,203 +1,152 @@
 
 
-# 全面问题审计报告
+# 问题诊断报告（第二轮）
+
+基于上一轮修复后的代码全面审查，以下是新发现的问题。
 
 ---
 
-## 严重 (Critical) — 影响上线
+## 严重 (Critical)
 
-### S1. 首页路由 `/` 未受 ProtectedRoute 保护，但依赖已登录数据
+### C1. AnalysisPage 推荐课程过滤使用硬编码中文匹配
+
+- **类型**: 真正的 bug
+- **复现**: 切换为英文/日文/韩文后，面部分析推荐课程逻辑在 `getRecommendedCourses()` 中用 `cat.includes("下颌")` / `cat.includes("法令")` / `cat.includes("眼")` 做中文字符串匹配。而 `useCourses` 在非中文语言下会返回翻译后的 category（或原始中文 category 取决于翻译逻辑）
+- **影响**: 非中文环境下推荐逻辑永远匹配不到，退回到 fallback（前3条课程），推荐完全失效
+- **涉及文件**: `src/components/AnalysisPage.tsx` L86-101
+- **修复建议**: 用数据库原始 category 值（中文）做匹配，而不是翻译后的值。或改为用 category key 常量做匹配
+- **是否立即修复**: 是
+
+### C2. LibraryPage 过滤器使用硬编码中文 `dbValue` 做匹配
 
 - **类型**: 逻辑风险
-- **复现**: 未登录用户直接访问 `/`，首页正常显示（设计如此），但 `useWeeklyProgress`、`useFavorites`、`usePaywallStatus` 等 hook 在 `user=null` 时仍被调用
-- **影响**: 目前 hook 内部有 `enabled: !!user` 守护，不会崩溃。但 `usePaywallStatus` 在 web 端当 `!user` 时 query 被跳过，`isPaid` 默认 `false`，PRO 按钮会始终显示 — 这是正确行为
-- **根因**: `/` 路由有意设计为公开。此项不是 bug，确认无问题
-- **是否修复**: 否，行为正确
-
-### S2. Onboarding 答案数据未持久化
-
-- **类型**: 真正的 bug
-- **复现**: 完成 onboarding 6 步问卷，选择的 goal、skinType、concerns、time 数据仅存在于组件 state 中，`completeOnboarding` 函数只更新 `onboarding_completed=true`，从未将用户选择写入数据库
-- **影响**: 用户辛苦回答的个性化数据全部丢失，无法用于推荐、个性化等后续功能
-- **涉及文件**: `src/pages/Onboarding.tsx` (L348-354)
-- **修复建议**: 在 profiles 表增加 `onboarding_goal`、`skin_type`、`concerns`、`preferred_time` 字段，onboarding 完成时一并写入
-- **是否立即修复**: 是 — 核心产品数据丢失
-
-### S3. `useFaceAnalysis` 成功/失败 toast 使用硬编码中文
-
-- **类型**: 真正的 bug
-- **复现**: 切换为英文/韩文/日文后，面部分析成功显示 "分析完成 ✨"，失败显示 "分析失败：..."
-- **影响**: 多语言用户体验断裂
-- **涉及文件**: `src/hooks/useFaceAnalysis.ts` (L73-77)
-- **修复建议**: 使用 i18n key 替换硬编码
-- **是否立即修复**: 是
-
-### S4. `handle_new_user` 触发器未挂载
-
-- **类型**: 真正的 bug
-- **复现**: 数据库有 `handle_new_user()` 函数但 triggers 列表为空 — 说明新用户注册时不会自动创建 profile
-- **影响**: AuthContext 的 fallback 逻辑（L39-43）会手动 insert，但没有设置 `display_name` 和 `avatar_url`，这些只有 trigger 才会从 `raw_user_meta_data` 提取。Google OAuth 注册的用户头像和显示名会丢失
-- **涉及文件**: 数据库 trigger 配置, `src/contexts/AuthContext.tsx`
-- **修复建议**: 创建 migration 挂载 trigger: `CREATE TRIGGER on_auth_user_created AFTER INSERT ON auth.users FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();`
-- **是否立即修复**: 是
+- **复现**: LibraryPage L25-34 的 `filterKeys` 中 `dbValue` 是中文（"眼部"、"下颌" 等），直接与 `course.category` 做 `===` 比较。如果 `useCourses` 返回的是翻译后的 category，过滤将完全失效
+- **影响**: 取决于 `useCourses` 是否翻译 category 字段。如果翻译了，非中文用户无法按分类筛选
+- **涉及文件**: `src/components/LibraryPage.tsx` L25-34, L106-107
+- **修复建议**: 确保 category 过滤始终用数据库原始值，UI 展示时才翻译
+- **是否立即修复**: 是 — 需确认 `useCourses` 的翻译逻辑
 
 ---
 
 ## 中等 (Medium)
 
-### M1. Paywall web 端跳过付费过于轻松
+### M1. WorkoutPlayer 计时器初始值闪烁
 
-- **类型**: 需要产品决策
-- **复现**: web 端点击"开始试用"直接 `markPaid()` 写入 `paywall_completed=true`，无需任何支付
-- **影响**: 开发/测试方便，但如果 web 版对外发布，任何用户都能免费解锁全部内容
-- **涉及文件**: `src/pages/Paywall.tsx` (L68-73), `src/hooks/usePaywallStatus.ts`
-- **修复建议**: 需要你决定 web 端是否需要真实支付（如 Stripe），还是仅限 native 端收费
-- **是否立即修复**: 产品决策点
-
-### M2. CourseDetail 顶部栏和底部栏使用 `createPortal(document.body)`
-
-- **类型**: 逻辑风险
-- **复现**: 顶部/底部按钮 portal 到 body，不受 `max-w-[480px]` 容器约束
-- **影响**: 在宽屏设备上，顶栏和底栏会横跨全屏而非限制在 480px 内。移动端正常
-- **涉及文件**: `src/pages/CourseDetail.tsx` (L110, L202)
-- **修复建议**: 改为 portal 到 `SwipeBack` 容器内，或添加 `max-w-[480px] mx-auto` 到 portal 元素
-- **是否立即修复**: 中 — 移动端优先的话可延后
-
-### M3. Onboarding 流程中 paywall 的 `onClose` 直接完成 onboarding
-
-- **类型**: 逻辑风险
-- **复现**: 用户在 onboarding paywall 点 X 关闭 → 调用 `completeOnboarding()` → `onboarding_completed=true` → 跳转首页。用户可跳过付费
-- **影响**: 这是设计意图（onboarding 模式 paywall 允许跳过），但如果未来希望强制付费，这里需要改
-- **涉及文件**: `src/pages/Onboarding.tsx` (L386)
-- **修复建议**: 确认这是产品意图
-- **是否立即修复**: 产品决策点
-
-### M4. 未付费用户可自由访问所有课程内容（除了开始训练）
-
-- **类型**: 需要产品决策
-- **复现**: 未付费用户可以浏览所有课程详情页，查看描述、评分等。只有点"开始训练"时才拦截
-- **影响**: 这可能是有意的（preview before buy），也可能需要更早拦截
-- **涉及文件**: `src/pages/CourseDetail.tsx` (L54-61)
-- **修复建议**: 确认这是产品意图
-- **是否立即修复**: 产品决策点
-
-### M5. `profiles` 表的 RLS insert 策略允许 `public` 角色
-
-- **类型**: 安全风险
-- **复现**: profiles 表的 INSERT 和 UPDATE 策略使用 `public` 角色而非 `authenticated`
-- **影响**: 理论上匿名用户也可以尝试 insert/update profile（但 `auth.uid()` check 会让实际影响有限）。但最佳实践是限制为 `authenticated`
-- **涉及文件**: 数据库 RLS policies
-- **修复建议**: 将 profiles 表 INSERT/UPDATE/SELECT 策略角色改为 `authenticated`
+- **类型**: UX 问题
+- **复现**: 打开 WorkoutPlayer 时，`seconds` 初始为 45（L50），然后 useEffect 在 course 加载后重设为 `parseDuration(course.duration)`。用户会短暂看到 `00:45` 然后跳变
+- **影响**: 视觉闪烁
+- **涉及文件**: `src/pages/WorkoutPlayer.tsx` L50, L84-89
+- **修复建议**: 初始值设为 0 或 null，在 course 未加载时显示 loading 状态
 - **是否立即修复**: 建议修
 
-### M6. Leaked Password Protection 未开启
+### M2. WorkoutPlayer 自动播放 — 用户还没看清就开始倒计时
 
-- **类型**: 安全风险
-- **复现**: Supabase linter 报告密码泄露检测已关闭
-- **影响**: 用户可使用已知泄露的弱密码注册
-- **涉及文件**: Auth 配置
-- **修复建议**: 在 Lovable Cloud Auth Settings 中启用 Password HIBP Check
+- **类型**: UX 问题
+- **复现**: 进入 WorkoutPlayer 时 `isPlaying` 默认 `true`（L49），倒计时立即开始。用户可能还没准备好
+- **影响**: 训练体验不佳
+- **涉及文件**: `src/pages/WorkoutPlayer.tsx` L49
+- **修复建议**: 默认 `isPlaying=false`，或加一个 3 秒倒计时准备阶段
+- **是否立即修复**: 建议修（UX 优化）
+
+### M3. 产品价格显示硬编码 `¥` 符号
+
+- **类型**: 国际化缺失
+- **复现**: `AnalysisPage.tsx` L227 `¥{Number(product.price).toFixed(0)}`，对非中国用户显示人民币符号
+- **影响**: 多币种用户体验不一致
+- **涉及文件**: `src/components/AnalysisPage.tsx` L227
+- **修复建议**: 产品表增加 `currency` 字段，或根据 locale 格式化
+- **是否立即修复**: 中 — 如只面向中国市场可延后
+
+### M4. ProfilePage 使用 `ProfilePage` 组件但 `/profile` 路由指向 `ProfileDetail`
+
+- **类型**: 结构混淆
+- **复现**: 有 `ProfilePage.tsx` 和 `ProfileDetail.tsx` + `ProfileDetailContent.tsx`。`/profile` 路由实际加载 `ProfileDetail`。`ProfilePage` 被 Index.tsx 通过 tab 展示但没有对应路由
+- **影响**: 不是 bug，但命名容易混淆。ProfilePage 是"我的"tab 页面，ProfileDetail 是独立路由页面
+- **涉及文件**: `src/components/ProfilePage.tsx`, `src/pages/ProfileDetail.tsx`
+- **修复建议**: 重命名 `ProfilePage` 为 `MyPage` 或 `AccountTab`，让命名更清晰
+- **是否立即修复**: 否 — 结构优化
+
+### M5. Membership 页面对已付费用户始终显示"年度会员"
+
+- **类型**: 逻辑不完整
+- **复现**: `Membership.tsx` L54 固定显示 `t("membership.annualMember")`，不区分用户实际订阅的是月度还是年度
+- **影响**: 月度订阅用户看到的也是"年度会员"
+- **涉及文件**: `src/pages/Membership.tsx` L54
+- **修复建议**: 从 RevenueCat 或数据库获取实际订阅类型并展示
+- **是否立即修复**: 中 — 上线前应修
+
+### M6. Paywall 底部 CTA 按钮在宽屏上横跨全屏
+
+- **类型**: UI 问题
+- **复现**: Paywall.tsx L222 `fixed bottom-0 left-0 right-0`，没有 `max-w-[480px]`
+- **影响**: 宽屏上 CTA 按钮拉满，视觉不一致
+- **涉及文件**: `src/pages/Paywall.tsx` L222
+- **修复建议**: 添加 `max-w-[480px] mx-auto left-1/2 -translate-x-1/2`
 - **是否立即修复**: 建议修
 
-### M7. Google OAuth 回调 URL 在 onboarding 模式下可能不正确
+### M7. AnalysisPage 推荐课程点击需要登录，但分析页本身不需要登录
+
+- **类型**: UX 矛盾
+- **复现**: 未登录用户可以在分析页看到推荐课程列表，但点击任何一个都会跳转登录页。课程本身是公开数据。
+- **影响**: 体验割裂 — 看到了但不让点
+- **涉及文件**: `src/components/AnalysisPage.tsx` L198
+- **修复建议**: 推荐课程不需要登录即可查看详情（`CourseDetail` 已是公开路由）。移除 `requireAuth()` 检查
+- **是否立即修复**: 建议修
+
+### M8. AuthContext `fetchOnboardingStatus` 可能导致竞态
 
 - **类型**: 逻辑风险
-- **复现**: `Auth.tsx` L61-63，当 `onSuccess` 回调存在时 redirect_uri 固定为 `/onboarding`；但 OAuth 返回后浏览器会加载该 URL，此时 `AuthRoute` 检测到 user 已登录会 redirect 到 returnTo（默认 `/`）
-- **影响**: 新用户通过 Google 登录 → 可能跳过 onboarding
-- **根因**: OAuth 的 redirect flow 和 SPA 路由守卫之间存在竞态。Google 登录后到达 `/auth?returnTo=/onboarding`，但 `AuthRoute` 检测到已登录后会 redirect 到 returnTo
-- **涉及文件**: `src/pages/Auth.tsx` (L60-65)
-- **修复建议**: Google OAuth redirect_uri 应该直接指向 `/`，由 `ProtectedRoute` 检测 onboardingCompleted 来决定跳转
-- **是否立即修复**: 是 — 影响新用户 Google 登录流程
-
-### M8. 面部分析页和进度记录页职责略有重叠
-
-- **类型**: 结构优化建议
-- **复现**: 分析页（tab 3）有拍照上传功能，进度页（tab 4）也有拍照上传功能。分析页上传的照片同时出现在进度页的照片列表中
-- **影响**: 用户可能困惑"应该在哪个页面拍照"
-- **涉及文件**: `src/components/AnalysisPage.tsx`, `src/components/ProgressPage.tsx`
-- **修复建议**: 明确区分：分析页=AI 面部分析（用于打分），进度页=每日打卡记录照片。建议分析页的照片单独存储或在 UI 上做更清晰的区分
-- **是否立即修复**: 否 — 后期产品优化
+- **复现**: `onAuthStateChange` 中用 `setTimeout(() => fetchOnboardingStatus(...), 0)` 延迟执行，同时 `getSession` 也调用 `fetchOnboardingStatus`。如果两个几乎同时触发，可能导致两次 profile insert 尝试
+- **影响**: insert 有 unique constraint（user_id），第二次会失败但被 silently ignored（因为用的是 `maybeSingle`）。实际影响小但代码不够健壮
+- **涉及文件**: `src/contexts/AuthContext.tsx` L49-62
+- **修复建议**: 在 `onAuthStateChange` 中不调用 `fetchOnboardingStatus`，只依赖 `getSession` 的结果；或用 flag 防止重复调用
+- **是否立即修复**: 低优先级
 
 ---
 
 ## 轻微 (Minor)
 
-### L1. GiftPage 无实际礼物逻辑
+### L1. Onboarding 答案存储的是翻译后的文本而非 key
 
-- **类型**: 功能缺失
-- **复现**: `/gift` 页面只有一个分享按钮，无 gift entitlement、无礼物码生成/兑换逻辑
-- **影响**: 仅作为裂变分享页面，不是真正的"赠送会员"功能
-- **涉及文件**: `src/pages/GiftPage.tsx`
-- **修复建议**: 如需真实礼物功能，需设计 gift code 系统。当前作为 MVP 分享页可接受
-- **是否立即修复**: 产品决策点
+- **类型**: 数据质量
+- **复现**: 用户选择"紧致提升"时，`goal` 存储的是 `t("onboarding.goalLift")` 的翻译值（如中文"紧致提升"、英文"Lift & Firm"）。不同语言的用户存储不同的文本
+- **影响**: 后端无法统一分析用户偏好，无法根据 goal 做推荐
+- **涉及文件**: `src/pages/Onboarding.tsx` L31, L42-44
+- **修复建议**: 存储 key（如 `"lift"`、`"glow"`）而非翻译后文本
+- **是否立即修复**: 是 — 数据质量问题，越早修越好
 
-### L2. `usePaywallStatus` 使用 `as any` 绕过类型检查
+### L2. WeeklyProgress fallback 标签仍有硬编码中文
 
-- **类型**: 工程质量
-- **复现**: `paywall_completed` 字段通过 `as any` 强制类型
-- **影响**: 字段已在 profiles 表中存在，类型文件可能未同步
-- **涉及文件**: `src/hooks/usePaywallStatus.ts` (L33), `src/pages/Onboarding.tsx` (L350, L379)
-- **修复建议**: 等类型自动同步后移除 `as any`
-- **是否立即修复**: 否
+- **类型**: 国际化缺失
+- **复现**: `useWeeklyProgress` L111 fallback labels `["一", "二", "三", "四", "五", "六", "日"]`
+- **影响**: 如果调用方忘记传 labels 参数，会显示中文
+- **涉及文件**: `src/hooks/useWorkoutLogs.ts` L111
+- **修复建议**: 移除 fallback 或改为语言无关的简写
+- **是否立即修复**: 轻微
 
-### L3. WorkoutPlayer 计时器为纯前端倒计时
-
-- **类型**: 结构优化建议
-- **复现**: 训练页面只有倒计时，没有动作指导、步骤切换
-- **影响**: 用户体验偏简，后续需要丰富
-- **涉及文件**: `src/pages/WorkoutPlayer.tsx`
-- **修复建议**: 后续迭代添加分步动作、视频指导
-- **是否立即修复**: 否
-
-### L4. 课程详情页评论为硬编码假数据
+### L3. ProfilePage 头像硬编码 fallback URL
 
 - **类型**: 硬编码
-- **复现**: `CourseDetail.tsx` L188 使用固定 unsplash 头像和翻译 key 里的固定评论
-- **影响**: 所有课程显示相同的评论
-- **涉及文件**: `src/pages/CourseDetail.tsx` (L186-197)
-- **修复建议**: 后期建立评论系统或至少用数据库中的评论数据
-- **是否立即修复**: 否
-
-### L5. LanguageProvider 包裹了两层
-
-- **类型**: 工程质量
-- **复现**: `main.tsx` 包裹了 `<LanguageProvider>`，`App.tsx` 内又包裹了一层 `<LanguageProvider>`
-- **影响**: 不会报错（内层覆盖外层），但造成不必要的 context 重复
-- **涉及文件**: `src/main.tsx` (L6), `src/App.tsx` (L67)
-- **修复建议**: 移除 `main.tsx` 中的 `LanguageProvider`
-- **是否立即修复**: 轻微，顺手修
-
-### L6. 产品推荐链接对未登录用户完全隐藏购买 URL
-
-- **类型**: 设计考量
-- **复现**: `AnalysisPage.tsx` L217，未登录时 `href="#"`，点击跳转登录
-- **影响**: 可能希望游客也能查看商品（但不能购买），当前行为合理
-- **是否立即修复**: 否
+- **复现**: ProfilePage L61, ProgressPage L84 都用 pexels.com 的固定图片作为默认头像
+- **影响**: 如果 pexels CDN 不可用，头像区域可能显示裂图
+- **涉及文件**: `src/components/ProfilePage.tsx` L61, `src/components/ProgressPage.tsx` L84
+- **修复建议**: 用本地 SVG 占位图
+- **是否立即修复**: 低
 
 ---
 
-## 修复优先级列表
+## 修复优先级
 
-| 优先级 | 问题 | 类型 | 建议 |
-|--------|------|------|------|
-| 1 | S4 - handle_new_user 触发器未挂载 | Bug | 立即修复 |
-| 2 | S2 - Onboarding 答案未持久化 | Bug | 立即修复 |
-| 3 | M7 - Google OAuth 回调 URL 竞态 | 逻辑风险 | 立即修复 |
-| 4 | S3 - 面部分析 toast 硬编码中文 | Bug | 立即修复 |
-| 5 | M6 - 密码泄露检测未开启 | 安全 | 尽快修复 |
-| 6 | M5 - profiles RLS 使用 public 角色 | 安全 | 尽快修复 |
-| 7 | L5 - LanguageProvider 重复包裹 | 工程质量 | 顺手修 |
-| 8 | M2 - CourseDetail portal 宽屏问题 | UI | 可延后 |
-| 9 | M1 - Web 端免费解锁 | 产品决策 | 需要你定 |
-| 10 | M3 - Onboarding paywall 可跳过 | 产品决策 | 需要你定 |
-| 11 | M4 - 课程详情页内容无付费墙 | 产品决策 | 需要你定 |
-| 12 | L1 - Gift 页无实际逻辑 | 功能缺失 | 需要你定 |
-
----
-
-## 不确定项
-
-- **profiles 表 `paywall_completed` 和 RevenueCat 状态同步问题**: 如果用户在 iOS 端取消订阅，RevenueCat 会更新 entitlement 状态，但 `paywall_completed` 在数据库中仍为 `true`。Web 端会误判为仍是付费用户。不确定当前是否有 webhook 处理这种情况（未看到相关 edge function），但这在未来上线 native 端时是一个必须解决的问题。
-
-- **email 确认是否已开启**: 代码中注册后只显示 toast "请查看邮箱确认"，但未看到 auth 配置中 auto-confirm 的设置状态。如果 auto-confirm 被开启，用户无需验证邮箱即可登录。不确定当前配置状态。
+| 优先级 | 问题 | 类型 |
+|--------|------|------|
+| 1 | C1 - 分析页推荐匹配硬编码中文 | Bug |
+| 2 | C2 - 课程库过滤器硬编码中文 | Bug |
+| 3 | L1 - Onboarding 答案存翻译文本 | 数据质量 |
+| 4 | M7 - 推荐课程不需要强制登录 | UX |
+| 5 | M1 - 计时器初始值闪烁 | UX |
+| 6 | M2 - 自动播放无准备时间 | UX |
+| 7 | M6 - Paywall CTA 宽屏问题 | UI |
+| 8 | M3 - 价格硬编码¥ | 国际化 |
+| 9 | M5 - 会员页固定显示年度 | 逻辑 |
+| 10 | M8 - AuthContext 竞态 | 健壮性 |
 
