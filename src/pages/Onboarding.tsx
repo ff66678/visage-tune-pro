@@ -65,10 +65,10 @@ const GoalStep = ({ selected, onSelect, t }: { selected: string | null; onSelect
 // Step 3: Skin Type
 const SkinTypeStep = ({ selected, onSelect, t }: { selected: string | null; onSelect: (v: string) => void; t: (k: string) => string }) => {
   const skinTypes = [
-    { icon: Droplets, label: t("onboarding.skinOily"), desc: t("onboarding.skinOilyDesc") },
-    { icon: Wind, label: t("onboarding.skinDry"), desc: t("onboarding.skinDryDesc") },
-    { icon: Link, label: t("onboarding.skinCombo"), desc: t("onboarding.skinComboDesc") },
-    { icon: Heart, label: t("onboarding.skinSensitive"), desc: t("onboarding.skinSensitiveDesc") },
+    { key: "oily", icon: Droplets, label: t("onboarding.skinOily"), desc: t("onboarding.skinOilyDesc") },
+    { key: "dry", icon: Wind, label: t("onboarding.skinDry"), desc: t("onboarding.skinDryDesc") },
+    { key: "combo", icon: Link, label: t("onboarding.skinCombo"), desc: t("onboarding.skinComboDesc") },
+    { key: "sensitive", icon: Heart, label: t("onboarding.skinSensitive"), desc: t("onboarding.skinSensitiveDesc") },
   ];
   return (
     <div className="flex-1 overflow-y-auto px-6 pb-32">
